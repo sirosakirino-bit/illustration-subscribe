@@ -8,12 +8,13 @@
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.75; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
   .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; flex-wrap: wrap; }
   .navlinks > a { padding: 8px 14px; }
+  .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #8fa2ac; }
 
@@ -25,6 +26,37 @@
     .navlinks { order: 3; flex-basis: 100%; font-size: 11px; gap: 4px; }
     .navlinks > a { padding: 6px 9px; }
   }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 16px 18px; position: relative; }
+    .topbar > div:first-child { order: 1; }
+    .topbar > div:last-child { order: 2; }
+    .topbar > div:last-child > div:last-child { display: none; }
+    .user-name-row { display: none; }
+    .nav-toggle-btn { display: flex; order: 3; }
+    .navlinks { display: none; }
+    .topbar.nav-open .navlinks {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 18px;
+      right: 18px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 28px rgba(47,155,214,0.22);
+      padding: 8px;
+      gap: 2px;
+      z-index: 60;
+    }
+    .topbar.nav-open .navlinks > a {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      border-radius: 10px;
+    }
+    .topbar.nav-open .nav-active { box-shadow: none; }
+  }
 </style>
 </head>
 <body data-require-auth>
@@ -32,6 +64,7 @@
 
   <div class="topbar">
     <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div class="nav-toggle-btn" onclick="toggleMobileNav()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
     <div class="navlinks">
       <a href="admin-members.html" class="nav-inactive">会員一覧</a>
       <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
@@ -78,6 +111,18 @@
 
   </div>
 </div>
+<script>
+  function toggleMobileNav() {
+    var topbar = document.querySelector('.topbar');
+    if (topbar) topbar.classList.toggle('nav-open');
+  }
+  document.addEventListener('click', function (e) {
+    var topbar = document.querySelector('.topbar');
+    if (topbar && topbar.classList.contains('nav-open') && !topbar.contains(e.target)) {
+      topbar.classList.remove('nav-open');
+    }
+  });
+</script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
 <script>
