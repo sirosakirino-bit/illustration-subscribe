@@ -46,10 +46,28 @@ export async function handler(event, context) {
       const body = JSON.parse(event.body || '{}');
       const action = body.action;
 
+      // 会員1人につき、同時に進行できる申請（ヒアリング中・制作中）は1件までとする
+      // （メニュー即時受付・特殊な依頼のご相談のどちらも対象）
+      if (action === 'submit-menu' || action === 'submit-consult') {
+        const active = await db.sql`
+          SELECT id FROM applications
+          WHERE member_id = ${member.id} AND status IN ('ヒアリング中', '制作中')
+        `;
+        if (active.length > 0) {
+          return jsonResponse(400, {
+            error: '現在進行中のご依頼（ヒアリング中・制作中）が1件あるため、新しい申請はできません。対応完了後にもう一度お申し込みください。'
+          });
+        }
+      }
+
       if (action === 'submit-menu') {
         const pt = Number(body.point_cost);
         if (!MENU_TITLES[pt]) {
           return jsonResponse(400, { error: '不正なメニューです' });
+        }
+        const notes = (body.notes || '').trim();
+        if (!notes) {
+          return jsonResponse(400, { error: 'ご要望メモの入力は必須です' });
         }
         if (member.point_balance < pt) {
           return jsonResponse(400, { error: 'ポイントが不足しています' });
@@ -60,7 +78,7 @@ export async function handler(event, context) {
         `;
         const inserted = await db.sql`
           INSERT INTO applications (member_id, kind, title, details, point_cost, status)
-          VALUES (${member.id}, 'menu', ${MENU_TITLES[pt]}, ${body.notes || null}, ${pt}, '制作中')
+          VALUES (${member.id}, 'menu', ${MENU_TITLES[pt]}, ${notes}, ${pt}, '制作中')
           RETURNING *
         `;
         return jsonResponse(200, { member: updatedMembers[0], application: inserted[0] });
@@ -70,14 +88,6 @@ export async function handler(event, context) {
         const details = (body.details || '').trim();
         if (!details) {
           return jsonResponse(400, { error: 'ご依頼内容の入力は必須です' });
-        }
-
-        const pending = await db.sql`
-          SELECT id FROM applications
-          WHERE member_id = ${member.id} AND kind = 'consult' AND status = 'ヒアリング中'
-        `;
-        if (pending.length > 0) {
-          return jsonResponse(400, { error: 'すでに相談中（ヒアリング中）の申請があります。回答・正式受付が済んでから、次のご相談をお送りください。' });
         }
 
         const inserted = await db.sql`
