@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>メッセージ｜[サイト名] 管理画面</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Noto Sans JP', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Zen Maru Gothic', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 1320px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .plan-tag { font-size: 8.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; flex-shrink: 0; white-space: nowrap; }
@@ -109,7 +109,7 @@
 <div class="page">
 
   <div class="topbar">
-    <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div style="font-family: 'Zen Maru Gothic', system-ui, sans-serif; font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
     <div class="nav-toggle-btn" onclick="toggleMobileNav()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
     <div class="navlinks">
       <a href="admin-members.html" class="nav-inactive">会員一覧</a>
@@ -128,7 +128,7 @@
   <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
 
     <div>
-      <div style="font-size: 20px; font-weight: 800;">メッセージ</div>
+      <div style="font-family: 'Zen Maru Gothic', system-ui, sans-serif; font-size: 20px; font-weight: 800;">メッセージ</div>
       <div style="font-size: 12px; color: #5c6b73; margin-top: 2px;">申請ごとのやり取りを一覧で確認できます。左から選ぶと、右側の表示がそのまま切り替わります。</div>
     </div>
 
@@ -362,7 +362,7 @@
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
                 'ポイントのご提示' +
               '</div>' +
-              '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
+              '<div style="font-family: 'Zen Maru Gothic', system-ui, sans-serif; font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
               (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
               statusNote +
             '</div>' +
