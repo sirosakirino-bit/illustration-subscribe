@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ポイント調整｜[サイト名] 管理画面</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
+  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; }
+  .navlinks > a { padding: 8px 14px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div class="navlinks">
+      <a href="admin-members.html" class="nav-active">会員一覧</a>
+      <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
+      <a href="admin-requests.html" class="nav-inactive">申請管理</a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">1</span></a>
+      <a href="admin-payments.html" class="nav-inactive">決済状況</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div>あなた（運営）</div>
+    </div>
+  </div>
+
+  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
+
+    <div style="font-size: 12px;"><a href="admin-members.html">← 会員一覧に戻る</a></div>
+
+    <div id="adjust-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 18px 24px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div id="member-initial" style="width: 34px; height: 34px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #1f7fb3;">？</div>
+        <div>
+          <div id="member-name" style="font-size: 15px; font-weight: 800;">読み込み中…</div>
+          <div id="member-plan" style="font-size: 11px; color: #9db0b8; margin-top: 2px;"></div>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; color: #9db0b8;">現在の保有ポイント</div>
+        <div id="member-balance" style="font-size: 22px; font-weight: 800; color: #2f9bd6;">ー</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 14px; font-weight: 800;">ポイント手動調整</div>
+      <div style="font-size: 11.5px; color: #8fa2ac; line-height: 1.7;">正式受付前キャンセルの返還処理や、イレギュラー対応など、通常のポイント付与・消費フロー以外で残高を調整する場合にここから行います。調整理由の記録は必須です。</div>
+
+      <div style="display: flex; gap: 16px;">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">調整pt数</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input id="adjust-delta" type="number" step="1" placeholder="+1" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 700; color: #3f9457; width: 90px; text-align: center; font-family: inherit;">
+            <div style="font-size: 11px; color: #b3c2c9;">プラスは付与、マイナスは減算</div>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">調整後の残高（プレビュー）</div>
+          <div id="adjust-preview" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 16px; font-size: 14px; font-weight: 700; background: #f7fbff; color: #3b454a;">ー</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">調整理由（必須）</div>
+        <textarea id="adjust-reason" placeholder="例）9/2受付の申請が正式受付前にキャンセルとなったため、消費前の状態に戻すための返還処理" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 60px; font-family: inherit; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-start;">
+        <div id="adjust-submit" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">
+          この内容で調整を確定する
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 13px; font-weight: 800;">調整履歴</div>
+
+      <div style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8;">
+        <div style="width: 90px;">日時</div>
+        <div style="width: 70px;">増減</div>
+        <div style="flex-grow: 1;">理由</div>
+      </div>
+
+      <div id="adjust-history-rows">
+        <div style="padding: 14px 0; font-size: 12px; color: #9db0b8;">読み込み中…</div>
+      </div>
+
+    </div>
+
+    <div style="background: #fbecec; border: 1px solid #f3d3d3; border-radius: 18px; padding: 24px 26px; display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <div style="font-size: 14px; font-weight: 800; color: #c0524f;">強制退会（運営判断）</div>
+        <div style="font-size: 11.5px; color: #a8504c; line-height: 1.7; margin-top: 6px;">規約違反や不適切な言動があった場合、運営の判断でこの会員を強制退会させることができます。通常の退会（申告月末〆・翌月1日付け）とは異なり、確定した時点で<strong>即時に</strong>アクセス不可・保有ポイント失効となります。あわせてStripe側のサブスクリプションもキャンセルし、以降の請求は発生しなくなります。</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #a8504c;">強制退会の理由（必須・記録されます）</div>
+        <div style="border: 1px solid #f0c2c2; background: #ffffff; border-radius: 12px; padding: 14px; font-size: 13px; color: #c7a9a7; min-height: 60px;">例）規約に反する迷惑行為があったため、運営判断により即時に利用停止・強制退会とする</div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-start;">
+        <div style="background: #c0524f; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(192,82,79,0.3); cursor: not-allowed;">
+          この会員を即時に強制退会させる
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+<script>
+  var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+  var memberId = Number(new URLSearchParams(location.search).get('member'));
+  var currentMember = null;
+
+  function formatDateTime(iso) {
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function showError(msg) {
+    var box = document.getElementById('adjust-error');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function renderMember(member) {
+    currentMember = member;
+    var name = member.handle_name || member.full_name || member.email;
+    document.getElementById('member-initial').textContent = name ? name.charAt(0) : '?';
+    document.getElementById('member-name').textContent = name + ' さん';
+    document.getElementById('member-plan').textContent = PLAN_LABELS[member.plan] || member.plan;
+    document.getElementById('member-balance').textContent = member.point_balance + 'pt';
+  }
+
+  function renderAdjustHistory(adjustments) {
+    var container = document.getElementById('adjust-history-rows');
+    var mine = adjustments.filter(function (a) { return a.member_id === memberId; });
+    if (!mine.length) {
+      container.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #9db0b8;">まだ調整履歴はありません</div>';
+      return;
+    }
+    container.innerHTML = mine.map(function (a, i) {
+      var border = (i < mine.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
+      var sign = a.delta > 0 ? ('+' + a.delta) : a.delta;
+      var color = a.delta > 0 ? '#3f9457' : '#c0524f';
+      return (
+        '<div style="display: flex; align-items: center; padding: 10px 0; ' + border + ' font-size: 12.5px;">' +
+          '<div style="width: 90px; color: #9db0b8;">' + formatDateTime(a.created_at) + '</div>' +
+          '<div style="width: 70px; color: ' + color + '; font-weight: 700;">' + sign + 'pt</div>' +
+          '<div style="flex-grow: 1; color: #4b5a61;">' + a.reason + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function loadData() {
+    AuthHelpers.callFunction('admin-data', { method: 'GET' }).then(function (data) {
+      var member = data.members.find(function (m) { return m.id === memberId; });
+      if (!member) {
+        showError('会員が見つかりませんでした。会員一覧からやり直してください。');
+        return;
+      }
+      renderMember(member);
+      renderAdjustHistory(data.adjustments);
+    }).catch(function (err) {
+      showError('読み込みに失敗しました：' + err.message);
+    });
+  }
+
+  document.getElementById('adjust-delta').addEventListener('input', function () {
+    var delta = Number(this.value);
+    var preview = document.getElementById('adjust-preview');
+    if (!currentMember || !this.value || isNaN(delta)) { preview.textContent = 'ー'; return; }
+    preview.textContent = (currentMember.point_balance + delta) + 'pt';
+  });
+
+  document.getElementById('adjust-submit').addEventListener('click', function () {
+    var delta = Number(document.getElementById('adjust-delta').value);
+    var reason = document.getElementById('adjust-reason').value.trim();
+    document.getElementById('adjust-error').style.display = 'none';
+    if (!memberId) { showError('会員が指定されていません。'); return; }
+    if (!delta) { showError('調整pt数を入力してください（0以外）。'); return; }
+    if (!reason) { showError('調整理由を入力してください。'); return; }
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'adjust-points', member_id: memberId, delta: delta, reason: reason } }).then(function () {
+      document.getElementById('adjust-delta').value = '';
+      document.getElementById('adjust-reason').value = '';
+      document.getElementById('adjust-preview').textContent = 'ー';
+      loadData();
+    }).catch(function (err) {
+      showError('調整に失敗しました：' + err.message);
+    });
+  });
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) {
+      if (!user || !window.AuthHelpers) return;
+      if (!memberId) { showError('会員が指定されていません。会員一覧の「調整」から開いてください。'); return; }
+      loadData();
+    });
+  }
+</script>
+</body>
+</html>

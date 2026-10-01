@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>サイトマップ｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; padding: 40px 36px 60px; gap: 28px; }
+  .card { background: #ffffff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 12px; }
+  .entry-btn { display: flex; align-items: center; justify-content: space-between; background: #2f9bd6; color: #fff; font-weight: 700; font-size: 14px; padding: 16px 24px; border-radius: 14px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
+  .entry-btn span.sub { display: block; font-size: 11px; font-weight: 500; color: #eaf6fb; margin-top: 3px; }
+  .pagelist { display: flex; flex-direction: column; gap: 2px; }
+  .pagelist a { display: flex; align-items: center; justify-content: space-between; padding: 9px 4px; font-size: 12.5px; font-weight: 700; border-bottom: 1px dashed #eef2f4; }
+  .pagelist a:last-child { border-bottom: none; }
+  .pagelist .note { font-size: 10.5px; font-weight: 500; color: #9db0b8; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div>
+    <div style="font-size: 24px; font-weight: 800; color: #2f9bd6;">[サイト名] サイトマップ</div>
+    <div style="font-size: 12px; color: #9db0b8; margin-top: 6px; line-height: 1.7;">ここからサイト全体を確認できます。内部処理（決済・通知・データ保存など）はまだ実装していないプロトタイプです。ボタンやリンクは基本的に画面遷移のみで、一部（プラン変更・退会申請の確定操作など）はまだリンクしていません。</div>
+  </div>
+
+  <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+    <a href="login.html" class="entry-btn" style="flex: 1; min-width: 220px;">訪問者としてログイン画面へ<span class="sub">新規登録・ログイン</span></a>
+    <a href="mypage.html" class="entry-btn" style="flex: 1; min-width: 220px; background: #1f7fb3;">会員としてマイページへ<span class="sub">会員ログイン後の画面</span></a>
+    <a href="admin-members.html" class="entry-btn" style="flex: 1; min-width: 220px; background: #6a4fc0; box-shadow: 0 4px 12px rgba(106,79,192,0.3);">管理画面を開く<span class="sub">運営側の画面</span></a>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 14px; font-weight: 800;">① 登録・訪問者向け</div>
+    <div class="pagelist">
+      <a href="login.html">ログイン画面 <span class="note">login.html</span></a>
+      <a href="password-reset.html">パスワード再設定 <span class="note">password-reset.html</span></a>
+      <a href="signup-plan.html">新規登録：プラン選択 <span class="note">signup-plan.html</span></a>
+      <a href="signup-plan-full.html">新規登録：プラン選択（満枠表示） <span class="note">signup-plan-full.html</span></a>
+      <a href="signup-terms.html">新規登録：規約確認（スクロール同意） <span class="note">signup-terms.html</span></a>
+      <a href="signup-account.html">新規登録：アカウント作成 <span class="note">signup-account.html</span></a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 14px; font-weight: 800;">② 会員向け</div>
+    <div class="pagelist">
+      <a href="mypage.html">マイページ <span class="note">mypage.html</span></a>
+      <a href="apply.html">ポイントを使う（申請フォーム） <span class="note">apply.html</span></a>
+      <a href="apply-full.html">ポイントを使う（枠満了表示） <span class="note">apply-full.html</span></a>
+      <a href="apply-monthly.html">今月のご依頼（月1プラン） <span class="note">apply-monthly.html</span></a>
+      <a href="history.html">申請履歴 <span class="note">history.html</span></a>
+      <a href="message.html">メッセージ：特殊な依頼の見積もりカード <span class="note">message.html</span></a>
+      <a href="message-monthly.html">メッセージ：月1プラン追加購入の見積もりカード <span class="note">message-monthly.html</span></a>
+      <a href="settings.html">設定 <span class="note">settings.html</span></a>
+      <a href="plan-change.html">プランの変更・退会 <span class="note">plan-change.html</span></a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 14px; font-weight: 800;">③ 管理画面（運営向け）</div>
+    <div class="pagelist">
+      <a href="admin-members.html">会員一覧 <span class="note">admin-members.html</span></a>
+      <a href="admin-capacity.html">制作枠状況 <span class="note">admin-capacity.html</span></a>
+      <a href="admin-requests.html">申請管理 <span class="note">admin-requests.html</span></a>
+      <a href="admin-inbox.html">メッセージ一覧（左から会員を選ぶと右側が切り替わります） <span class="note">admin-inbox.html</span></a>
+      <a href="admin-inbox.html#C">└ 特殊な依頼への見積もり提示（[会員名C]さん） <span class="note">admin-inbox.html#C</span></a>
+      <a href="admin-inbox.html#B">└ 月1プラン追加購入の見積もり提示（[会員名B]さん） <span class="note">admin-inbox.html#B</span></a>
+      <a href="admin-point-adjust.html">ポイント手動調整 <span class="note">admin-point-adjust.html</span></a>
+      <a href="admin-payments.html">決済状況 <span class="note">admin-payments.html</span></a>
+      <a href="admin-invoice-issue.html">領収書の発行 <span class="note">admin-invoice-issue.html</span></a>
+      <a href="admin-invoice-bulk.html">領収書の一括発行 <span class="note">admin-invoice-bulk.html</span></a>
+      <a href="admin-invoice-document.html">領収書PDFプレビュー <span class="note">admin-invoice-document.html</span></a>
+    </div>
+  </div>
+
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

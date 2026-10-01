@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今月のご依頼｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  a:hover { color: #1f7fb3; }
+  .page { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 16px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo"><a href="mypage.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+    <div class="navlinks">
+      <a href="mypage.html" class="nav-inactive">マイページ</a>
+      <a href="apply-monthly.html" class="nav-active">今月のご依頼</a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="settings.html" class="nav-inactive">設定</a>
+    </div>
+    <div class="user">
+      <div class="avatar" data-user-initial>B</div>
+      <div><span data-user-name>[会員名B]</span> さん</div>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+    </div>
+  </div>
+
+  <div style="padding: 8px 36px 36px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1;">
+
+    <div style="background: #ffffff; border-radius: 16px; padding: 16px 22px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <div style="font-size: 11px; color: #9db0b8;">現在のプラン</div>
+        <div style="font-size: 15px; font-weight: 800; margin-top: 2px;">月1プラン（月額25,000円＋消費税10%）</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; color: #9db0b8;">今月の制作枠</div>
+        <div style="font-size: 15px; font-weight: 800; color: #3f9457; margin-top: 2px;">確保済み（2pt相当）</div>
+      </div>
+    </div>
+
+    <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #6a4fc0; line-height: 1.7;">
+      内容・必要ptについて双方が合意した時点で「正式受付」となります。正式受付から納品までは1ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。
+    </div>
+
+    <div style="background: #ffffff; border-radius: 20px; padding: 28px 30px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 22px;">
+
+      <div style="font-size: 17px; font-weight: 800;">今月のご依頼内容</div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">依頼内容</div>
+        <div style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #b3c2c9; min-height: 70px;">例）バストアップ＋簡易背景で、表情差分を1パターン追加していただきたいです…</div>
+        <div style="font-size: 11px; color: #9db0b8;">※月1プランの制作内容は、ポイント表の2pt相当（バストアップ＋簡易背景の目安）がそのまま適用されます</div>
+      </div>
+
+      <div style="border: 1px solid #f2e0c4; background: #fdf9f2; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 12.5px; font-weight: 800; color: #a8722a;">内容が2pt相当を超えそうな場合</div>
+        <div style="font-size: 11.5px; color: #8a6524; line-height: 1.7;">2pt相当（バストアップ＋簡易背景の目安）を超えるボリュームをご希望の場合、不足分として追加1ptまで購入いただけます。1ヶ月に利用できる制作量は最大3pt相当までです。追加購入したポイントは翌月へ持ち越せません。</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #f2e0c4; border-radius: 12px; padding: 12px 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #d9b877;"></div>
+            <div style="font-size: 13px; font-weight: 700; color: #3b454a;">不足分1ptを追加購入する</div>
+          </div>
+          <div style="font-size: 12px; color: #a8722a; font-weight: 700;">＋10,000円 <span style="font-size: 10.5px; font-weight: 500;">＋税10%</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">オプション</div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+            <div style="font-size: 13px;">商用利用</div>
+          </div>
+          <div style="font-size: 12px; color: #8fa2ac;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+            <div style="font-size: 13px;">実績非公開</div>
+          </div>
+          <div style="font-size: 12px; color: #8fa2ac;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+            <div style="font-size: 13px;">著作権譲渡</div>
+          </div>
+          <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+        </div>
+
+        <div style="font-size: 10.5px; color: #b3c2c9; line-height: 1.6;">※追加購入・オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-start;">
+        <a href="message-monthly.html" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3);">
+          この内容で依頼する
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

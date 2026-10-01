@@ -1,0 +1,7 @@
+{
+  "name": "illustration-subscription-site",
+  "private": true,
+  "dependencies": {
+    "@netlify/database": "latest"
+  }
+}

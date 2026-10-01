@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>領収書PDFプレビュー｜[サイト名] 管理画面</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: #e7edf0; font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #33393d; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 16px 60px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div style="width: 100%; max-width: 640px; margin-bottom: 14px;">
+    <a href="admin-invoice-issue.html" style="font-size: 12px;">← 領収書の発行に戻る</a>
+  </div>
+
+  <div style="font-size: 11px; color: #8b979d; margin-bottom: 14px;">発行PDFプレビュー（A4）</div>
+
+  <div style="width: 100%; max-width: 640px; min-height: 900px; background: #ffffff; box-shadow: 0 6px 20px rgba(0,0,0,0.10); padding: 56px 60px; display: flex; flex-direction: column; gap: 0;">
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+      <div style="font-size: 26px; font-weight: 800; letter-spacing: 4px;">領収書</div>
+      <div style="text-align: right; font-size: 11.5px; color: #6b767c; line-height: 1.8;">
+        <div>発行番号：No. 20260911-001</div>
+        <div>発行日：2026年9月11日</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px; display: flex; align-items: flex-end; gap: 10px; border-bottom: 2px solid #33393d; padding-bottom: 10px; width: 100%; max-width: 360px;">
+      <div style="font-size: 20px; font-weight: 700;">山田 花子</div>
+      <div style="font-size: 14px; color: #5c6b73; padding-bottom: 2px;">様</div>
+    </div>
+
+    <div style="margin-top: 28px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+      <div style="font-size: 13px; color: #5c6b73;">金額</div>
+      <div style="font-size: 32px; font-weight: 800; letter-spacing: 1px;">￥11,000<span style="font-size: 16px; font-weight: 700;">-（税込）</span></div>
+    </div>
+
+    <div style="margin-top: 18px; font-size: 12.5px; color: #4b5a61; line-height: 1.9;">
+      但し、イラスト制作サブスクリプション（ポイントプラン）ご利用料として<br>
+      上記正に領収いたしました。
+    </div>
+
+    <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 0; border-top: 1px solid #dfe4e6;">
+      <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #eef2f4; font-size: 12.5px;">
+        <div style="flex-grow: 1; color: #4b5a61;">月額利用料（ポイントプラン）</div>
+        <div style="width: 110px; text-align: right;">10,000円</div>
+      </div>
+      <div style="display: flex; padding: 10px 0; border-bottom: 1px solid #eef2f4; font-size: 12.5px;">
+        <div style="flex-grow: 1; color: #4b5a61;">消費税（10%）</div>
+        <div style="width: 110px; text-align: right;">1,000円</div>
+      </div>
+      <div style="display: flex; padding: 12px 0; font-size: 13.5px; font-weight: 800;">
+        <div style="flex-grow: 1;">合計（税込）</div>
+        <div style="width: 110px; text-align: right; color: #2f9bd6;">11,000円</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 56px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+      <div style="font-size: 10px; color: #b3c2c9; line-height: 1.8; max-width: 280px;">
+        電子発行のため収入印紙は不要です。
+      </div>
+
+      <div style="display: flex; align-items: flex-end; gap: 14px;">
+        <div style="width: 50px; height: 50px; border: 1.5px solid #c0524f; color: #c0524f; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; opacity: 0.8; transform: rotate(-3deg); flex-shrink: 0;">角印</div>
+        <div style="text-align: right; font-size: 11.5px; color: #4b5a61; line-height: 1.9;">
+          <div style="font-weight: 700; font-size: 13px;">山田 太郎</div>
+          <div>〒000-0000</div>
+          <div>東京都〇〇区〇〇1-2-3</div>
+          <div>TEL：090-0000-0000</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

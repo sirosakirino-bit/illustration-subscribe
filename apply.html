@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ポイントを使う｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  a:hover { color: #1f7fb3; }
+  .page { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 16px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+
+  .tab-btn { font-size: 13px; font-weight: 700; padding: 11px 20px; border-radius: 999px; cursor: pointer; text-align: center; }
+  .tab-btn.active { background: #2f9bd6; color: #fff; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
+  .tab-btn.inactive { background: #ffffff; color: #5c6b73; border: 1px solid #dcedf5; }
+
+  .menu-card { border: 1.5px solid #dcedf5; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; background: #ffffff; }
+  .menu-card.selected { border-color: #2f9bd6; background: #eaf6fb; }
+  .menu-pt-badge { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .menu-title { font-size: 13.5px; font-weight: 700; }
+  .menu-desc { font-size: 11.5px; color: #9db0b8; margin-top: 2px; }
+  .menu-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c9d8de; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .menu-card.selected .menu-radio { border-color: #2f9bd6; background: #2f9bd6; }
+  .menu-radio-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; }
+
+  .field-input {
+    border: 1px solid #dcedf5; border-radius: 10px; padding: 11px 14px; font-size: 13px;
+    color: #3b454a; font-family: inherit; width: 100%; outline: none; background: #ffffff;
+  }
+  .field-input::placeholder { color: #b3c2c9; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo"><a href="mypage.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+    <div class="navlinks">
+      <a href="mypage.html" class="nav-inactive">マイページ</a>
+      <a href="apply.html" class="nav-active">ポイントを使う</a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="settings.html" class="nav-inactive">設定</a>
+    </div>
+    <div class="user">
+      <div class="avatar" data-user-initial>A</div>
+      <div><span data-user-name>[会員名]</span> さん</div>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+    </div>
+  </div>
+
+  <div style="padding: 8px 36px 36px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1;">
+
+    <div style="background: #ffffff; border-radius: 16px; padding: 16px 22px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <div style="font-size: 11px; color: #9db0b8;">今月のポイントプラン受付枠（残り）</div>
+        <div style="font-size: 22px; font-weight: 800; color: #2f9bd6; margin-top: 2px;">4pt</div>
+      </div>
+      <div style="text-align: right; font-size: 11px; color: #9db0b8; max-width: 380px; line-height: 1.7;">
+        月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。<br><br>
+        申請は<span style="color: #c0524f; font-weight: 700;">完全先着順</span>で、申請した時点で枠を仮押さえします。<br>枠に達し次第、今月の受付は終了します。
+      </div>
+    </div>
+
+    <div style="background: #eaf6fb; border: 1px solid #cbe9f7; border-radius: 14px; padding: 12px 18px; font-size: 12px; color: #1f7fb3; display: flex; align-items: center; gap: 8px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      申請受付期間：毎月1日〜10日／現在の保有ポイント：<span id="balance-display" style="font-weight: 800;">読み込み中…</span>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <div id="tab-btn-menu" class="tab-btn active" onclick="switchTab('menu')">メニューから選ぶ（即時受付）</div>
+      <div id="tab-btn-consult" class="tab-btn inactive" onclick="switchTab('consult')">特殊な依頼を相談する</div>
+    </div>
+
+    <!-- ===== メニュー選択タブ ===== -->
+    <div id="panel-menu" style="display: flex; flex-direction: column; gap: 18px;">
+
+      <div style="background: #e6f7ea; border: 1px solid #cdebd4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #3f9457; line-height: 1.7;">
+        メニューからお選びいただいた内容は、<span style="font-weight: 800;">ヒアリング不要でそのまま正式受付</span>となります。ラフ完成後に内容が大きく変わる大幅な修正が発生した場合のみ、別途10,000円（＋消費税10%）を申し受けます。
+      </div>
+
+      <div style="background: #ffffff; border-radius: 20px; padding: 28px 30px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 18px;">
+
+        <div style="font-size: 17px; font-weight: 800;">制作メニューから選ぶ</div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+
+          <div class="menu-card" onclick="selectMenu(this, 1)">
+            <div class="menu-pt-badge" style="background: #bfe0f0;">1pt</div>
+            <div style="flex-grow: 1;">
+              <div class="menu-title">ミニキャラ／SNSアイコン／キャラクターデザイン（ラフ案）</div>
+              <div class="menu-desc">簡単なイラスト全般</div>
+            </div>
+            <div class="menu-radio"><div class="menu-radio-dot" style="display: none;"></div></div>
+          </div>
+
+          <div class="menu-card" onclick="selectMenu(this, 2)">
+            <div class="menu-pt-badge" style="background: #8fcbe6;">2pt</div>
+            <div style="flex-grow: 1;">
+              <div class="menu-title">バストアップ＋簡易背景</div>
+              <div class="menu-desc">表情差分も可</div>
+            </div>
+            <div class="menu-radio"><div class="menu-radio-dot" style="display: none;"></div></div>
+          </div>
+
+          <div class="menu-card" onclick="selectMenu(this, 3)">
+            <div class="menu-pt-badge" style="background: #5fb3da;">3pt</div>
+            <div style="flex-grow: 1;">
+              <div class="menu-title">腰上＋背景／人物2人までの絵</div>
+              <div class="menu-desc">背景付きイラスト</div>
+            </div>
+            <div class="menu-radio"><div class="menu-radio-dot" style="display: none;"></div></div>
+          </div>
+
+          <div class="menu-card" onclick="switchTab('consult')" style="background: #f7f5fc; border-style: dashed;">
+            <div class="menu-pt-badge" style="background: #b3a3e0;">4pt〜</div>
+            <div style="flex-grow: 1;">
+              <div class="menu-title" style="color: #6a4fc0;">特殊な依頼（4pt以上・大型案件など）</div>
+              <div class="menu-desc">背景込みの一枚絵／複数人／VTuber差分デザイン／6pt以上の大型案件など、内容に応じたご相談が必要です</div>
+            </div>
+            <div style="font-size: 11.5px; font-weight: 700; color: #6a4fc0; white-space: nowrap;">相談する ＞</div>
+          </div>
+
+        </div>
+
+        <div id="menu-detail" style="display: none; flex-direction: column; gap: 16px; border-top: 1px solid #eef2f4; padding-top: 20px;">
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">参考画像・ポーズ資料など<span style="color: #b3c2c9; font-weight: 500;">（任意）</span></div>
+            <div style="display: flex; align-items: center; gap: 14px; border: 1.5px dashed #cbe0e9; border-radius: 12px; padding: 12px 16px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+              <div style="flex-grow: 1; font-size: 11.5px; color: #9db0b8;">未添付でも受付可能です</div>
+              <div style="border: 1px solid #dcedf5; color: #2f9bd6; font-weight: 700; font-size: 11.5px; padding: 8px 16px; border-radius: 999px; white-space: nowrap;">画像を追加</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">ご要望メモ<span style="color: #b3c2c9; font-weight: 500;">（任意）</span></div>
+            <div class="field-input" style="min-height: 60px; color: #b3c2c9;">例）服装は制服、表情は笑顔でお願いします…（未記入でも受付可能です）</div>
+          </div>
+
+          <div id="balance-check" style="border-radius: 12px; padding: 12px 16px; font-size: 12.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+            <div id="balance-check-text">使用ポイント：<span id="selected-pt-text">2pt</span>／保有ポイント：3pt</div>
+            <div id="balance-check-result" style="color: #3f9457;">受付後の残り：1pt</div>
+          </div>
+
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #eef2f4; padding-top: 20px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">オプション</div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+              <div style="font-size: 13px;">商用利用</div>
+            </div>
+            <div style="font-size: 12px; color: #8fa2ac;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+              <div style="font-size: 13px;">実績非公開</div>
+            </div>
+            <div style="font-size: 12px; color: #8fa2ac;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+              <div style="font-size: 13px;">著作権譲渡</div>
+            </div>
+            <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+          </div>
+
+          <div style="font-size: 10.5px; color: #b3c2c9; line-height: 1.6;">※オプション料金は月額サブスクの請求とは別に、受付時にStripeから個別の請求書でご案内します。</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div id="submit-menu" onclick="submitMenu()" style="align-self: flex-start; background: #cbd8dd; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; cursor: not-allowed;">
+            メニューを選択してください
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== 相談タブ ===== -->
+    <div id="panel-consult" style="display: none; flex-direction: column; gap: 18px;">
+
+      <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #6a4fc0; line-height: 1.7;">
+        メニューにない特殊な内容や、4pt以上の大型案件のご相談はこちらから。内容・必要ptについて双方が合意した時点で「正式受付」となります。ポイントプランは正式受付から納品まで2ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。
+      </div>
+
+      <div style="background: #ffffff; border-radius: 20px; padding: 28px 30px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 22px;">
+
+        <div style="font-size: 17px; font-weight: 800;">特殊な依頼のご相談</div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">依頼内容</div>
+          <textarea id="consult-details" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 70px; font-family: inherit; width: 100%; resize: vertical;" placeholder="例）6pt相当の大型イラストで、背景の書き込みをかなりしっかり入れていただきたいです…"></textarea>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">希望ポイント数の目安</div>
+          <div id="consult-estimate-row" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div class="estimate-chip selected" onclick="selectEstimate(this, '4pt')" style="border: 2px solid #2f9bd6; background: #eef8fd; border-radius: 999px; padding: 7px 17px; font-size: 12px; font-weight: 700; color: #2f9bd6; cursor: pointer;">4pt</div>
+            <div class="estimate-chip" onclick="selectEstimate(this, '5pt')" style="border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 18px; font-size: 12px; font-weight: 700; color: #5c6b73; cursor: pointer;">5pt</div>
+            <div class="estimate-chip" onclick="selectEstimate(this, '6pt')" style="border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 18px; font-size: 12px; font-weight: 700; color: #5c6b73; cursor: pointer;">6pt</div>
+            <div class="estimate-chip" onclick="selectEstimate(this, 'わからない')" style="border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 18px; font-size: 12px; font-weight: 700; color: #5c6b73; cursor: pointer;">わからない</div>
+          </div>
+          <div style="font-size: 11px; color: #9db0b8;">※最終的な必要ポイント数はご依頼内容の確認後に確定します</div>
+        </div>
+
+        <div id="consult-note" style="display:none; font-size: 11.5px; font-weight: 700;"></div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">オプション</div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+              <div style="font-size: 13px;">商用利用</div>
+            </div>
+            <div style="font-size: 12px; color: #8fa2ac;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+              <div style="font-size: 13px;">実績非公開</div>
+            </div>
+            <div style="font-size: 12px; color: #8fa2ac;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+              <div style="font-size: 13px;">著作権譲渡</div>
+            </div>
+            <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+          </div>
+
+          <div style="font-size: 10.5px; color: #b3c2c9; line-height: 1.6;">※オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-start;">
+          <div id="submit-consult" onclick="submitConsult()" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">
+            この内容で相談する
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+<script>
+  var memberBalance = 0;
+  var selectedPt = null;
+  var selectedEstimate = '4pt';
+
+  function selectEstimate(chip, value) {
+    document.querySelectorAll('.estimate-chip').forEach(function (c) {
+      c.style.border = '1px solid #dcedf5';
+      c.style.background = 'transparent';
+      c.style.color = '#5c6b73';
+    });
+    chip.style.border = '2px solid #2f9bd6';
+    chip.style.background = '#eef8fd';
+    chip.style.color = '#2f9bd6';
+    selectedEstimate = value;
+  }
+
+  function loadMemberData() {
+    if (!window.AuthHelpers) return;
+    AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
+      memberBalance = data.member.point_balance;
+      document.getElementById('balance-display').textContent = memberBalance + 'pt';
+    }).catch(function (err) {
+      document.getElementById('balance-display').textContent = '取得できませんでした';
+      console.error(err);
+    });
+  }
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) {
+      if (user) loadMemberData();
+    });
+  }
+
+  function switchTab(tab) {
+    var btnMenu = document.getElementById('tab-btn-menu');
+    var btnConsult = document.getElementById('tab-btn-consult');
+    var panelMenu = document.getElementById('panel-menu');
+    var panelConsult = document.getElementById('panel-consult');
+
+    if (tab === 'menu') {
+      btnMenu.className = 'tab-btn active';
+      btnConsult.className = 'tab-btn inactive';
+      panelMenu.style.display = 'flex';
+      panelConsult.style.display = 'none';
+    } else {
+      btnMenu.className = 'tab-btn inactive';
+      btnConsult.className = 'tab-btn active';
+      panelMenu.style.display = 'none';
+      panelConsult.style.display = 'flex';
+    }
+  }
+
+  function selectMenu(card, pt) {
+    var cards = document.querySelectorAll('.menu-card');
+    cards.forEach(function (c) {
+      c.classList.remove('selected');
+      var dot = c.querySelector('.menu-radio-dot');
+      if (dot) dot.style.display = 'none';
+    });
+    card.classList.add('selected');
+    card.querySelector('.menu-radio-dot').style.display = 'block';
+
+    selectedPt = pt;
+    document.getElementById('menu-detail').style.display = 'flex';
+    document.getElementById('selected-pt-text').textContent = pt + 'pt';
+
+    var remaining = memberBalance - pt;
+    var resultEl = document.getElementById('balance-check-result');
+    var checkEl = document.getElementById('balance-check');
+    var submitBtn = document.getElementById('submit-menu');
+
+    if (remaining >= 0) {
+      resultEl.textContent = '受付後の残り：' + remaining + 'pt';
+      resultEl.style.color = '#3f9457';
+      checkEl.style.background = '#e6f7ea';
+      checkEl.style.border = '1px solid #cdebd4';
+      submitBtn.textContent = 'この内容で受付する（ヒアリング不要）';
+      submitBtn.style.background = '#2f9bd6';
+      submitBtn.style.cursor = 'pointer';
+      submitBtn.style.boxShadow = '0 4px 12px rgba(47,155,214,0.3)';
+    } else {
+      resultEl.textContent = 'ポイントが不足しています';
+      resultEl.style.color = '#c0524f';
+      checkEl.style.background = '#fbecec';
+      checkEl.style.border = '1px solid #f3d7d7';
+      submitBtn.textContent = '保有ポイントが不足しています';
+      submitBtn.style.background = '#cbd8dd';
+      submitBtn.style.cursor = 'not-allowed';
+      submitBtn.style.boxShadow = 'none';
+    }
+  }
+
+  function submitMenu() {
+    if (selectedPt === null) return;
+    var remaining = memberBalance - selectedPt;
+    if (remaining < 0) return;
+
+    var submitBtn = document.getElementById('submit-menu');
+    submitBtn.textContent = '送信しています…';
+    submitBtn.style.cursor = 'not-allowed';
+
+    AuthHelpers.callFunction('member-data', {
+      method: 'POST',
+      body: { action: 'submit-menu', point_cost: selectedPt }
+    }).then(function () {
+      location.href = 'history.html';
+    }).catch(function (err) {
+      submitBtn.textContent = '送信に失敗しました（' + err.message + '）。もう一度お試しください';
+      submitBtn.style.background = '#c0524f';
+      submitBtn.style.cursor = 'pointer';
+    });
+  }
+
+  function submitConsult() {
+    var detailsEl = document.getElementById('consult-details');
+    var noteEl = document.getElementById('consult-note');
+    var btn = document.getElementById('submit-consult');
+
+    btn.textContent = '送信しています…';
+
+    AuthHelpers.callFunction('member-data', {
+      method: 'POST',
+      body: {
+        action: 'submit-consult',
+        title: '特殊な依頼のご相談（目安' + selectedEstimate + '）',
+        details: detailsEl.value,
+        point_estimate: selectedEstimate
+      }
+    }).then(function () {
+      location.href = 'history.html';
+    }).catch(function (err) {
+      btn.textContent = 'この内容で相談する';
+      noteEl.style.display = 'block';
+      noteEl.style.color = '#c0524f';
+      noteEl.textContent = '送信に失敗しました：' + err.message;
+    });
+  }
+</script>
+</body>
+</html>

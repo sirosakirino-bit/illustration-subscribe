@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>申請履歴｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  a:hover { color: #1f7fb3; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 16px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+  .row-link:hover { background: #f7fbff; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo"><a href="mypage.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+    <div class="navlinks">
+      <a href="mypage.html" class="nav-inactive">マイページ</a>
+      <a href="apply.html" class="nav-inactive">ポイントを使う</a>
+      <a href="history.html" class="nav-active" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="settings.html" class="nav-inactive">設定</a>
+    </div>
+    <div class="user">
+      <div class="avatar" data-user-initial>A</div>
+      <div><span data-user-name>[会員名]</span> さん</div>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+    </div>
+  </div>
+
+  <div style="padding: 8px 36px 36px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1;">
+
+    <div style="font-size: 20px; font-weight: 800;">申請履歴</div>
+
+    <div style="background: #ffffff; border-radius: 20px; padding: 8px 26px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column;">
+
+      <div style="display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8;">
+        <div style="width: 90px;">申請日</div>
+        <div style="flex-grow: 1;">内容</div>
+        <div style="width: 60px;">pt数</div>
+        <div style="width: 120px;">ステータス</div>
+        <div style="width: 110px;">納期目安</div>
+      </div>
+
+      <div id="history-rows">
+        <div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">読み込み中…</div>
+      </div>
+
+      <div style="font-size: 10.5px; color: #b3c2c9; padding: 10px 0 4px;">「ヒアリング中」は相談・内容確認の段階、「制作中」は正式受付が済んだ段階、「対応完了」は納品済みを表します</div>
+
+    </div>
+
+  </div>
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+<script>
+  var STATUS_STYLE = {
+    'ヒアリング中': { bg: '#f1eefb', color: '#6a4fc0' },
+    '制作中': { bg: '#fff0da', color: '#b3791a' },
+    '対応完了': { bg: '#e6f7ea', color: '#3f9457' }
+  };
+
+  function formatDate(iso) {
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function renderHistory(applications) {
+    var container = document.getElementById('history-rows');
+    if (!applications.length) {
+      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">まだ申請はありません</div>';
+      return;
+    }
+    container.innerHTML = applications.map(function (app, i) {
+      var style = STATUS_STYLE[app.status] || { bg: '#eef2f4', color: '#8fa2ac' };
+      var border = (i < applications.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
+      var ptText = app.point_cost != null ? (app.point_cost + 'pt') : ('目安' + (app.point_estimate || '相談中'));
+      return (
+        '<div style="display: flex; align-items: center; padding: 16px 0; ' + border + ' font-size: 13px;">' +
+          '<div style="width: 90px; color: #9db0b8;">' + formatDate(app.created_at) + '</div>' +
+          '<div style="flex-grow: 1;">' + app.title + '</div>' +
+          '<div style="width: 60px; color: #5c6b73;">' + ptText + '</div>' +
+          '<div style="width: 120px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: ' + style.bg + '; color: ' + style.color + ';">' + app.status + '</span></div>' +
+          '<div style="width: 110px; color: #9db0b8;">ー</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) {
+      if (!user || !window.AuthHelpers) return;
+      AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
+        renderHistory(data.applications);
+      }).catch(function (err) {
+        document.getElementById('history-rows').innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #c0524f; text-align: center;">読み込みに失敗しました：' + err.message + '</div>';
+      });
+    });
+  }
+</script>
+</body>
+</html>

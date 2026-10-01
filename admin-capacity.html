@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>制作枠状況｜[サイト名] 管理画面</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
+  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; }
+  .navlinks > a { padding: 8px 14px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div class="navlinks">
+      <a href="admin-members.html" class="nav-inactive">会員一覧</a>
+      <a href="admin-capacity.html" class="nav-active">制作枠</a>
+      <a href="admin-requests.html" class="nav-inactive">申請管理</a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">1</span></a>
+      <a href="admin-payments.html" class="nav-inactive">決済状況</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div>あなた（運営）</div>
+    </div>
+  </div>
+
+  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
+
+    <div>
+      <div style="font-size: 20px; font-weight: 800;">制作枠状況</div>
+      <div style="font-size: 12px; color: #9db0b8; margin-top: 4px;">ポイントプランの制作枠は、月1プランの利用状況に応じて月ごとに変動する共有枠です。今月の受付可能ポイント数はこのページからいつでも調整できます。</div>
+    </div>
+
+    <div style="display: flex; gap: 14px;">
+      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">月間総制作キャパ（上限）</div>
+        <div style="font-size: 24px; font-weight: 800; margin-top: 6px;">8<span style="font-size: 13px; font-weight: 700; color: #9db0b8;">pt / 月</span></div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">月1プラン・ポイントプラン合算の上限目安</div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">月1プランの当月消費</div>
+        <div style="font-size: 24px; font-weight: 800; margin-top: 6px; color: #1f7fb3;">4<span style="font-size: 13px; font-weight: 700; color: #9db0b8;">pt</span></div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">基礎確保 2pt×2名／追加購入確定 0pt</div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">差引の自動算出枠（参考値）</div>
+        <div style="font-size: 24px; font-weight: 800; margin-top: 6px; color: #3f9457;">4<span style="font-size: 13px; font-weight: 700; color: #9db0b8;">pt</span></div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">総キャパ8pt − 月1プラン消費4pt</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="font-size: 14px; font-weight: 800;">今月のポイントプラン受付可能ポイント数</div>
+        <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #eaf6fb; color: #1f7fb3;">会員側にも即時反映</span>
+      </div>
+
+      <div style="font-size: 11.5px; color: #8fa2ac; line-height: 1.7;">月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。大型の通常依頼が入った場合などは、ここで残り枠数を直接調整してください。</div>
+
+      <div style="display: flex; align-items: center; gap: 14px; margin-top: 4px;">
+        <div style="display: flex; align-items: center; gap: 8px; border: 2px solid #2f9bd6; border-radius: 14px; padding: 10px 20px; background: #eef8fd;">
+          <div style="font-size: 26px; font-weight: 800; color: #2f9bd6;">4</div>
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">pt</div>
+        </div>
+        <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 26px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: not-allowed;">この数値で更新する</div>
+        <div style="font-size: 11px; color: #b3c2c9;">最終更新：9/11 14:20（あなた）</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-size: 13px; font-weight: 800;">今月の枠の内訳</div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
+        <div style="color: #5c6b73;">ポイントプラン受付可能枠</div>
+        <div style="font-weight: 700;">4pt</div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
+        <div style="color: #5c6b73;">申請中・正式受付で仮押さえ済み（先着順）</div>
+        <div style="font-weight: 700; color: #b3791a;">2pt</div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
+        <div style="color: #5c6b73;">残り受付可能</div>
+        <div style="font-weight: 800; color: #3f9457;">2pt</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

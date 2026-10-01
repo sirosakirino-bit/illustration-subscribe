@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>決済状況｜[サイト名] 管理画面</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
+  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; }
+  .navlinks > a { padding: 8px 14px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div class="navlinks">
+      <a href="admin-members.html" class="nav-inactive">会員一覧</a>
+      <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
+      <a href="admin-requests.html" class="nav-inactive">申請管理</a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">1</span></a>
+      <a href="admin-payments.html" class="nav-active">決済状況</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div>あなた（運営）</div>
+    </div>
+  </div>
+
+  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
+
+    <div>
+      <div style="font-size: 20px; font-weight: 800;">決済状況</div>
+      <div style="font-size: 12px; color: #9db0b8; margin-top: 4px;">Stripe連携による入金状況です。未払いの会員は自動リトライの状況と、自動退会までの残り日数を確認できます。金額はすべて消費税込みの実際の決済額です（プラン料金は税抜表示のため、決済額は表示価格＋消費税10%）。</div>
+    </div>
+
+    <div style="display: flex; gap: 14px;">
+      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">今月の売上（確定分・税込）</div>
+        <div style="font-size: 22px; font-weight: 800; margin-top: 6px; color: #3f9457;">60,500円</div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">入金済み 3件</div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">未払い・要確認</div>
+        <div style="font-size: 22px; font-weight: 800; margin-top: 6px; color: #c0524f;">1件</div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">自動リトライ中</div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">今月の解約（自動退会含む）</div>
+        <div style="font-size: 22px; font-weight: 800; margin-top: 6px;">0件</div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">現時点</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-size: 13px; font-weight: 800; color: #c0524f;">未払い会員（要フォロー）</div>
+
+      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8;">
+        <div style="flex-grow: 1;">会員</div>
+        <div style="width: 110px;">プラン</div>
+        <div style="width: 150px;">金額</div>
+        <div style="width: 150px;">リトライ状況</div>
+        <div style="width: 130px;">自動退会まで</div>
+      </div>
+
+      <div style="display: flex; align-items: center; padding: 12px 0; font-size: 13px;">
+        <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;"><div style="width: 26px; height: 26px; border-radius: 50%; background: #fbecec; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #c0524f;">D</div>[会員名D] さん</div>
+        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
+        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
+        <div style="width: 150px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fff0da; color: #b3791a;">2回目のリトライ中</span></div>
+        <div style="width: 130px; color: #c0524f; font-weight: 700;">あと6日（9/17）</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 13px; font-weight: 800;">直近の決済履歴</div>
+          <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 2px;">「領収書」から、運営の記帳・確定申告用に保管する領収書PDFを発行できます（会員へは送付されません）</div>
+        </div>
+        <a href="admin-invoice-bulk.html" style="flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; background: #eaf6fb; color: #1f7fb3; font-size: 11.5px; font-weight: 700; padding: 9px 16px; border-radius: 999px; white-space: nowrap;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          今月の会員分をまとめて発行
+        </a>
+      </div>
+
+      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8;">
+        <div style="width: 90px;">請求日</div>
+        <div style="flex-grow: 1;">会員</div>
+        <div style="width: 110px;">プラン</div>
+        <div style="width: 150px;">金額</div>
+        <div style="width: 110px;">ステータス</div>
+        <div style="width: 70px;"></div>
+      </div>
+
+      <a href="admin-invoice-issue.html" style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px; color: inherit; text-decoration: none;">
+        <div style="width: 90px; color: #9db0b8;">9/1</div>
+        <div style="flex-grow: 1;">[会員名A] さん</div>
+        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
+        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
+        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span></div>
+        <div style="width: 70px; font-size: 11px; font-weight: 700; color: #2f9bd6;">領収書</div>
+      </a>
+
+      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px;">
+        <div style="width: 90px; color: #9db0b8;">9/1</div>
+        <div style="flex-grow: 1;">[会員名B] さん</div>
+        <div style="width: 110px; color: #4b5a61;">月1プラン</div>
+        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">27,500円（税込）</div>
+        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span></div>
+        <div style="width: 70px; font-size: 11px; font-weight: 700; color: #2f9bd6;"><a href="admin-invoice-issue.html">領収書</a></div>
+      </div>
+
+      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px;">
+        <div style="width: 90px; color: #9db0b8;">9/1</div>
+        <div style="flex-grow: 1;">[会員名D] さん</div>
+        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
+        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
+        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fbecec; color: #c0524f;">失敗</span></div>
+        <div style="width: 70px; font-size: 11px; color: #d3dde1;">ー</div>
+      </div>
+
+      <div style="display: flex; align-items: center; padding: 12px 0; font-size: 13px;">
+        <div style="width: 90px; color: #9db0b8;">9/2</div>
+        <div style="flex-grow: 1;">[会員名A] さん</div>
+        <div style="width: 110px; color: #4b5a61;">オプション請求（商用利用）</div>
+        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">22,000円（税込）</div>
+        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span></div>
+        <div style="width: 70px; font-size: 11px; font-weight: 700; color: #2f9bd6;"><a href="admin-invoice-issue.html">領収書</a></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

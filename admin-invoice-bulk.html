@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>領収書の一括発行｜[サイト名] 管理画面</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
+  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; }
+  .navlinks > a { padding: 8px 14px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid #2f9bd6; background: #2f9bd6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .month-select { appearance: none; -webkit-appearance: none; border: 1px solid #dcedf5; background: #ffffff; border-radius: 999px; padding: 9px 34px 9px 18px; font-size: 13px; font-weight: 700; color: #2f9bd6; font-family: inherit; cursor: pointer; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f9bd6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; background-size: 13px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div class="navlinks">
+      <a href="admin-members.html" class="nav-inactive">会員一覧</a>
+      <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
+      <a href="admin-requests.html" class="nav-inactive">申請管理</a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">1</span></a>
+      <a href="admin-payments.html" class="nav-active">決済状況</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div>あなた（運営）</div>
+    </div>
+  </div>
+
+  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
+
+    <div style="font-size: 12px;"><a href="admin-payments.html">← 決済状況に戻る</a></div>
+    <div style="font-size: 20px; font-weight: 800;">領収書の一括発行</div>
+    <div style="font-size: 12px; color: #9db0b8; line-height: 1.7;">対象月を選んで、その月に決済が成功した月額プラン分をまとめてPDF発行し、一括でダウンロードできます（商用利用などのオプション請求は対象外のため、個別に発行してください）。過去の月にさかのぼっての発行もこちらから行えます。運営の記帳・確定申告用に保管する領収書です（会員へは送付されません）。</div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">対象月</div>
+      <select id="month-select" class="month-select" onchange="switchMonth()">
+        <option value="2026-09">2026年9月</option>
+        <option value="2026-08">2026年8月</option>
+        <option value="2026-07">2026年7月</option>
+        <option value="2026-06">2026年6月</option>
+      </select>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 8px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column;">
+
+      <div style="display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8;">
+        <div style="width: 30px;"></div>
+        <div style="width: 90px;">請求日</div>
+        <div style="flex-grow: 1;">会員</div>
+        <div style="width: 110px;">プラン</div>
+        <div style="width: 150px;">金額</div>
+      </div>
+
+      <div id="invoice-rows"></div>
+
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <div>
+        <div style="font-size: 12px; color: #9db0b8;">選択中（<span id="selected-month-label">2026年9月</span>）</div>
+        <div style="font-size: 16px; font-weight: 800;"><span id="selected-count">2件</span><span id="selected-total" style="font-size: 12px; font-weight: 700; color: #9db0b8; margin-left: 8px;">合計 38,500円（税込）</span></div>
+      </div>
+      <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 28px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: not-allowed; display: flex; align-items: center; gap: 8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        <span id="bulk-btn-label">選択した2件をまとめてPDF発行する（一括ダウンロード）</span>
+      </div>
+    </div>
+
+    <div style="font-size: 11px; color: #b3c2c9;">※ チェックを外すと発行対象から除外できます（表示のみ・操作は未実装です）。</div>
+
+  </div>
+</div>
+<script>
+  var MONTH_DATA = {
+    '2026-09': { label: '2026年9月', rows: [
+      { date: '9/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 },
+      { date: '9/1', name: '[会員名B] さん',               plan: '月1プラン',     amount: 27500 }
+    ]},
+    '2026-08': { label: '2026年8月', rows: [
+      { date: '8/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 },
+      { date: '8/1', name: '[会員名B] さん',               plan: '月1プラン',     amount: 27500 },
+      { date: '8/1', name: '[会員名D] さん',               plan: 'ポイントプラン', amount: 11000 }
+    ]},
+    '2026-07': { label: '2026年7月', rows: [
+      { date: '7/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 },
+      { date: '7/1', name: '[会員名B] さん',               plan: '月1プラン',     amount: 27500 }
+    ]},
+    '2026-06': { label: '2026年6月', rows: [
+      { date: '6/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 }
+    ]}
+  };
+
+  function checkIcon() {
+    return '<div class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>';
+  }
+
+  function renderMonth(key) {
+    var data = MONTH_DATA[key];
+    var rowsHtml = '';
+    var total = 0;
+
+    data.rows.forEach(function (r, i) {
+      total += r.amount;
+      var borderStyle = (i < data.rows.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
+      rowsHtml +=
+        '<div style="display: flex; align-items: center; padding: 14px 0; ' + borderStyle + ' font-size: 13px;">' +
+          '<div style="width: 30px;">' + checkIcon() + '</div>' +
+          '<div style="width: 90px; color: #9db0b8;">' + r.date + '</div>' +
+          '<div style="flex-grow: 1;">' + r.name + '</div>' +
+          '<div style="width: 110px; color: #4b5a61;">' + r.plan + '</div>' +
+          '<div style="width: 150px; color: #4b5a61; white-space: nowrap;">' + r.amount.toLocaleString() + '円（税込）</div>' +
+        '</div>';
+    });
+
+    document.getElementById('invoice-rows').innerHTML = rowsHtml;
+    document.getElementById('selected-month-label').textContent = data.label;
+    document.getElementById('selected-count').textContent = data.rows.length + '件';
+    document.getElementById('selected-total').textContent = '合計 ' + total.toLocaleString() + '円（税込）';
+    document.getElementById('bulk-btn-label').textContent = '選択した' + data.rows.length + '件をまとめてPDF発行する（一括ダウンロード）';
+  }
+
+  function switchMonth() {
+    renderMonth(document.getElementById('month-select').value);
+  }
+
+  renderMonth('2026-09');
+</script>
+</body>
+</html>

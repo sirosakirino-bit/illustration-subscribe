@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アカウント情報の入力｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .field-input {
+    border: 1px solid #dcedf5; border-radius: 10px; padding: 11px 14px; font-size: 13px;
+    color: #3b454a; font-family: inherit; width: 100%; outline: none; background: #ffffff;
+  }
+  .field-input::placeholder { color: #b3c2c9; }
+  .field-input:focus { border-color: #2f9bd6; }
+  select.field-input { appearance: none; -webkit-appearance: none; }
+
+  .page { width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; margin: 0 auto; }
+  .logo-bar { width: 100%; padding: 26px 36px; font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .back-link { width: 100%; max-width: 480px; font-size: 12px; font-weight: 700; padding: 0 18px; }
+  .steps-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; row-gap: 6px; margin-top: 10px; font-size: 12px; font-weight: 700; padding: 0 18px; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-line { width: 28px; height: 1px; background: #cbe0e9; flex-shrink: 0; }
+  .signup-card { width: 100%; max-width: 480px; background: #ffffff; border-radius: 20px; padding: 34px 36px; margin-top: 22px; margin-bottom: 40px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 22px; }
+
+  @media (max-width: 480px) {
+    .logo-bar { padding: 18px 20px; }
+    .steps-row { font-size: 10.5px; gap: 5px; }
+    .step-num { width: 18px; height: 18px; }
+    .step-line { width: 16px; }
+    .signup-card { padding: 22px 20px; margin-top: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo-bar"><a href="index.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+  <div class="back-link"><a href="signup-terms.html" id="back-link">← 規約確認に戻る</a></div>
+
+  <div class="steps-row">
+    <div class="step-num" style="background: #ffffff; border: 1px solid #cbe0e9; color: #9db0b8;">✓</div>
+    <div style="color: #9db0b8;">プラン選択</div>
+    <div class="step-line"></div>
+    <div class="step-num" style="background: #ffffff; border: 1px solid #cbe0e9; color: #9db0b8;">✓</div>
+    <div style="color: #9db0b8;">規約確認</div>
+    <div class="step-line"></div>
+    <div class="step-num" style="background: #2f9bd6; color: #fff;">3</div>
+    <div style="color: #2f9bd6;">アカウント作成</div>
+  </div>
+
+  <form id="signup-form" class="signup-card">
+
+    <div style="font-size: 17px; font-weight: 800;">アカウント情報の入力</div>
+
+    <div style="background: #eaf6fb; border: 1px solid #cbe9f7; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #1f7fb3; display: flex; justify-content: space-between; align-items: center;">
+      <div id="plan-banner-text">ポイントプラン（月額10,000円＋消費税10%）</div>
+      <div style="font-weight: 700;">規約に同意済み ✓</div>
+    </div>
+
+    <div style="font-size: 10.5px; color: #9db0b8;"><span style="color: #c0524f; font-weight: 700;">必須</span>の項目はすべてご入力ください。未入力のまま登録することはできません。</div>
+
+    <!-- ログイン情報 -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="font-size: 13px; font-weight: 800;">ログイン情報</div>
+      <div style="font-size: 11px; color: #9db0b8; line-height: 1.6;">「アカウントを作成する」を押すと、ここで入力したメールアドレスを使ってログイン用の小さいウィンドウが開きます。そちらでパスワードを決めて登録を完了してください。</div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">メールアドレス<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+        <input id="input-email" class="field-input" type="email" required placeholder="you@example.com">
+      </div>
+    </div>
+
+    <!-- ご本人情報 -->
+    <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #eef2f4; padding-top: 20px;">
+      <div>
+        <div style="font-size: 13px; font-weight: 800;">ご本人情報</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">本名（氏名）<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+        <input id="input-fullname" class="field-input" type="text" required placeholder="例）山田 花子">
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 6px; width: 160px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">郵便番号<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+          <input id="input-zip" class="field-input" type="text" required placeholder="123-4567">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">都道府県<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+          <select id="input-prefecture" class="field-input" required>
+            <option value="" selected disabled hidden>選択してください</option>
+            <option>北海道</option><option>青森県</option><option>岩手県</option><option>宮城県</option><option>秋田県</option><option>山形県</option><option>福島県</option>
+            <option>茨城県</option><option>栃木県</option><option>群馬県</option><option>埼玉県</option><option>千葉県</option><option>東京都</option><option>神奈川県</option>
+            <option>新潟県</option><option>富山県</option><option>石川県</option><option>福井県</option><option>山梨県</option><option>長野県</option><option>岐阜県</option>
+            <option>静岡県</option><option>愛知県</option><option>三重県</option><option>滋賀県</option><option>京都府</option><option>大阪府</option><option>兵庫県</option>
+            <option>奈良県</option><option>和歌山県</option><option>鳥取県</option><option>島根県</option><option>岡山県</option><option>広島県</option><option>山口県</option>
+            <option>徳島県</option><option>香川県</option><option>愛媛県</option><option>高知県</option><option>福岡県</option><option>佐賀県</option><option>長崎県</option>
+            <option>熊本県</option><option>大分県</option><option>宮崎県</option><option>鹿児島県</option><option>沖縄県</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">ご住所（市区町村・番地）<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+        <input id="input-address1" class="field-input" type="text" required placeholder="例）〇〇市〇〇町1-2-3">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">建物名・部屋番号<span style="color: #b3c2c9; font-weight: 500;">（任意）</span></div>
+        <input id="input-address2" class="field-input" type="text" placeholder="例）〇〇マンション101">
+      </div>
+    </div>
+
+    <!-- 活動者情報 -->
+    <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #eef2f4; padding-top: 20px;">
+      <div>
+        <div style="font-size: 13px; font-weight: 800;">活動者情報</div>
+        <div style="font-size: 11px; color: #9db0b8; margin-top: 4px; line-height: 1.6;">やり取りの際の呼び名や、制作のご参考として使用します。</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">ネットでのお名前（ハンドルネーム）<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+        <input id="input-handlename" class="field-input" type="text" required placeholder="例）はなこ">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">ご利用形態<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+
+        <div id="opt-individual" onclick="selectType('individual')" style="display: flex; align-items: center; gap: 10px; border: 1.5px solid #2f9bd6; background: #eaf6fb; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
+          <div id="dot-individual" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #2f9bd6; background: #2f9bd6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><div style="width: 7px; height: 7px; border-radius: 50%; background: #fff;"></div></div>
+          <div style="font-size: 13px; font-weight: 700;">個人として利用</div>
+        </div>
+
+        <div id="opt-creator" onclick="selectType('creator')" style="display: flex; align-items: center; gap: 10px; border: 1.5px solid #dcedf5; background: #ffffff; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
+          <div id="dot-creator" style="width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c9d8de; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
+          <div style="font-size: 13px; font-weight: 700;">活動者として利用<span style="font-weight: 500; color: #9db0b8;">（配信・投稿活動をされている方）</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div id="label-x" style="font-size: 12px; font-weight: 700; color: #5c6b73;">X（Twitter）アカウントURL<span id="tag-x" style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">必須</span></div>
+        <input id="input-x" class="field-input" type="url" required placeholder="https://x.com/example">
+      </div>
+
+      <div id="fields-creator" style="display: none; flex-direction: column; gap: 12px; background: #f7fbff; border: 1px solid #dcedf5; border-radius: 12px; padding: 14px 16px;">
+        <div style="font-size: 11px; color: #c0524f; font-weight: 700;">YouTube・Twitchのいずれかのご記入が必須です</div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">YouTubeチャンネルURL<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">いずれか必須</span></div>
+          <input id="input-youtube" class="field-input" type="url" oninput="updateCreatorValidity()" placeholder="https://youtube.com/@example">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">Twitchチャンネルルル<span style="color: #c0524f; font-weight: 700; font-size: 11px; margin-left: 4px;">いずれか必須</span></div>
+          <input id="input-twitch" class="field-input" type="url" oninput="updateCreatorValidity()" placeholder="https://twitch.tv/example">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 0; border: none; border-radius: 999px; text-align: center; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer; font-family: inherit;">
+      アカウントを作成する
+    </button>
+
+    <div id="submit-note" style="font-size: 11px; color: #9db0b8; text-align: center;">登録すると、ログイン用の小さいウィンドウでパスワードを設定します（決済（Stripe）とのつなぎ込みは別の作業で対応予定です）</div>
+
+  </form>
+
+</div>
+
+<script>
+  var PLANS = {
+    point:   { name: 'ポイントプラン', price: '10,000' },
+    monthly: { name: '月1プラン',     price: '25,000' }
+  };
+
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var planKey = params.get('plan') === 'monthly' ? 'monthly' : 'point';
+    var plan = PLANS[planKey];
+    document.getElementById('plan-banner-text').textContent = plan.name + '（月額' + plan.price + '円＋消費税10%）';
+    document.getElementById('back-link').setAttribute('href', 'signup-terms.html?plan=' + planKey);
+  })();
+
+  var currentType = 'individual';
+
+  function selectType(type) {
+    currentType = type;
+    var isCreator = (type === 'creator');
+
+    var optIndividual = document.getElementById('opt-individual');
+    var dotIndividual = document.getElementById('dot-individual');
+    optIndividual.style.border = isCreator ? '1.5px solid #dcedf5' : '1.5px solid #2f9bd6';
+    optIndividual.style.background = isCreator ? '#ffffff' : '#eaf6fb';
+    dotIndividual.style.border = isCreator ? '2px solid #c9d8de' : '2px solid #2f9bd6';
+    dotIndividual.style.background = isCreator ? '#ffffff' : '#2f9bd6';
+    dotIndividual.innerHTML = isCreator ? '' : '<div style="width:7px;height:7px;border-radius:50%;background:#fff;"></div>';
+
+    var optCreator = document.getElementById('opt-creator');
+    var dotCreator = document.getElementById('dot-creator');
+    optCreator.style.border = isCreator ? '1.5px solid #2f9bd6' : '1.5px solid #dcedf5';
+    optCreator.style.background = isCreator ? '#eaf6fb' : '#ffffff';
+    dotCreator.style.border = isCreator ? '2px solid #2f9bd6' : '2px solid #c9d8de';
+    dotCreator.style.background = isCreator ? '#2f9bd6' : '#ffffff';
+    dotCreator.innerHTML = isCreator ? '<div style="width:7px;height:7px;border-radius:50%;background:#fff;"></div>' : '';
+
+    document.getElementById('fields-creator').style.display = isCreator ? 'flex' : 'none';
+
+    var inputX = document.getElementById('input-x');
+    var tagX = document.getElementById('tag-x');
+    inputX.required = !isCreator;
+    tagX.textContent = isCreator ? '任意' : '必須';
+    tagX.style.color = isCreator ? '#b3c2c9' : '#c0524f';
+
+    updateCreatorValidity();
+  }
+
+  function updateCreatorValidity() {
+    var yt = document.getElementById('input-youtube');
+    var tw = document.getElementById('input-twitch');
+    if (currentType === 'creator' && !yt.value && !tw.value) {
+      yt.setCustomValidity('YouTubeまたはTwitchのいずれかをご入力ください');
+    } else {
+      yt.setCustomValidity('');
+    }
+  }
+
+  document.getElementById('signup-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var email = document.getElementById('input-email').value;
+    var fullName = document.getElementById('input-fullname').value;
+
+    var extraProfileData = {
+      handle_name: document.getElementById('input-handlename').value,
+      zip: document.getElementById('input-zip').value,
+      prefecture: document.getElementById('input-prefecture').value,
+      address1: document.getElementById('input-address1').value,
+      address2: document.getElementById('input-address2').value,
+      usage_type: currentType,
+      sns_x: document.getElementById('input-x').value,
+      sns_youtube: document.getElementById('input-youtube') ? document.getElementById('input-youtube').value : '',
+      sns_twitch: document.getElementById('input-twitch') ? document.getElementById('input-twitch').value : '',
+      plan: new URLSearchParams(location.search).get('plan') === 'monthly' ? 'monthly' : 'point'
+    };
+
+    var note = document.getElementById('submit-note');
+    note.textContent = 'まもなくログイン用のウィンドウが開きます…';
+    note.style.color = '#3f9457';
+    note.style.fontWeight = '700';
+
+    if (window.AuthHelpers) {
+      window.AuthHelpers.beginSignup(email, fullName, extraProfileData);
+    } else {
+      note.textContent = 'ログイン機能の読み込みに失敗しました。インターネット接続を確認して、ページを再読み込みしてください。';
+      note.style.color = '#c0524f';
+    }
+  });
+</script>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

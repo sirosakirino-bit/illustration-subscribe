@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マイページ｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  a:hover { color: #1f7fb3; }
+
+  .page { width: 100%; max-width: 900px; min-height: 100vh; display: flex; flex-direction: column; margin: 0 auto; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 16px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; flex-shrink: 0; }
+
+  .body-pad { padding: 12px 36px 36px; display: flex; flex-direction: column; gap: 26px; flex-grow: 1; }
+
+  .welcome-card { background: #ffffff; border-radius: 20px; padding: 22px 28px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .welcome-title { font-size: 22px; font-weight: 800; color: #3b454a; }
+  .welcome-sub { font-size: 12px; color: #8fa2ac; margin-top: 4px; }
+  .welcome-icon { width: 56px; height: 56px; border-radius: 50%; background: #eef8fd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .stat-card { background: #ffffff; border-radius: 18px; padding: 20px 22px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); }
+  .stat-label { font-size: 11px; color: #9db0b8; font-weight: 700; }
+  .stat-value { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .stat-badge { display: inline-flex; align-self: flex-start; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457; }
+  .stat-note { font-size: 11px; color: #9db0b8; }
+
+  .cta-row { display: flex; justify-content: flex-start; }
+  .cta-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 26px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
+
+  .history-card { background: #ffffff; border-radius: 18px; padding: 22px 26px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); }
+  .history-title { font-size: 13px; font-weight: 800; color: #3b454a; margin-bottom: 10px; }
+  .history-row { display: flex; align-items: center; padding: 10px 0; font-size: 13px; color: #4b5a61; }
+  .history-row.divider { border-bottom: 1px dashed #dcedf5; }
+  .history-row.linked { cursor: pointer; }
+  .history-row.linked:hover .history-name { color: #2f9bd6; }
+  .history-date { width: 90px; color: #9db0b8; flex-shrink: 0; }
+  .history-name { flex-grow: 1; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #c0524f; flex-shrink: 0; }
+  .status-pill { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; flex-shrink: 0; }
+  .status-progress { background: #fff0da; color: #b3791a; }
+  .status-done { background: #e6f7ea; color: #3f9457; }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 16px 18px; }
+    .logo { order: 1; }
+    .user { order: 2; }
+    .navlinks { order: 3; flex-basis: 100%; font-size: 11.5px; gap: 4px; }
+    .navlinks > a { padding: 7px 10px; }
+    .user > div:last-child { display: none; }
+    .body-pad { padding: 8px 18px 24px; gap: 18px; }
+    .welcome-card { padding: 18px 20px; }
+    .welcome-title { font-size: 17px; }
+    .welcome-icon { width: 44px; height: 44px; }
+    .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+    .stat-card { padding: 16px 18px; }
+    .history-card { padding: 18px 18px; }
+    .history-date { width: 56px; font-size: 12px; }
+    .history-name { font-size: 12.5px; }
+  }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo">[サイト名] ✧</div>
+    <div class="navlinks">
+      <a href="mypage.html" class="nav-active">マイページ</a>
+      <a href="apply.html" class="nav-inactive">ポイントを使う</a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="settings.html" class="nav-inactive">設定</a>
+    </div>
+    <div class="user">
+      <div class="avatar" data-user-initial>A</div>
+      <div><span data-user-name>[会員名]</span> さん</div>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+    </div>
+  </div>
+
+  <div class="body-pad">
+
+    <div class="welcome-card">
+      <div>
+        <div class="welcome-title">おかえり、<span data-user-name>[会員名]</span> さん！</div>
+        <div class="welcome-sub" data-user-email>メールアドレス取得中…</div>
+      </div>
+      <div class="welcome-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-label">現在のプラン</div>
+        <div class="stat-value" id="stat-plan">読み込み中…</div>
+        <div class="stat-badge">利用中</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">ポイント残高</div>
+        <div class="stat-value" id="stat-balance">ー</div>
+        <div class="stat-note">月々の付与は決済（Stripe）連携後に開始されます</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">次回請求</div>
+        <div class="stat-value" style="color: #9db0b8; font-size: 15px;">決済連携後に表示</div>
+        <div class="stat-note">まだStripeと接続されていません</div>
+      </div>
+
+    </div>
+
+    <div class="cta-row">
+      <a href="apply.html" class="cta-btn">
+        ポイントを使って依頼する
+        <span>＞</span>
+      </a>
+    </div>
+
+    <div class="history-card">
+      <div class="history-title">直近の申請状況</div>
+      <div id="mypage-history-rows">
+        <div style="padding: 14px 0; font-size: 12px; color: #9db0b8;">読み込み中…</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+<script>
+  var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+  var STATUS_STYLE = {
+    'ヒアリング中': { bg: '#f1eefb', color: '#6a4fc0' },
+    '制作中': { bg: '#fff0da', color: '#b3791a' },
+    '対応完了': { bg: '#e6f7ea', color: '#3f9457' }
+  };
+
+  function formatDate(iso) {
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function renderMypageHistory(applications) {
+    var container = document.getElementById('mypage-history-rows');
+    var recent = applications.slice(0, 2);
+    if (!recent.length) {
+      container.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #9db0b8;">まだ申請はありません</div>';
+      return;
+    }
+    container.innerHTML = recent.map(function (app, i) {
+      var style = STATUS_STYLE[app.status] || { bg: '#eef2f4', color: '#8fa2ac' };
+      var cls = 'history-row' + (i < recent.length - 1 ? ' divider' : '');
+      var ptText = app.point_cost != null ? ('（' + app.point_cost + 'pt）') : '';
+      return (
+        '<div class="' + cls + '">' +
+          '<div class="history-date">' + formatDate(app.created_at) + '</div>' +
+          '<div class="history-name">' + app.title + ptText + '</div>' +
+          '<div class="status-pill" style="background:' + style.bg + ';color:' + style.color + ';">' + app.status + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) {
+      if (!user || !window.AuthHelpers) return;
+      AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
+        document.getElementById('stat-plan').textContent = PLAN_LABELS[data.member.plan] || data.member.plan;
+        document.getElementById('stat-balance').textContent = data.member.point_balance + ' pt';
+        renderMypageHistory(data.applications);
+      }).catch(function (err) {
+        document.getElementById('stat-plan').textContent = '取得失敗';
+        document.getElementById('stat-balance').textContent = '取得失敗';
+        console.error(err);
+      });
+    });
+  }
+</script>
+</body>
+</html>

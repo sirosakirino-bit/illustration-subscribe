@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>設定｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 16px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo"><a href="mypage.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+    <div class="navlinks">
+      <a href="mypage.html" class="nav-inactive">マイページ</a>
+      <a href="apply.html" class="nav-inactive">ポイントを使う</a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="settings.html" class="nav-active">設定</a>
+    </div>
+    <div class="user">
+      <div class="avatar" data-user-initial>A</div>
+      <div><span data-user-name>[会員名]</span> さん</div>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+    </div>
+  </div>
+
+  <div style="padding: 8px 36px 36px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1;">
+
+    <div style="font-size: 20px; font-weight: 800;">設定</div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 13px; font-weight: 800;">アカウント情報</div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
+        <div>
+          <div style="font-size: 11px; color: #9db0b8;">メールアドレス</div>
+          <div style="font-size: 13px; margin-top: 3px;" data-user-email>you@example.com</div>
+        </div>
+        <div style="font-size: 12px; color: #2f9bd6; font-weight: 700;">変更する</div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
+        <div>
+          <div style="font-size: 11px; color: #9db0b8;">パスワード</div>
+          <div style="font-size: 13px; margin-top: 3px;">••••••••</div>
+        </div>
+        <div style="font-size: 12px; color: #2f9bd6; font-weight: 700;">変更する</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 13px; font-weight: 800;">ご契約プラン・お支払い</div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
+        <div>
+          <div style="font-size: 11px; color: #9db0b8;">現在のプラン</div>
+          <div style="font-size: 13px; margin-top: 3px; font-weight: 700; color: #2f9bd6;">ポイントプラン（月額10,000円＋消費税10%）</div>
+        </div>
+        <div style="font-size: 11px; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">利用中</div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
+        <div>
+          <div style="font-size: 11px; color: #9db0b8;">次回請求日</div>
+          <div style="font-size: 13px; margin-top: 3px;">2026/10/1／11,000円（税込）</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
+        <div>
+          <div style="font-size: 11px; color: #9db0b8;">お支払い方法</div>
+          <div style="font-size: 13px; margin-top: 3px;">クレジットカード（下4桁 4242）</div>
+        </div>
+        <div style="font-size: 12px; color: #2f9bd6; font-weight: 700;">Stripeで変更する</div>
+      </div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-size: 13px; font-weight: 800;">プランの変更・退会</div>
+      <div style="display: flex; gap: 12px; margin-top: 4px;">
+        <a href="plan-change.html" style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 12px; padding: 12px; text-align: center; font-size: 12px; font-weight: 700; color: #5c6b73;">プランを変更する</a>
+        <a href="plan-change.html" style="flex-grow: 1; border: 1px solid #f3d7d7; border-radius: 12px; padding: 12px; text-align: center; font-size: 12px; font-weight: 700; color: #c0524f;">退会する</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

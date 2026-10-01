@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>制度・利用規約のご確認｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; padding-bottom: 40px; }
+  .logo-bar { width: 100%; padding: 26px 36px; font-size: 20px; font-weight: 800; color: #2f9bd6; }
+
+  .steps-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; font-size: 12px; font-weight: 700; flex-wrap: wrap; justify-content: center; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  .page-title { font-size: 20px; font-weight: 800; margin-top: 24px; text-align: center; padding: 0 18px; }
+  .page-sub { font-size: 12px; color: #8fa2ac; margin-top: 4px; text-align: center; }
+
+  .plan-note { width: 620px; max-width: calc(100% - 40px); background: #eaf6fb; border: 1px solid #cbe9f7; border-radius: 12px; padding: 12px 18px; font-size: 12px; color: #1f7fb3; margin-top: 14px; }
+
+  .terms-card { width: 620px; max-width: calc(100% - 40px); background: #ffffff; border-radius: 20px; margin-top: 16px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); padding: 0; display: flex; flex-direction: column; }
+  .terms-scroll { position: relative; height: 360px; overflow-y: auto; border-top: 1px solid #eef2f4; margin-top: 14px; padding: 18px 28px 20px; display: flex; flex-direction: column; gap: 14px; font-size: 11.5px; line-height: 1.7; color: #4b5a61; }
+  .terms-scroll::-webkit-scrollbar { width: 6px; }
+  .terms-scroll::-webkit-scrollbar-thumb { background: #cfe6f1; border-radius: 999px; }
+
+  .agree-row { width: 620px; max-width: calc(100% - 40px); margin-top: 18px; display: flex; align-items: center; gap: 10px; background: #f3f6f7; border: 1px solid #e4eaec; border-radius: 12px; padding: 14px 18px; opacity: 0.7; cursor: not-allowed; transition: opacity 0.2s; }
+  .agree-row.enabled { background: #eaf6fb; border-color: #cbe9f7; opacity: 1; cursor: pointer; }
+  .agree-check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid #c9d8de; background: #ffffff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .agree-row.enabled .agree-check { border-color: #2f9bd6; }
+  .agree-row.checked .agree-check { background: #2f9bd6; border-color: #2f9bd6; }
+  .agree-label { font-size: 13px; font-weight: 700; color: #9db0b8; }
+  .agree-row.enabled .agree-label { color: #1f7fb3; }
+
+  .next-row { width: 620px; max-width: calc(100% - 40px); margin-top: 18px; }
+  .next-btn { display: block; background: #cfe0e7; color: #ffffff; font-weight: 700; font-size: 13px; padding: 13px 0; border-radius: 999px; text-align: center; pointer-events: none; }
+  .next-btn.enabled { background: #2f9bd6; box-shadow: 0 4px 12px rgba(47,155,214,0.3); pointer-events: auto; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo-bar"><a href="index.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+
+  <div class="steps-row">
+    <div class="step-num" style="background: #ffffff; border: 1px solid #cbe0e9; color: #9db0b8;">✓</div>
+    <div style="color: #9db0b8;">プラン選択</div>
+    <div style="width: 28px; height: 1px; background: #cbe0e9;"></div>
+    <div class="step-num" style="background: #2f9bd6; color: #fff;">2</div>
+    <div style="color: #2f9bd6;">規約確認</div>
+    <div style="width: 28px; height: 1px; background: #cbe0e9;"></div>
+    <div class="step-num" style="background: #ffffff; border: 1px solid #cbe0e9; color: #9db0b8;">3</div>
+    <div style="color: #9db0b8;">アカウント作成</div>
+  </div>
+
+  <div class="page-title">制度・利用規約のご確認</div>
+  <div class="page-sub" id="scroll-hint">最後までお読みいただくと、同意チェックが有効になります</div>
+
+  <div class="plan-note" id="plan-note">選択中のプラン：ポイントプラン（月額10,000円＋消費税10%）</div>
+
+  <div class="terms-card">
+    <div style="padding: 22px 28px 4px; font-size: 13px; font-weight: 800;">イラストサブスクリプション制度｜利用規約（全文）</div>
+
+    <div class="terms-scroll" id="terms-scroll" onscroll="checkScroll()">
+
+      <div>
+        <div style="font-weight: 800; color: #6a4fc0; font-size: 12.5px; margin-bottom: 4px;">① 休止制度</div>
+        <div>休止は会員個別に行うものではなく、サービス全体を対象に運営が行います。休止・再開する場合は、原則として前月中に全会員へお知らせします（原則月単位）。休止中の月額料金は発生せず、ポイントプランの保有ポイントは休止中も失効しません（再開後すぐに使用可能）。休止期間中は新規のポイント付与はありません。月1プランも休止中は制作枠を確保しません。再開後は、再開月から通常のプラン内容に戻ります。体調不良等やむを得ない事情により、事前の申告なく休止となる場合があります。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">② ポイントプラン</div>
+        <div>月額10,000円（＋消費税10%）。毎月1pt付与（1pt＝10,000円分の制作権）。未使用ポイントは繰り越し可能で、加入中は有効期限なし。退会時は保有ポイントがすべて失効し、現金化・返金・譲渡・他サービスへの利用は不可です。ポイントは複数の制作物に分けて使用でき、必要ポイント数は制作内容により変動します。制作枠は月1プランの固定枠を確保した後の「残りの可変枠」で、申請順に受付・制作します。月間の制作可能量は最大8ptですが、実際の受付可能ポイント数は通常依頼・制作状況等を踏まえて運営が随時調整し、調整後の残り枠数は会員にも共有します。ポイントを多く保有していても優先されるわけではありません。ポイント使用申請は毎月1日〜10日の間に受付し、内容・必要ptについて双方合意の時点で正式受付となります。正式受付前のキャンセルはポイントを消費しません。納期は正式受付日から2ヶ月以内が目安です（ヒアリングの状況やデザイン内容によっては、目安から納品がずれることがあります）。納期のご指定は基本的にできません。修正回数に基本的に制限はありませんが、ラフ完成後の大幅な修正・度重なる修正には別途10,000円（＋消費税10%）が発生します。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">③ 月1プラン</div>
+        <div>月額25,000円（＋消費税10%）、定員2名限定。毎月1件・ポイント表の2pt相当の制作枠を固定で確保します。正式受付から納品までは1ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。2ptを超える制作を希望する場合、追加1ptまで購入可能（1pt＝10,000円、1ヶ月に利用できる制作量は最大3pt相当）。追加購入したポイントは翌月へ持ち越せません。初回決済日から3ヶ月経過後、ポイントプランへの変更が可能です（変更は翌月適用、変更時は保有ポイントがすべて失効）。運営側の事情による休止が発生した場合は、この3ヶ月条件は適用されません。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">④ プラン変更・ポイントについて</div>
+        <div>プラン変更は翌月から適用され、変更時・退会時は保有ポイントがすべて失効します。ポイントの引き継ぎ、現金化、返金、譲渡はいずれも不可です。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">⑤ 商用利用・著作権・実績公開</div>
+        <div>SNSやYouTube等の配信媒体での通常利用は商用利用に含まれません。グッズ化・販売等、制作物を利用して直接収益を得る場合は商用利用料＋20,000円（＋消費税10%）が必要です。制作物は通常、実績として公開されます。実績非公開をご希望の場合は＋50,000円（＋消費税10%）、著作権譲渡をご希望の場合は＋100,000円（＋消費税10%、商用利用とは別料金・別扱い）です。これらのオプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">⑥ 決済に関する規定</div>
+        <div>決済はStripe Billingを利用し、請求日は全会員共通で毎月1日です。月の途中で加入した場合、加入した月は無料となり、プランの適用は翌月1日からです。退会の申告期限は当月末までで、翌月1日から請求が停止します。休止はStripeのpause collection機能を使用し、サブスクリプションを維持したまま課金のみ停止します。決済が失敗した場合はStripeの自動リトライを行い、初回の支払い失敗から約2週間経過しても支払いが完了しない場合は自動的に退会扱いとなります。未払い期間中は新規のポイント付与・新規のポイント使用申請の受付を停止します（すでに正式受付済みの制作は継続します）。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">⑦ 請求関連の細則</div>
+        <div>領収書はStripeの自動発行機能により発行します。料金は税抜き表記とし、別途消費税額を明記します。決済失敗時はStripeの自動メール機能で通知します。退会後の再入会に制限はなく、いつでも新規入会と同じ扱いで再度お申し込みいただけます（保有ポイントの引き継ぎはありません）。カード情報の変更はStripeのカスタマーポータルからお願いします。</div>
+      </div>
+
+      <div>
+        <div style="font-weight: 800; color: #2f9bd6; font-size: 12.5px; margin-bottom: 4px;">⑧ 追加料金一覧</div>
+        <div>ラフ完成後の大幅な修正・度重なる修正：＋10,000円（＋消費税10%）／商用利用：＋20,000円（＋消費税10%）／実績非公開：＋50,000円（＋消費税10%）／著作権譲渡：＋100,000円（＋消費税10%）。</div>
+      </div>
+
+      <div style="color: #b3c2c9; font-size: 11px; padding-top: 4px; padding-bottom: 10px;">以上</div>
+
+    </div>
+
+    <div style="padding: 10px 28px 20px; font-size: 11px; color: #9db0b8; text-align: center;" id="scroll-footer">↓ 下までスクロールすると続きが表示されます</div>
+  </div>
+
+  <div class="agree-row" id="agree-row" onclick="toggleAgree()">
+    <div class="agree-check" id="agree-check"></div>
+    <div class="agree-label" id="agree-label">上記の制度・利用規約に同意します（全文を確認すると選択できます）</div>
+  </div>
+
+  <div class="next-row">
+    <a href="signup-account.html" class="next-btn" id="next-btn">同意して次へ進む</a>
+  </div>
+
+</div>
+
+<script>
+  var PLANS = {
+    point:   { name: 'ポイントプラン', price: '10,000' },
+    monthly: { name: '月1プラン',     price: '25,000' }
+  };
+
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var planKey = params.get('plan') === 'monthly' ? 'monthly' : 'point';
+    var plan = PLANS[planKey];
+    document.getElementById('plan-note').textContent = '選択中のプラン：' + plan.name + '（月額' + plan.price + '円＋消費税10%）';
+    document.getElementById('next-btn').setAttribute('href', 'signup-account.html?plan=' + planKey);
+  })();
+
+  var hasScrolledToBottom = false;
+  var isChecked = false;
+
+  function checkScroll() {
+    var el = document.getElementById('terms-scroll');
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 8) {
+      hasScrolledToBottom = true;
+      document.getElementById('agree-row').classList.add('enabled');
+      document.getElementById('agree-label').textContent = '上記の制度・利用規約に同意します';
+      document.getElementById('scroll-hint').textContent = '最後までお読みいただきました。同意にチェックすると次へ進めます';
+      document.getElementById('scroll-footer').textContent = '↑ 最後まで確認済みです';
+    }
+  }
+
+  function toggleAgree() {
+    if (!hasScrolledToBottom) return;
+    isChecked = !isChecked;
+    var row = document.getElementById('agree-row');
+    var btn = document.getElementById('next-btn');
+    if (isChecked) {
+      row.classList.add('checked');
+      btn.classList.add('enabled');
+    } else {
+      row.classList.remove('checked');
+      btn.classList.remove('enabled');
+    }
+  }
+</script>
+
+</body>
+</html>

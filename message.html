@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>メッセージ｜[サイト名]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6; }
+  .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 16px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+  .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+
+  .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; max-width: 440px; align-self: flex-start; }
+  .balance-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; }
+  .accept-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 12.5px; padding: 10px 0; border-radius: 999px; text-align: center; cursor: pointer; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
+  .decline-btn { color: #5c6b73; font-size: 11.5px; font-weight: 700; text-align: center; cursor: pointer; padding: 4px 0; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div class="logo"><a href="mypage.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+    <div class="navlinks">
+      <a href="mypage.html" class="nav-inactive">マイページ</a>
+      <a href="apply.html" class="nav-inactive">ポイントを使う</a>
+      <a href="history.html" class="nav-active" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="settings.html" class="nav-inactive">設定</a>
+    </div>
+    <div class="user">
+      <div class="avatar" data-user-initial>A</div>
+      <div><span data-user-name>[会員名]</span> さん</div>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+    </div>
+  </div>
+
+  <div style="padding: 4px 36px 30px; display: flex; flex-direction: column; gap: 14px; flex-grow: 1;">
+
+    <div style="font-size: 12px;"><a href="history.html">← 申請履歴に戻る</a></div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 18px 24px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <div style="font-size: 11px; color: #9db0b8;">保有ポイント：<span id="balance-text" style="font-weight: 800; color: #2f9bd6;">6pt</span></div>
+        <div style="font-size: 15px; font-weight: 800; margin-top: 3px;">特殊な依頼のご相談：背景込みの一枚絵（複数人・VTuber差分デザイン）</div>
+        <div style="font-size: 11px; color: #9db0b8; margin-top: 3px;">相談開始：9/10</div>
+      </div>
+      <div id="status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #f1eefb; color: #6a4fc0;">ヒアリング中</div>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 22px 24px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
+
+      <div style="font-size: 13px; font-weight: 800;">やり取り</div>
+
+      <div id="messages" style="display: flex; flex-direction: column; gap: 14px; flex-grow: 1;">
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+          <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 420px; line-height: 1.6;">特殊な依頼の相談フォームから失礼します。複数人（3人）の背景込み一枚絵をお願いしたいです。詳細は添付の通りです。</div>
+          <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた　9/10 13:02</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+          <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 420px; line-height: 1.6;">ご相談ありがとうございます！内容確認しました。人数と背景の書き込み量を踏まえると5〜6pt相当になりそうです。表情差分などは必要ですか？</div>
+          <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">運営　9/10 15:40</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+          <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 420px; line-height: 1.6;">差分は不要です、一枚絵のみで大丈夫です！</div>
+          <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた　9/10 16:10</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+          <div class="quote-card">
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#6a4fc0;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              運営からのポイントご提示
+            </div>
+            <div style="font-size:20px; font-weight:800; color:#3b454a;">5pt<span style="font-size:12px; font-weight:700; color:#9db0b8; margin-left:6px;">（¥50,000＋消費税10%）</span></div>
+            <div style="font-size:12px; color:#4b5a61; line-height:1.6;">複数人・背景込みの一枚絵として5ptでご案内します。</div>
+            <div id="balance-row" class="balance-row" style="background:#e6f7ea; border:1px solid #cdebd4;">
+              <span style="color:#3f9457;">受付後の残りポイント</span>
+              <span id="balance-remaining" style="color:#3f9457;">1pt</span>
+            </div>
+            <div id="quote-actions" style="display: flex; flex-direction: column; gap: 6px;">
+              <div class="accept-btn" onclick="acceptQuote()">この内容で正式受付する</div>
+              <div class="decline-btn">内容について相談を続ける</div>
+            </div>
+          </div>
+          <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">運営　9/11 11:20</div>
+        </div>
+
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #eef2f4; padding-top: 16px;">
+        <div style="width: 34px; height: 34px; border-radius: 10px; background: #f2f6f7; display: flex; align-items: center; justify-content: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8fa2ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </div>
+        <div style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #b3c2c9;">メッセージを入力…</div>
+        <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px;">送信</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function acceptQuote() {
+    document.getElementById('status-pill').textContent = '正式受付';
+    document.getElementById('status-pill').style.background = '#eaf6fb';
+    document.getElementById('status-pill').style.color = '#1f7fb3';
+
+    document.getElementById('balance-text').textContent = '1pt';
+
+    document.getElementById('quote-actions').innerHTML =
+      '<div style="font-size:12px; font-weight:800; color:#3f9457; display:flex; align-items:center; gap:6px;">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+        '正式受付済み（9/11）' +
+      '</div><a href="history.html" style="font-size:11.5px; font-weight:700; margin-top:4px;">申請履歴に戻る ＞</a>';
+
+    var wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.justifyContent = 'center';
+
+    var sys = document.createElement('div');
+    sys.style.background = '#f2f6f7';
+    sys.style.color = '#8fa2ac';
+    sys.style.fontSize = '11.5px';
+    sys.style.padding = '10px 18px';
+    sys.style.borderRadius = '999px';
+    sys.style.textAlign = 'center';
+    sys.style.maxWidth = '480px';
+    sys.style.lineHeight = '1.6';
+    sys.textContent = '正式受付されました。ポイントプランは正式受付から納品まで2ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。';
+
+    wrap.appendChild(sys);
+    document.getElementById('messages').appendChild(wrap);
+  }
+</script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
