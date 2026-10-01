@@ -1,4 +1,4 @@
-import { getDatabase } from '@netlify/database';
+import { getDb } from './_lib/db.mjs';
 import { requireUser, jsonResponse } from './_lib/auth.mjs';
 
 // メニューから選ぶ即時受付（apply.htmlの「メニューから選ぶ」タブに対応）
@@ -29,7 +29,7 @@ async function ensureMember(db, user) {
 }
 
 export async function handler(event, context) {
-  const db = getDatabase();
+  const db = getDb();
 
   try {
     const user = requireUser(context);

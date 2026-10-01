@@ -1,8 +1,8 @@
-import { getDatabase } from '@netlify/database';
+import { getDb } from './_lib/db.mjs';
 import { requireAdmin, jsonResponse } from './_lib/auth.mjs';
 
 export async function handler(event, context) {
-  const db = getDatabase();
+  const db = getDb();
 
   try {
     requireAdmin(context);
