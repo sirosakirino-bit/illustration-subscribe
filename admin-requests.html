@@ -17,6 +17,17 @@
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #8fa2ac; }
   .row-link { display: flex; align-items: center; padding: 14px 0; font-size: 13px; color: inherit; text-decoration: none; }
+  .request-row { cursor: pointer; }
+  .request-row:hover { background: #f7fbff; }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 16px 18px; }
+    .topbar > div:first-child { order: 1; }
+    .topbar > div:last-child { order: 2; }
+    .topbar > div:last-child > div:last-child { display: none; }
+    .navlinks { order: 3; flex-basis: 100%; font-size: 11px; gap: 4px; }
+    .navlinks > a { padding: 6px 9px; }
+  }
 </style>
 </head>
 <body data-require-auth>
@@ -85,6 +96,13 @@
     box.style.display = 'block';
   }
 
+  // 行内の入力欄・ボタン・取消リンクをクリックしたときはメッセージ画面へ飛ばさず、
+  // それ以外（会員名や依頼内容など）をクリックしたときだけメッセージ画面に移動する
+  function handleRowClick(e, appId) {
+    if (e.target.closest('input, [data-action-accept], [data-action-complete], [data-action-cancel]')) return;
+    location.href = 'admin-inbox.html#' + appId;
+  }
+
   function renderRequests(applications) {
     var container = document.getElementById('request-rows');
     if (!applications.length) {
@@ -109,7 +127,7 @@
         action = '<div style="font-size: 11px; color: #9db0b8; white-space: nowrap;">' + (app.status === 'キャンセル' ? '取消済み' : '完了') + '</div>';
       }
       return (
-        '<div style="display: flex; align-items: center; padding: 14px 0; ' + border + ' font-size: 13px; gap: 10px; flex-wrap: nowrap; min-width: 600px;">' +
+        '<div class="request-row" data-row-id="' + app.id + '" onclick="handleRowClick(event, ' + app.id + ')" style="display: flex; align-items: center; padding: 14px 0; ' + border + ' font-size: 13px; gap: 10px; flex-wrap: nowrap; min-width: 600px;">' +
           '<div style="width: 56px; flex-shrink: 0; color: #9db0b8;">' + formatDate(app.created_at) + '</div>' +
           '<div style="width: 84px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + app.member_display_name + '</div>' +
           '<div style="flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + app.title + '</div>' +

@@ -45,6 +45,29 @@
   .msg-row { display: flex; flex-direction: column; gap: 4px; }
   .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
   .edit-link { color: #2f9bd6; cursor: pointer; text-decoration: underline; }
+
+  .inbox-split { display: flex; gap: 14px; flex-grow: 1; min-height: 740px; }
+  .inbox-list { width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+  .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; }
+  .thread-back-link { display: none; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #2f9bd6; cursor: pointer; flex-shrink: 0; }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 16px 18px; }
+    .topbar > div:first-child { order: 1; }
+    .topbar > div:last-child { order: 2; }
+    .topbar > div:last-child > div:last-child { display: none; }
+    .navlinks { order: 3; flex-basis: 100%; font-size: 11px; gap: 4px; }
+    .navlinks > a { padding: 6px 9px; }
+  }
+
+  @media (max-width: 760px) {
+    .inbox-split { flex-direction: column; min-height: 0; }
+    .inbox-list { width: 100%; }
+    .inbox-thread { display: none; min-height: 72vh; }
+    .thread-back-link { display: flex; }
+    body.mobile-thread-open .inbox-list { display: none; }
+    body.mobile-thread-open .inbox-thread { display: flex; }
+  }
 </style>
 </head>
 <body data-require-auth>
@@ -73,9 +96,9 @@
       <div style="font-size: 12px; color: #9db0b8; margin-top: 2px;">申請ごとのやり取りを一覧で確認できます。左から選ぶと、右側の表示がそのまま切り替わります。</div>
     </div>
 
-    <div style="display: flex; gap: 14px; flex-grow: 1; min-height: 740px;">
+    <div class="inbox-split">
 
-      <div style="width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;">
+      <div class="inbox-list">
 
         <div style="padding: 14px 16px 10px;">
           <input id="contact-search" type="text" placeholder="会員・内容で検索" style="width: 100%; border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 14px; font-size: 12px; color: #3b454a; font-family: inherit; outline: none;">
@@ -87,16 +110,21 @@
 
       </div>
 
-      <div style="flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0;">
+      <div class="inbox-thread">
 
         <div id="panel-empty" style="display: flex; align-items: center; justify-content: center; flex-grow: 1; font-size: 13px; color: #9db0b8;">左の一覧から会員を選んでください</div>
 
         <div id="panel-thread" style="display: none; flex-direction: column; flex-grow: 1;">
 
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4; gap: 10px;">
-            <div style="min-width: 0;">
-              <div id="thread-member-name" style="font-size: 14px; font-weight: 800;">ー</div>
-              <div id="thread-title" style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ー</div>
+            <div style="min-width: 0; display: flex; align-items: center; gap: 10px;">
+              <div class="thread-back-link" onclick="backToList()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+              <div style="min-width: 0;">
+                <div id="thread-member-name" style="font-size: 14px; font-weight: 800;">ー</div>
+                <div id="thread-title" style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ー</div>
+              </div>
             </div>
             <div id="thread-status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #8fa2ac; flex-shrink: 0;">ー</div>
           </div>
@@ -211,7 +239,12 @@
     renderContactRows();
     document.getElementById('panel-empty').style.display = 'none';
     document.getElementById('panel-thread').style.display = 'flex';
+    document.body.classList.add('mobile-thread-open');
     loadThread(id);
+  }
+
+  function backToList() {
+    document.body.classList.remove('mobile-thread-open');
   }
 
   function renderComposers(application) {

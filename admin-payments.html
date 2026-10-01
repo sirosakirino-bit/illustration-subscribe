@@ -16,6 +16,15 @@
   .navlinks > a { padding: 8px 14px; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #8fa2ac; }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 16px 18px; }
+    .topbar > div:first-child { order: 1; }
+    .topbar > div:last-child { order: 2; }
+    .topbar > div:last-child > div:last-child { display: none; }
+    .navlinks { order: 3; flex-basis: 100%; font-size: 11px; gap: 4px; }
+    .navlinks > a { padding: 6px 9px; }
+  }
 </style>
 </head>
 <body>
