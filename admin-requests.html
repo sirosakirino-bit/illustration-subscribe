@@ -44,15 +44,15 @@
 
     <div id="requests-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
 
-    <div style="background: #ffffff; border-radius: 18px; padding: 8px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column;">
+    <div style="background: #ffffff; border-radius: 18px; padding: 8px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow-x: auto;">
 
-      <div style="display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8;">
-        <div style="width: 80px;">申請日</div>
-        <div style="width: 110px;">会員</div>
-        <div style="flex-grow: 1;">依頼内容</div>
-        <div style="width: 60px;">pt数</div>
-        <div style="width: 110px;">ステータス</div>
-        <div style="width: 260px;"></div>
+      <div style="display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8; gap: 10px; flex-wrap: nowrap; min-width: 600px;">
+        <div style="width: 56px; flex-shrink: 0;">申請日</div>
+        <div style="width: 84px; flex-shrink: 0;">会員</div>
+        <div style="flex: 1 1 auto; min-width: 0;">依頼内容</div>
+        <div style="width: 46px; flex-shrink: 0;">pt数</div>
+        <div style="width: 86px; flex-shrink: 0;">ステータス</div>
+        <div style="flex-shrink: 0;">操作</div>
       </div>
 
       <div id="request-rows">
@@ -98,26 +98,23 @@
       var cancelLink = '';
       if (app.status === 'ヒアリング中') {
         action = (
-          '<input type="number" min="1" step="1" placeholder="pt数" data-pt-input="' + app.id + '" style="width: 56px; min-width: 56px; flex-shrink: 0; padding: 8px 4px; border: 1px solid #dcedf5; border-radius: 8px; font-size: 12px; font-family: inherit; text-align: center; box-sizing: border-box;">' +
-          '<div data-action-accept="' + app.id + '" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 11px; padding: 8px 12px; border-radius: 999px; cursor: pointer; white-space: nowrap;">正式受付にする</div>'
+          '<input type="number" min="1" step="1" placeholder="pt数" data-pt-input="' + app.id + '" style="width: 46px; flex-shrink: 0; padding: 7px 4px; border: 1px solid #dcedf5; border-radius: 8px; font-size: 11.5px; font-family: inherit; text-align: center; box-sizing: border-box;">' +
+          '<div data-action-accept="' + app.id + '" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 10.5px; padding: 7px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">正式受付</div>'
         );
-        cancelLink = '<div data-action-cancel="' + app.id + '" style="font-size: 10.5px; font-weight: 700; color: #c0524f; cursor: pointer; white-space: nowrap; text-decoration: underline;">取り消す</div>';
+        cancelLink = '<div data-action-cancel="' + app.id + '" style="font-size: 10px; font-weight: 700; color: #c0524f; cursor: pointer; white-space: nowrap; text-decoration: underline; flex-shrink: 0;">取消</div>';
       } else if (app.status === '制作中') {
-        action = '<div data-action-complete="' + app.id + '" style="background: #3f9457; color: #fff; font-weight: 700; font-size: 11px; padding: 8px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;">納品済みにする</div>';
+        action = '<div data-action-complete="' + app.id + '" style="background: #3f9457; color: #fff; font-weight: 700; font-size: 10.5px; padding: 7px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">納品済みにする</div>';
       } else {
-        action = '<div style="font-size: 11px; color: #9db0b8;">' + (app.status === 'キャンセル' ? '取消済み' : '対応完了') + '</div>';
+        action = '<div style="font-size: 11px; color: #9db0b8; white-space: nowrap;">' + (app.status === 'キャンセル' ? '取消済み' : '完了') + '</div>';
       }
       return (
-        '<div style="display: flex; align-items: center; padding: 14px 0; ' + border + ' font-size: 13px; flex-wrap: wrap; row-gap: 8px;">' +
-          '<div style="width: 80px; color: #9db0b8;">' + formatDate(app.created_at) + '</div>' +
-          '<div style="width: 110px;">' + app.member_display_name + ' さん</div>' +
-          '<div style="flex-grow: 1;">' + app.title + '</div>' +
-          '<div style="width: 60px; color: #4b5a61;">' + ptText + '</div>' +
-          '<div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: ' + style.bg + '; color: ' + style.color + ';">' + app.status + '</span></div>' +
-          '<div style="width: 260px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">' +
-            '<div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">' + action + '</div>' +
-            (cancelLink ? '<div>' + cancelLink + '</div>' : '') +
-          '</div>' +
+        '<div style="display: flex; align-items: center; padding: 14px 0; ' + border + ' font-size: 13px; gap: 10px; flex-wrap: nowrap; min-width: 600px;">' +
+          '<div style="width: 56px; flex-shrink: 0; color: #9db0b8;">' + formatDate(app.created_at) + '</div>' +
+          '<div style="width: 84px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + app.member_display_name + '</div>' +
+          '<div style="flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + app.title + '</div>' +
+          '<div style="width: 46px; flex-shrink: 0; color: #4b5a61; font-size: 11.5px;">' + ptText + '</div>' +
+          '<div style="width: 86px; flex-shrink: 0;"><span style="font-size: 10.5px; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: ' + style.bg + '; color: ' + style.color + '; white-space: nowrap;">' + app.status + '</span></div>' +
+          '<div style="flex-shrink: 0; display: flex; align-items: center; gap: 5px; flex-wrap: nowrap;">' + action + cancelLink + '</div>' +
         '</div>'
       );
     }).join('');
