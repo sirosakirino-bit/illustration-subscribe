@@ -32,11 +32,12 @@
   .bubble.mine { background: #2f9bd6; color: #fff; border-radius: 16px 4px 16px 16px; align-self: flex-end; }
   .bubble.theirs { background: #f2f6f7; color: #3b454a; border-radius: 4px 16px 16px 16px; align-self: flex-start; }
   .meta { font-size: 10px; color: #b3c2c9; }
-  .send-box { display: flex; align-items: center; gap: 10px; border-top: 1px solid #eef2f4; padding-top: 16px; }
-  .send-input { flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none; }
+  .send-box { display: flex; align-items: flex-end; gap: 10px; border-top: 1px solid #eef2f4; padding-top: 16px; }
+  .send-input { flex-grow: 1; border: 1px solid #dcedf5; border-radius: 18px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none; resize: none; max-height: 160px; line-height: 1.5; }
   .send-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; cursor: pointer; flex-shrink: 0; }
   .send-btn:hover { opacity: 0.92; }
   .send-btn.disabled { background: #cbd8dd; cursor: not-allowed; }
+  .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
 </style>
 </head>
 <body data-require-auth>
@@ -83,11 +84,13 @@
         </div>
 
         <div class="send-box">
-          <input id="send-input" class="send-input" type="text" placeholder="メッセージを入力…" maxlength="2000">
+          <textarea id="send-input" class="send-input" rows="1" placeholder="メッセージを入力…" maxlength="2000"></textarea>
           <div id="send-btn" class="send-btn" onclick="sendMessage()">送信</div>
         </div>
 
-        <div style="font-size: 10.5px; color: #b3c2c9; text-align: center;">新着メッセージは登録メールアドレスにも通知されます。メールが届かない場合は、迷惑メールフォルダをご確認ください。</div>
+        <div id="send-hint" style="font-size: 10.5px; color: #b3c2c9; text-align: right;"></div>
+
+        <div style="font-size: 10.5px; color: #b3c2c9; text-align: center;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
 
       </div>
 
@@ -198,7 +201,7 @@
       return (
         '<div class="msg-row" style="align-items:' + (mine ? 'flex-end' : 'flex-start') + ';">' +
           '<div class="bubble ' + (mine ? 'mine' : 'theirs') + '">' + escapeHtml(m.body) + '</div>' +
-          '<div class="meta">' + (mine ? 'あなた' : '運営') + '　' + when + '</div>' +
+          '<div class="meta">' + (mine ? 'あなた' : '運営') + '　' + when + (m.edited_at ? '　（編集済み）' : '') + '</div>' +
         '</div>'
       );
     }).join('');
@@ -239,6 +242,7 @@
     AuthHelpers.callFunction('member-data', { method: 'POST', body: { action: 'send-message', application_id: Number(applicationId), body: text } })
       .then(function () {
         input.value = '';
+        autoResizeInput();
         btn.classList.remove('disabled');
         loadThread();
       })
@@ -246,6 +250,19 @@
         btn.classList.remove('disabled');
         alert('送信に失敗しました：' + err.message);
       });
+  }
+
+  function autoResizeInput() {
+    var input = document.getElementById('send-input');
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 160) + 'px';
+  }
+
+  function renderSendHint() {
+    var isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '');
+    var ctrlLabel = isMac ? '⌘' : 'Ctrl';
+    document.getElementById('send-hint').innerHTML =
+      '<span class="kbd">Enter</span> で改行　<span class="kbd">' + ctrlLabel + '</span>+<span class="kbd">↵</span> で送信';
   }
 
   function acceptQuote() {
@@ -257,8 +274,13 @@
   }
 
   document.getElementById('send-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') sendMessage();
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      sendMessage();
+    }
   });
+  document.getElementById('send-input').addEventListener('input', autoResizeInput);
+  renderSendHint();
 
   function updateNavBadge() {
     AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {

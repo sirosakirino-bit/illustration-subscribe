@@ -23,8 +23,8 @@
   .deliver-composer { display: none; flex-direction: column; gap: 12px; background: #f3faf5; border: 1px solid #cfe8d6; border-radius: 14px; padding: 18px 20px; }
   .send-deliver-btn { background: #3f9457; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 22px; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; }
   .deliver-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
-  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; flex-wrap: wrap; }
   .navlinks > a { padding: 8px 14px; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #8fa2ac; }
@@ -43,6 +43,8 @@
   .bubble.theirs { background: #f2f6f7; color: #3b454a; border-radius: 4px 16px 16px 16px; align-self: flex-start; }
   .meta { font-size: 10px; color: #b3c2c9; }
   .msg-row { display: flex; flex-direction: column; gap: 4px; }
+  .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
+  .edit-link { color: #2f9bd6; cursor: pointer; text-decoration: underline; }
 </style>
 </head>
 <body data-require-auth>
@@ -103,10 +105,14 @@
 
           <div id="thread-composers" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px;"></div>
 
-          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-top: 1px solid #eef2f4;">
-            <input id="thread-send-input" type="text" placeholder="メッセージを入力…" style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none;">
+          <div style="display: flex; align-items: flex-end; gap: 10px; padding: 14px 22px 0; border-top: 1px solid #eef2f4;">
+            <textarea id="thread-send-input" rows="1" placeholder="メッセージを入力…" style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 18px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none; resize: none; max-height: 160px; line-height: 1.5;"></textarea>
             <div id="thread-send-btn" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0; cursor: pointer;">送信</div>
           </div>
+
+          <div id="thread-send-hint" style="font-size: 10.5px; color: #b3c2c9; text-align: right; padding: 4px 22px 0;"></div>
+
+          <div style="font-size: 10.5px; color: #b3c2c9; text-align: center; padding: 6px 22px 14px;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
 
         </div>
 
@@ -132,6 +138,9 @@
 
   var allThreads = [];
   var selectedId = null;
+  var editingMessageId = null;
+  var currentMessages = [];
+  var currentApplication = null;
 
   function escapeHtml(s) {
     return String(s == null ? '' : s)
@@ -297,10 +306,28 @@
       }
 
       var mine = (m.sender === 'admin');
+
+      if (mine && editingMessageId === m.id) {
+        return (
+          '<div class="msg-row" style="align-items:flex-end;">' +
+            '<div style="max-width:420px; width:100%; align-self:flex-end; display:flex; flex-direction:column; gap:6px;">' +
+              '<textarea id="edit-input-' + m.id + '" style="width:100%; min-height:60px; border:1px solid #dcedf5; border-radius:12px; padding:10px 14px; font-size:13px; font-family:inherit; color:#3b454a; outline:none; resize:vertical;">' + escapeHtml(m.body) + '</textarea>' +
+              '<div style="display:flex; gap:8px; align-self:flex-end;">' +
+                '<div style="font-size:11px; font-weight:700; color:#9db0b8; padding:7px 14px; border-radius:999px; cursor:pointer; background:#f2f6f7;" onclick="cancelEditMessage()">キャンセル</div>' +
+                '<div style="font-size:11px; font-weight:700; color:#fff; padding:7px 16px; border-radius:999px; cursor:pointer; background:#2f9bd6;" onclick="saveEditMessage(' + m.id + ')">保存</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
       return (
         '<div class="msg-row" style="align-items:' + (mine ? 'flex-end' : 'flex-start') + ';">' +
           '<div class="bubble ' + (mine ? 'mine' : 'theirs') + '">' + escapeHtml(m.body) + '</div>' +
-          '<div class="meta">' + (mine ? 'あなた（運営）' : escapeHtml(application.member_display_name) + ' さん') + '　' + when + '</div>' +
+          '<div class="meta">' + (mine ? 'あなた（運営）' : escapeHtml(application.member_display_name) + ' さん') + '　' + when +
+            (m.edited_at ? '　（編集済み）' : '') +
+            (mine ? '　<span class="edit-link" onclick="startEditMessage(' + m.id + ')">編集</span>' : '') +
+          '</div>' +
         '</div>'
       );
     }).join('');
@@ -317,6 +344,10 @@
       pill.textContent = data.application.status;
       pill.style.background = style.bg;
       pill.style.color = style.color;
+
+      currentMessages = data.messages;
+      currentApplication = data.application;
+      editingMessageId = null;
 
       renderComposers(data.application);
       renderThreadMessages(data.messages, data.application);
@@ -342,9 +373,45 @@
     AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'send-message', application_id: selectedId, body: text } })
       .then(function () {
         input.value = '';
+        autoResizeThreadInput();
         loadThread(selectedId);
       })
       .catch(function (err) { alert('送信に失敗しました：' + err.message); });
+  }
+
+  function autoResizeThreadInput() {
+    var input = document.getElementById('thread-send-input');
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 160) + 'px';
+  }
+
+  function renderThreadSendHint() {
+    var isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || '');
+    var ctrlLabel = isMac ? '⌘' : 'Ctrl';
+    document.getElementById('thread-send-hint').innerHTML =
+      '<span class="kbd">Enter</span> で改行　<span class="kbd">' + ctrlLabel + '</span>+<span class="kbd">↵</span> で送信';
+  }
+
+  function startEditMessage(id) {
+    editingMessageId = id;
+    renderThreadMessages(currentMessages, currentApplication);
+  }
+
+  function cancelEditMessage() {
+    editingMessageId = null;
+    renderThreadMessages(currentMessages, currentApplication);
+  }
+
+  function saveEditMessage(id) {
+    var ta = document.getElementById('edit-input-' + id);
+    var text = ta.value.trim();
+    if (!text) { alert('メッセージを入力してください。'); return; }
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'edit-message', application_id: selectedId, message_id: id, body: text } })
+      .then(function () {
+        editingMessageId = null;
+        loadThread(selectedId);
+      })
+      .catch(function (err) { alert('編集に失敗しました：' + err.message); });
   }
 
   function sendQuote() {
@@ -365,8 +432,13 @@
 
   document.getElementById('thread-send-btn').addEventListener('click', sendThreadMessage);
   document.getElementById('thread-send-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') sendThreadMessage();
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      sendThreadMessage();
+    }
   });
+  document.getElementById('thread-send-input').addEventListener('input', autoResizeThreadInput);
+  renderThreadSendHint();
   document.getElementById('contact-search').addEventListener('input', renderContactRows);
 
   function applyHash() {

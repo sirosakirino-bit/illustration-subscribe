@@ -210,6 +210,26 @@ export async function handler(event, context) {
         return jsonResponse(200, { message: inserted[0] });
       }
 
+      // ---- 送信済みメッセージを編集する（運営から送った通常メッセージのみ） ----
+      if (action === 'edit-message') {
+        const applicationId = Number(body.application_id);
+        const messageId = Number(body.message_id);
+        const text = (body.body || '').trim();
+        if (!text) return jsonResponse(400, { error: 'メッセージを入力してください' });
+
+        const msgRows = await db.sql`SELECT * FROM messages WHERE id = ${messageId} AND application_id = ${applicationId}`;
+        if (msgRows.length === 0) return jsonResponse(404, { error: 'メッセージが見つかりません' });
+        const message = msgRows[0];
+        if (message.sender !== 'admin' || message.kind !== 'text') {
+          return jsonResponse(400, { error: '運営から送った通常メッセージのみ編集できます' });
+        }
+
+        const updated = await db.sql`
+          UPDATE messages SET body = ${text}, edited_at = now() WHERE id = ${messageId} RETURNING *
+        `;
+        return jsonResponse(200, { message: updated[0] });
+      }
+
       // ---- ポイント数を提示する（会員の正式受付待ち。ステータスは変更しない） ----
       if (action === 'send-quote') {
         const applicationId = Number(body.application_id);
