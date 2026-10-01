@@ -126,7 +126,7 @@
           <div class="menu-card" onclick="switchTab('consult')" style="background: #f7f5fc; border-style: dashed;">
             <div class="menu-pt-badge" style="background: #b3a3e0;">4pt〜</div>
             <div style="flex-grow: 1;">
-              <div class="menu-title" style="color: #6a4fc0;">特殊な依頼（4pt以上・大型案件など）</div>
+              <div class="menu-title" style="color: #6a4fc0;">特殊な依頼（4pt以上/複数枚依頼/大型案件など）</div>
               <div class="menu-desc">背景込みの一枚絵／複数人／VTuber差分デザイン／6pt以上の大型案件など、内容に応じたご相談が必要です</div>
             </div>
             <div style="font-size: 11.5px; font-weight: 700; color: #6a4fc0; white-space: nowrap;">相談する ＞</div>
@@ -200,10 +200,14 @@
     <div id="panel-consult" style="display: none; flex-direction: column; gap: 18px;">
 
       <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #6a4fc0; line-height: 1.7;">
-        メニューにない特殊な内容や、4pt以上の大型案件のご相談はこちらから。内容・必要ptについて双方が合意した時点で「正式受付」となります。ポイントプランは正式受付から納品まで2ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。
+        メニューにない特殊な内容や、4pt以上の大型案件のご相談はこちらから。内容・必要ptについて双方が合意した時点で「正式受付」となります。ポイントプランは正式受付から納品まで2ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。<strong>相談中（ヒアリング中）の申請は同時に1件までです。</strong>保有ポイント内で複数のご依頼をしたい場合も、まずは1件ずつご相談いただき、正式受付が済んでから次のご相談をお送りください。
       </div>
 
-      <div style="background: #ffffff; border-radius: 20px; padding: 28px 30px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 22px;">
+      <div id="consult-blocked" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 14px; padding: 14px 18px; font-size: 12px; color: #a8722a; line-height: 1.7;">
+        現在ご相談中（ヒアリング中）の申請があるため、新しいご相談はまだ送信できません。回答・正式受付が済んでから、次のご相談をお送りください。
+      </div>
+
+      <div id="consult-form-card" style="background: #ffffff; border-radius: 20px; padding: 28px 30px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 22px;">
 
         <div style="font-size: 17px; font-weight: 800;">特殊な依頼のご相談</div>
 
@@ -273,6 +277,24 @@
   var memberBalance = 0;
   var selectedPt = null;
   var selectedEstimate = '4pt';
+  var hasPendingConsult = false;
+
+  function applyConsultLock() {
+    var blocked = document.getElementById('consult-blocked');
+    var formCard = document.getElementById('consult-form-card');
+    var btn = document.getElementById('submit-consult');
+    if (hasPendingConsult) {
+      blocked.style.display = 'block';
+      formCard.style.opacity = '0.5';
+      formCard.style.pointerEvents = 'none';
+      btn.style.cursor = 'not-allowed';
+    } else {
+      blocked.style.display = 'none';
+      formCard.style.opacity = '1';
+      formCard.style.pointerEvents = 'auto';
+      btn.style.cursor = 'pointer';
+    }
+  }
 
   function selectEstimate(chip, value) {
     document.querySelectorAll('.estimate-chip').forEach(function (c) {
@@ -291,6 +313,10 @@
     AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
       memberBalance = data.member.point_balance;
       document.getElementById('balance-display').textContent = memberBalance + 'pt';
+      hasPendingConsult = (data.applications || []).some(function (app) {
+        return app.kind === 'consult' && app.status === 'ヒアリング中';
+      });
+      applyConsultLock();
     }).catch(function (err) {
       document.getElementById('balance-display').textContent = '取得できませんでした';
       console.error(err);
@@ -387,6 +413,21 @@
     var detailsEl = document.getElementById('consult-details');
     var noteEl = document.getElementById('consult-note');
     var btn = document.getElementById('submit-consult');
+
+    if (hasPendingConsult) {
+      noteEl.style.display = 'block';
+      noteEl.style.color = '#c0524f';
+      noteEl.textContent = 'すでに相談中の申請があります。回答をお待ちください。';
+      return;
+    }
+
+    if (!detailsEl.value.trim()) {
+      noteEl.style.display = 'block';
+      noteEl.style.color = '#c0524f';
+      noteEl.textContent = 'ご依頼内容を入力してください。';
+      detailsEl.focus();
+      return;
+    }
 
     btn.textContent = '送信しています…';
 

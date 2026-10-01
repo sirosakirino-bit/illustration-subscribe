@@ -67,11 +67,24 @@ export async function handler(event, context) {
       }
 
       if (action === 'submit-consult') {
+        const details = (body.details || '').trim();
+        if (!details) {
+          return jsonResponse(400, { error: 'ご依頼内容の入力は必須です' });
+        }
+
+        const pending = await db.sql`
+          SELECT id FROM applications
+          WHERE member_id = ${member.id} AND kind = 'consult' AND status = 'ヒアリング中'
+        `;
+        if (pending.length > 0) {
+          return jsonResponse(400, { error: 'すでに相談中（ヒアリング中）の申請があります。回答・正式受付が済んでから、次のご相談をお送りください。' });
+        }
+
         const inserted = await db.sql`
           INSERT INTO applications (member_id, kind, title, details, point_estimate, status)
           VALUES (
             ${member.id}, 'consult', ${body.title || '特殊な依頼のご相談'},
-            ${body.details || null}, ${body.point_estimate || null}, 'ヒアリング中'
+            ${details}, ${body.point_estimate || null}, 'ヒアリング中'
           )
           RETURNING *
         `;
