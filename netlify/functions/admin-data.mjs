@@ -87,6 +87,25 @@ export async function handler(event, context) {
         return jsonResponse(400, { error: 'そのステータス変更はできません' });
       }
 
+      // 運営側で申請を取り消す（テスト用の申請の後片付けや、申請ミスの取り消しなど）
+      // 「制作中」（＝正式受付済み・制作着手済み）になった申請は取り消し不可。「ヒアリング中」のみ取り消せる
+      if (action === 'cancel-application') {
+        const applicationId = Number(body.application_id);
+        const rows = await db.sql`SELECT * FROM applications WHERE id = ${applicationId}`;
+        if (rows.length === 0) return jsonResponse(404, { error: '申請が見つかりません' });
+        const application = rows[0];
+
+        if (application.status !== 'ヒアリング中') {
+          return jsonResponse(400, { error: '「ヒアリング中」の申請のみ取り消せます（制作中・対応完了・取消済みの申請は取り消せません）' });
+        }
+
+        const updatedApp = await db.sql`
+          UPDATE applications SET status = 'キャンセル', updated_at = now()
+          WHERE id = ${applicationId} RETURNING *
+        `;
+        return jsonResponse(200, { application: updatedApp[0] });
+      }
+
       return jsonResponse(400, { error: '不明な操作です' });
     }
 
