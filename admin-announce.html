@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>お知らせ配信｜[サイト名] 管理画面</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -16,7 +16,7 @@
   .navlinks > a { padding: 8px 10px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .admin-user-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
 
   @media (max-width: 820px) {
@@ -77,7 +77,7 @@
       <a href="admin-announce.html" class="nav-active">お知らせ配信</a>
     </div>
     <div class="admin-user-info">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c;">運</div>
       <div>あなた（運営）</div>
     </div>
   </div>
@@ -85,10 +85,10 @@
   <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
 
     <div style="font-size: 20px; font-weight: 800;">会員全体へのお知らせ配信</div>
-    <div style="font-size: 11.5px; color: #8fa2ac;">ここで送信すると、現在登録されているすべての会員の登録メールアドレス宛に、一斉にお知らせメールが届きます。運営休止のご案内や、重要なお知らせなど、全員に伝える必要がある内容のときにご利用ください。サイト内には表示されず、メールのみでの通知です。</div>
+    <div style="font-size: 14.5px; color: #5c6b73;">ここで送信すると、現在登録されているすべての会員の登録メールアドレス宛に、一斉にお知らせメールが届きます。運営休止のご案内や、重要なお知らせなど、全員に伝える必要がある内容のときにご利用ください。サイト内には表示されず、メールのみでの通知です。</div>
 
     <div id="announce-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
-    <div id="announce-success" style="display:none; background:#e6f7ea; border:1px solid #cdeed6; color:#3f9457; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
+    <div id="announce-success" style="display:none; background:#e6f7ea; border:1px solid #cdeed6; color:#2d7a42; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px;">
 
@@ -102,7 +102,7 @@
         <textarea id="announce-body" placeholder="例）いつもご利用いただきありがとうございます。○月○日〜○日の間、サーバーメンテナンスのためサービスを一時休止いたします。ご不便をおかけしますが、よろしくお願いいたします。" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 160px; font-family: inherit; resize: vertical;"></textarea>
       </div>
 
-      <div style="font-size: 10.5px; color: #b3c2c9;">※ 改行はメール本文にもそのまま反映されます。送信前に内容をよくご確認ください。</div>
+      <div style="font-size: 13.5px; color: #b3c2c9;">※ 改行はメール本文にもそのまま反映されます。送信前に内容をよくご確認ください。</div>
 
       <div style="display: flex; justify-content: flex-start;">
         <div id="announce-submit" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">
@@ -172,7 +172,7 @@
   });
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>

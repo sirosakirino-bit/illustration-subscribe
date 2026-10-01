@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>プラン選択｜[サイト名]</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
 
   .page { width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; margin: 0 auto; }
@@ -18,10 +18,10 @@
   .steps-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; row-gap: 6px; margin-top: 4px; font-size: 12px; font-weight: 700; }
   .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .step-num.on { background: #2f9bd6; color: #fff; }
-  .step-num.off { background: #ffffff; border: 1px solid #cbe0e9; color: #9db0b8; }
+  .step-num.off { background: #ffffff; border: 1px solid #cbe0e9; color: #5c6b73; }
   .step-line { width: 28px; height: 1px; background: #cbe0e9; flex-shrink: 0; }
   .step-label.on { color: #2f9bd6; }
-  .step-label.off { color: #9db0b8; }
+  .step-label.off { color: #5c6b73; }
 
   .page-title { font-size: 20px; font-weight: 800; margin-top: 24px; text-align: center; padding: 0 18px; }
 
@@ -30,17 +30,17 @@
   .plan-card.featured { border: 2px solid #2f9bd6; box-shadow: 0 4px 14px rgba(47,155,214,0.12); }
   .plan-card.plain { border: 1px solid #dcedf5; box-shadow: 0 3px 10px rgba(47,155,214,0.06); }
   .plan-card.selected { box-shadow: 0 0 0 3px rgba(47,155,214,0.28), 0 4px 14px rgba(47,155,214,0.12); }
-  .plan-banner { font-size: 12.5px; font-weight: 500; padding: 14px 18px; border-radius: 12px; }
-  .plan-banner.blue { background: #eaf6fb; color: #1f7fb3; }
+  .plan-banner { font-size: 19px; font-weight: 500; padding: 14px 18px; border-radius: 12px; }
+  .plan-banner.blue { background: #eaf6fb; color: #15608c; }
   .plan-banner.gray { background: #f2f6f7; color: #5c6b73; }
   .plan-banner-note { font-size: 10.5px; font-weight: 400; color: #a9b7bd; margin-top: 5px; }
   .plan-name { font-size: 17px; font-weight: 800; }
   .plan-name.blue { color: #2f9bd6; }
   .plan-price { font-size: 22px; font-weight: 800; margin-top: 4px; }
-  .plan-price-note { font-size: 11px; color: #9db0b8; margin-top: 2px; }
+  .plan-price-note { font-size: 11px; color: #5c6b73; margin-top: 2px; }
   .plan-divider { height: 1px; background: #eef2f4; }
-  .plan-list { display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #4b5a61; }
-  .plan-pick-indicator { display: flex; align-items: center; gap: 9px; margin-top: 4px; padding-top: 14px; border-top: 1px solid #eef2f4; font-weight: 700; font-size: 13px; color: #9db0b8; }
+  .plan-list { display: flex; flex-direction: column; gap: 10px; font-size: 18px; color: #4b5a61; }
+  .plan-pick-indicator { display: flex; align-items: center; gap: 9px; margin-top: 4px; padding-top: 14px; border-top: 1px solid #eef2f4; font-weight: 700; font-size: 13px; color: #5c6b73; }
   .plan-card.selected .plan-pick-indicator { color: #2f9bd6; }
   .plan-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbe0e9; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; }
   .plan-card.selected .plan-check { background: #2f9bd6; border-color: #2f9bd6; }
@@ -53,20 +53,20 @@
   .confirm-next-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 14px 32px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer; white-space: nowrap; }
 
   .wide-block { width: 100%; max-width: 828px; box-sizing: border-box; }
-  .info-banner { margin: 22px auto 0; padding: 14px 22px; background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; font-size: 12px; color: #6a4fc0; text-align: center; }
+  .info-banner { margin: 22px auto 0; padding: 14px 22px; background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; font-size: 18px; color: #6a4fc0; text-align: center; }
 
   .examples-head { margin: 32px auto 0; padding: 0 36px; }
   .examples-title { font-size: 15px; font-weight: 800; }
-  .examples-sub { font-size: 11px; color: #8fa2ac; margin-top: 4px; }
+  .examples-sub { font-size: 11px; color: #5c6b73; margin-top: 4px; }
 
   .examples-row { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 16px; padding: 0 36px; }
   .example-card { width: 148px; max-width: 100%; background: #ffffff; border-radius: 16px; padding: 16px 14px; box-shadow: 0 3px 10px rgba(47,155,214,0.06); display: flex; flex-direction: column; gap: 8px; }
   .example-tag { align-self: flex-start; font-size: 12px; font-weight: 800; color: #fff; padding: 3px 12px; border-radius: 999px; }
-  .example-desc { font-size: 11px; color: #4b5a61; }
+  .example-desc { font-size: 16px; color: #4b5a61; }
 
-  .footnote { font-size: 11px; color: #9db0b8; margin-top: 26px; text-align: center; max-width: 700px; padding: 0 18px; }
-  .ref-link { font-size: 11px; color: #9db0b8; margin-top: 14px; padding-bottom: 40px; }
-  .ref-link a { color: #8fa2ac; text-decoration: underline; }
+  .footnote { font-size: 14px; color: #5c6b73; margin-top: 26px; text-align: center; max-width: 700px; padding: 0 18px; }
+  .ref-link { font-size: 11px; color: #5c6b73; margin-top: 14px; padding-bottom: 40px; }
+  .ref-link a { color: #5c6b73; text-decoration: underline; }
 
   @media (max-width: 820px) {
     .logo-bar { padding: 18px 20px; }
@@ -106,7 +106,7 @@
       <div class="plan-banner blue">一度に高額のご依頼が難しい方へ。ポイントを積み立てて、大型イラストもご依頼いただけます。</div>
       <div>
         <div class="plan-name blue">ポイントプラン</div>
-        <div class="plan-price">月額 10,000円<span style="font-size: 12px; font-weight: 700; color: #9db0b8;">＋消費税10%</span></div>
+        <div class="plan-price">月額 10,000円<span style="font-size: 12px; font-weight: 700; color: #5c6b73;">＋消費税10%</span></div>
         <div class="plan-price-note">＝ 11,000円／月（税込）</div>
       </div>
       <div class="plan-divider"></div>
@@ -127,7 +127,7 @@
       <div class="plan-banner gray">毎月ちゃんと1件、確実に依頼したい方へ。制作枠は毎月固定で確保されます。<div class="plan-banner-note">（ヒアリングの状況やデザイン内容によっては、納品が翌月にずれることがあります）</div></div>
       <div>
         <div class="plan-name">月1プラン</div>
-        <div class="plan-price">月額 25,000円<span style="font-size: 12px; font-weight: 700; color: #9db0b8;">＋消費税10%</span></div>
+        <div class="plan-price">月額 25,000円<span style="font-size: 12px; font-weight: 700; color: #5c6b73;">＋消費税10%</span></div>
         <div class="plan-price-note">＝ 27,500円／月（税込）</div>
       </div>
       <div class="plan-divider"></div>
@@ -148,7 +148,7 @@
 
   <div class="wide-block confirm-bar">
     <div>
-      <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">選択中のプラン</div>
+      <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">選択中のプラン</div>
       <div id="selected-plan-text" style="font-size: 16px; font-weight: 800; margin-top: 2px;">ポイントプラン（月額10,000円＋消費税10%）</div>
     </div>
     <div class="confirm-next-btn" onclick="goNext()">このプランで申し込みを進める</div>
@@ -220,7 +220,7 @@
   }
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>

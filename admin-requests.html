@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>申請管理｜[サイト名] 管理画面</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -16,7 +16,7 @@
   .navlinks > a { padding: 8px 10px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .admin-user-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
   .row-link { display: flex; align-items: center; padding: 14px 0; font-size: 13px; color: inherit; text-decoration: none; }
   .request-row { cursor: pointer; }
@@ -80,7 +80,7 @@
       <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
     </div>
     <div class="admin-user-info">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c;">運</div>
       <div>あなた（運営）</div>
     </div>
   </div>
@@ -88,13 +88,13 @@
   <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
 
     <div style="font-size: 20px; font-weight: 800;">申請管理</div>
-    <div style="font-size: 12px; color: #9db0b8;">申請日時順に表示しています。「ヒアリング中」は内容を確認して確定ポイント数を入力し「正式受付」へ、「制作中」は納品が終わったら「納品済みにする」を押してください。</div>
+    <div style="font-size: 15px; color: #5c6b73;">申請日時順に表示しています。「ヒアリング中」は内容を確認して確定ポイント数を入力し「正式受付」へ、「制作中」は納品が終わったら「納品済みにする」を押してください。</div>
 
     <div id="requests-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 8px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow-x: auto;">
 
-      <div style="display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #9db0b8; gap: 10px; flex-wrap: nowrap; min-width: 600px;">
+      <div style="display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #5c6b73; gap: 10px; flex-wrap: nowrap; min-width: 600px;">
         <div style="width: 56px; flex-shrink: 0;">申請日</div>
         <div style="width: 84px; flex-shrink: 0;">会員</div>
         <div style="flex: 1 1 auto; min-width: 0;">依頼内容</div>
@@ -104,7 +104,7 @@
       </div>
 
       <div id="request-rows">
-        <div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">読み込み中…</div>
+        <div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">読み込み中…</div>
       </div>
 
     </div>
@@ -154,7 +154,7 @@
   function renderRequests(applications) {
     var container = document.getElementById('request-rows');
     if (!applications.length) {
-      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">まだ申請はありません</div>';
+      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">まだ申請はありません</div>';
       return;
     }
     container.innerHTML = applications.map(function (app, i) {
@@ -172,11 +172,11 @@
       } else if (app.status === '制作中') {
         action = '<div data-action-complete="' + app.id + '" style="background: #3f9457; color: #fff; font-weight: 700; font-size: 10.5px; padding: 7px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap; flex-shrink: 0;">納品済みにする</div>';
       } else {
-        action = '<div style="font-size: 11px; color: #9db0b8; white-space: nowrap;">' + (app.status === 'キャンセル' ? '取消済み' : '完了') + '</div>';
+        action = '<div style="font-size: 11px; color: #5c6b73; white-space: nowrap;">' + (app.status === 'キャンセル' ? '取消済み' : '完了') + '</div>';
       }
       return (
         '<div class="request-row" data-row-id="' + app.id + '" onclick="handleRowClick(event, ' + app.id + ')" style="display: flex; align-items: center; padding: 14px 0; ' + border + ' font-size: 13px; gap: 10px; flex-wrap: nowrap; min-width: 600px;">' +
-          '<div style="width: 56px; flex-shrink: 0; color: #9db0b8;">' + formatDate(app.created_at) + '</div>' +
+          '<div style="width: 56px; flex-shrink: 0; color: #5c6b73;">' + formatDate(app.created_at) + '</div>' +
           '<div style="width: 84px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + app.member_display_name + '</div>' +
           '<div style="flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + app.title + '</div>' +
           '<div style="width: 46px; flex-shrink: 0; color: #4b5a61; font-size: 11.5px;">' + ptText + '</div>' +
@@ -235,7 +235,7 @@
   }
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ポイントを使う（今月の枠が満枠）｜[サイト名]</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
-  a:hover { color: #1f7fb3; }
+  a:hover { color: #15608c; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -19,9 +19,9 @@
   .navlinks > a { padding: 8px 16px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c; }
 
   @media (max-width: 820px) {
     .topbar { padding: 16px 18px; position: relative; }
@@ -70,7 +70,7 @@
     <div class="user">
       <div class="avatar" data-user-initial>A</div>
       <div class="user-name-row"><span data-user-name>[会員名]</span> さん</div>
-      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #5c6b73; font-weight: 700;">ログアウト</a>
     </div>
   </div>
 
@@ -78,12 +78,12 @@
 
     <div style="font-size: 11px;"><a href="apply.html">← 通常表示（受付枠に空きがある場合）に戻る</a></div>
 
-    <div style="background: #ffffff; border-radius: 16px; padding: 16px 22px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between;">
-      <div>
-        <div style="font-size: 11px; color: #9db0b8;">今月のポイントプラン受付枠（残り）</div>
+    <div style="background: #ffffff; border-radius: 16px; padding: 16px 22px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div style="flex-shrink: 0;">
+        <div style="font-size: 11px; color: #5c6b73;">今月のポイントプラン受付枠（残り）</div>
         <div style="font-size: 22px; font-weight: 800; color: #c0524f; margin-top: 2px;">0pt（満枠）</div>
       </div>
-      <div style="text-align: right; font-size: 11px; color: #9db0b8; max-width: 380px;">
+      <div style="text-align: right; font-size: 14px; color: #5c6b73; max-width: 380px; flex: 1 1 220px; min-width: 0;">
         月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。<br><br>
         申請は<span style="color: #c0524f; font-weight: 700;">完全先着順</span>で、申請した時点で枠を仮押さえします。<br>枠に達し次第、今月の受付は終了します。
       </div>
@@ -101,12 +101,12 @@
       </div>
 
       <div style="font-size: 16px; font-weight: 800;">今月のポイントプラン受付枠は上限に達しました</div>
-      <div style="font-size: 12.5px; color: #8fa2ac; max-width: 460px;">
+      <div style="font-size: 15.5px; color: #5c6b73; max-width: 460px;">
         ポイントプランの制作枠は、月1プランの利用状況に応じて月ごとに変動する共有枠です。<br>申請は完全先着順のため、今月はすでに上限まで受け付けが完了しています。<br>
         保有ポイントは失効しませんので、来月1日〜10日の受付期間に改めて申請してください。
       </div>
 
-      <div style="background: #eef2f4; color: #9db0b8; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; margin-top: 6px; cursor: not-allowed;">
+      <div style="background: #eef2f4; color: #5c6b73; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; margin-top: 6px; cursor: not-allowed;">
         この内容で申請する（枠が空くまで利用できません）
       </div>
 
@@ -129,7 +129,7 @@
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>

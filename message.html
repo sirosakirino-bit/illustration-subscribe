@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>メッセージ｜[サイト名]</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
-  a:hover { color: #1f7fb3; }
+  a:hover { color: #15608c; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -19,13 +19,13 @@
   .navlinks > a { padding: 8px 16px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c; }
 
   .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; max-width: 420px; align-self: flex-start; }
   .delivery-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 420px; align-self: flex-start; }
-  .balance-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; background: #e6f7ea; border: 1px solid #cdebd4; color: #3f9457; }
+  .balance-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; background: #e6f7ea; border: 1px solid #cdebd4; color: #2d7a42; }
   .accept-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 12.5px; padding: 10px 0; border-radius: 999px; text-align: center; cursor: pointer; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
   .accept-btn:hover { opacity: 0.92; }
   .msg-row { display: flex; flex-direction: column; gap: 4px; }
@@ -87,7 +87,7 @@
     <div class="user">
       <div class="avatar" data-user-initial>A</div>
       <div class="user-name-row"><span data-user-name>[会員名]</span> さん</div>
-      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #5c6b73; font-weight: 700;">ログアウト</a>
     </div>
   </div>
 
@@ -101,11 +101,11 @@
 
       <div style="background: #ffffff; border-radius: 18px; padding: 18px 24px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
         <div style="min-width: 0;">
-          <div style="font-size: 11px; color: #9db0b8;">保有ポイント：<span id="balance-text" style="font-weight: 800; color: #2f9bd6;">ー</span></div>
+          <div style="font-size: 11px; color: #5c6b73;">保有ポイント：<span id="balance-text" style="font-weight: 800; color: #2f9bd6;">ー</span></div>
           <div id="thread-title" style="font-size: 15px; font-weight: 800; margin-top: 3px;">読み込み中…</div>
-          <div id="thread-started" style="font-size: 11px; color: #9db0b8; margin-top: 3px;"></div>
+          <div id="thread-started" style="font-size: 11px; color: #5c6b73; margin-top: 3px;"></div>
         </div>
-        <div id="status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #8fa2ac; flex-shrink: 0;">ー</div>
+        <div id="status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #5c6b73; flex-shrink: 0;">ー</div>
       </div>
 
       <div style="background: #ffffff; border-radius: 18px; padding: 22px 24px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
@@ -113,7 +113,7 @@
         <div style="font-size: 13px; font-weight: 800;">やり取り</div>
 
         <div id="messages" style="display: flex; flex-direction: column; gap: 14px; flex-grow: 1;">
-          <div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">読み込み中…</div>
+          <div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">読み込み中…</div>
         </div>
 
         <div class="send-box">
@@ -123,7 +123,7 @@
 
         <div id="send-hint" style="font-size: 10.5px; color: #b3c2c9; text-align: right;"></div>
 
-        <div style="font-size: 10.5px; color: #b3c2c9; text-align: center;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
+        <div style="font-size: 13.5px; color: #b3c2c9; text-align: center;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
 
       </div>
 
@@ -181,7 +181,7 @@
   function renderMessages(messages, application) {
     var container = document.getElementById('messages');
     if (!messages.length) {
-      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">まだメッセージはありません</div>';
+      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">まだメッセージはありません</div>';
       return;
     }
     container.innerHTML = messages.map(function (m) {
@@ -190,7 +190,7 @@
       if (m.kind === 'system') {
         return (
           '<div style="display:flex; justify-content:center;">' +
-            '<div style="background:#f2f6f7; color:#8fa2ac; font-size:11.5px; padding:10px 18px; border-radius:999px; text-align:center; max-width:480px; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
+            '<div style="background:#f2f6f7; color:#5c6b73; font-size:11.5px; padding:10px 18px; border-radius:999px; text-align:center; max-width:480px; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
           '</div>'
         );
       }
@@ -204,7 +204,7 @@
               '<div class="accept-btn" onclick="acceptQuote()">この内容で正式受付する</div>' +
             '</div>';
         } else if (m.quote_status === 'accepted') {
-          actions = '<div style="font-size:12px; font-weight:800; color:#3f9457; display:flex; align-items:center; gap:6px;">' +
+          actions = '<div style="font-size:12px; font-weight:800; color:#2d7a42; display:flex; align-items:center; gap:6px;">' +
             '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
             '正式受付済み</div>';
         } else if (m.quote_status === 'superseded') {
@@ -217,7 +217,7 @@
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
                 '運営からのポイントご提示' +
               '</div>' +
-              '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#9db0b8; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
+              '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
               (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
               actions +
             '</div>' +
@@ -230,7 +230,7 @@
         return (
           '<div class="msg-row" style="align-items:flex-start;">' +
             '<div class="delivery-card">' +
-              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#3f9457;">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#2d7a42;">' +
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>' +
                 '納品のお知らせ' +
               '</div>' +
@@ -353,7 +353,7 @@
   }
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>

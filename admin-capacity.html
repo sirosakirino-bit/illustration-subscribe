@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>制作枠状況｜[サイト名] 管理画面</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -16,7 +16,7 @@
   .navlinks > a { padding: 8px 10px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .admin-user-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
 
   @media (max-width: 820px) {
@@ -60,6 +60,10 @@
     }
     .topbar.nav-open .nav-active { box-shadow: none; }
   }
+
+  @media (max-width: 640px) {
+    .capacity-stats-row { flex-direction: column; }
+  }
 </style>
 </head>
 <body>
@@ -77,7 +81,7 @@
       <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
     </div>
     <div class="admin-user-info">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c;">運</div>
       <div>あなた（運営）</div>
     </div>
   </div>
@@ -86,23 +90,23 @@
 
     <div>
       <div style="font-size: 20px; font-weight: 800;">制作枠状況</div>
-      <div style="font-size: 12px; color: #9db0b8; margin-top: 4px;">ポイントプランの制作枠は、月1プランの利用状況に応じて月ごとに変動する共有枠です。今月の受付可能ポイント数はこのページからいつでも調整できます。</div>
+      <div style="font-size: 15px; color: #5c6b73; margin-top: 4px;">ポイントプランの制作枠は、月1プランの利用状況に応じて月ごとに変動する共有枠です。今月の受付可能ポイント数はこのページからいつでも調整できます。</div>
     </div>
 
-    <div style="display: flex; gap: 14px;">
-      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
-        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">月間総制作キャパ（上限）</div>
-        <div style="font-size: 24px; font-weight: 800; margin-top: 6px;">8<span style="font-size: 13px; font-weight: 700; color: #9db0b8;">pt / 月</span></div>
+    <div class="capacity-stats-row" style="display: flex; gap: 14px;">
+      <div class="capacity-stat-card" style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">月間総制作キャパ（上限）</div>
+        <div style="font-size: 24px; font-weight: 800; margin-top: 6px;">8<span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt / 月</span></div>
         <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">月1プラン・ポイントプラン合算の上限目安</div>
       </div>
-      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
-        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">月1プランの当月消費</div>
-        <div style="font-size: 24px; font-weight: 800; margin-top: 6px; color: #1f7fb3;">4<span style="font-size: 13px; font-weight: 700; color: #9db0b8;">pt</span></div>
+      <div class="capacity-stat-card" style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">月1プランの当月消費</div>
+        <div style="font-size: 24px; font-weight: 800; margin-top: 6px; color: #15608c;">4<span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt</span></div>
         <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">基礎確保 2pt×2名／追加購入確定 0pt</div>
       </div>
-      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
-        <div style="font-size: 11px; color: #9db0b8; font-weight: 700;">差引の自動算出枠（参考値）</div>
-        <div style="font-size: 24px; font-weight: 800; margin-top: 6px; color: #3f9457;">4<span style="font-size: 13px; font-weight: 700; color: #9db0b8;">pt</span></div>
+      <div class="capacity-stat-card" style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+        <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">差引の自動算出枠（参考値）</div>
+        <div style="font-size: 24px; font-weight: 800; margin-top: 6px; color: #2d7a42;">4<span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt</span></div>
         <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">総キャパ8pt − 月1プラン消費4pt</div>
       </div>
     </div>
@@ -110,10 +114,10 @@
     <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 14px;">
       <div style="display: flex; align-items: center; justify-content: space-between;">
         <div style="font-size: 14px; font-weight: 800;">今月のポイントプラン受付可能ポイント数</div>
-        <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #eaf6fb; color: #1f7fb3;">会員側にも即時反映</span>
+        <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #eaf6fb; color: #15608c;">会員側にも即時反映</span>
       </div>
 
-      <div style="font-size: 11.5px; color: #8fa2ac;">月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。大型の通常依頼が入った場合などは、ここで残り枠数を直接調整してください。</div>
+      <div style="font-size: 14.5px; color: #5c6b73;">月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。大型の通常依頼が入った場合などは、ここで残り枠数を直接調整してください。</div>
 
       <div style="display: flex; align-items: center; gap: 14px; margin-top: 4px;">
         <div style="display: flex; align-items: center; gap: 8px; border: 2px solid #2f9bd6; border-radius: 14px; padding: 10px 20px; background: #eef8fd;">
@@ -134,18 +138,18 @@
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
         <div style="color: #5c6b73;">申請中・正式受付で仮押さえ済み（先着順）</div>
-        <div style="font-weight: 700; color: #b3791a;">2pt</div>
+        <div style="font-weight: 700; color: #8f5f10;">2pt</div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
         <div style="color: #5c6b73;">残り受付可能</div>
-        <div style="font-weight: 800; color: #3f9457;">2pt</div>
+        <div style="font-weight: 800; color: #2d7a42;">2pt</div>
       </div>
     </div>
 
   </div>
 </div>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 <script>
   function toggleMobileNav() {

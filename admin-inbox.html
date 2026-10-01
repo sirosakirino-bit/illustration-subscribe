@@ -4,22 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>メッセージ｜[サイト名] 管理画面</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 1320px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .plan-tag { font-size: 8.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; flex-shrink: 0; white-space: nowrap; }
-  .plan-tag.point { background: #eaf6fb; color: #1f7fb3; }
+  .plan-tag.point { background: #eaf6fb; color: #15608c; }
   .plan-tag.monthly { background: #f1eefb; color: #6a4fc0; }
 
   .contact-row.unread { background: #fdf1f0; }
   .contact-row.unread.active { background: #eef8fd; }
   .unread-badge { min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: #c0524f; color: #fff; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-  .deliver-btn { display: inline-flex; align-items: center; gap: 6px; background: #e6f7ea; color: #3f9457; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 999px; cursor: pointer; align-self: flex-start; }
+  .deliver-btn { display: inline-flex; align-items: center; gap: 6px; background: #e6f7ea; color: #2d7a42; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 999px; cursor: pointer; align-self: flex-start; }
   .deliver-composer { display: none; flex-direction: column; gap: 12px; background: #f3faf5; border: 1px solid #cfe8d6; border-radius: 14px; padding: 18px 20px; }
   .send-deliver-btn { background: #3f9457; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 22px; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; }
   .deliver-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
@@ -28,7 +28,7 @@
   .navlinks > a { padding: 8px 10px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .admin-user-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
 
   .contact-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-left: 3px solid transparent; cursor: pointer; }
@@ -120,7 +120,7 @@
       <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
     </div>
     <div class="admin-user-info">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c;">運</div>
       <div>あなた（運営）</div>
     </div>
   </div>
@@ -129,7 +129,7 @@
 
     <div>
       <div style="font-size: 20px; font-weight: 800;">メッセージ</div>
-      <div style="font-size: 12px; color: #9db0b8; margin-top: 2px;">申請ごとのやり取りを一覧で確認できます。左から選ぶと、右側の表示がそのまま切り替わります。</div>
+      <div style="font-size: 15px; color: #5c6b73; margin-top: 2px;">申請ごとのやり取りを一覧で確認できます。左から選ぶと、右側の表示がそのまま切り替わります。</div>
     </div>
 
     <div class="inbox-split">
@@ -141,14 +141,14 @@
         </div>
 
         <div id="contact-rows" style="display: flex; flex-direction: column; overflow-y: auto;">
-          <div style="padding: 20px 16px; font-size: 12px; color: #9db0b8; text-align: center;">読み込み中…</div>
+          <div style="padding: 20px 16px; font-size: 12px; color: #5c6b73; text-align: center;">読み込み中…</div>
         </div>
 
       </div>
 
       <div class="inbox-thread">
 
-        <div id="panel-empty" style="display: flex; align-items: center; justify-content: center; flex-grow: 1; font-size: 13px; color: #9db0b8;">左の一覧から会員を選んでください</div>
+        <div id="panel-empty" style="display: flex; align-items: center; justify-content: center; flex-grow: 1; font-size: 13px; color: #5c6b73;">左の一覧から会員を選んでください</div>
 
         <div id="panel-thread" style="display: none; flex-direction: column; flex-grow: 1;">
 
@@ -159,10 +159,10 @@
               </div>
               <div style="min-width: 0;">
                 <div id="thread-member-name" style="font-size: 14px; font-weight: 800;">ー</div>
-                <div id="thread-title" style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ー</div>
+                <div id="thread-title" style="font-size: 11px; color: #5c6b73; margin-top: 2px;">ー</div>
               </div>
             </div>
-            <div id="thread-status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #8fa2ac; flex-shrink: 0;">ー</div>
+            <div id="thread-status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #5c6b73; flex-shrink: 0;">ー</div>
           </div>
 
           <div id="thread-messages" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1; overflow-y: auto;"></div>
@@ -176,7 +176,7 @@
 
           <div id="thread-send-hint" style="font-size: 10.5px; color: #b3c2c9; text-align: right; padding: 4px 22px 0;"></div>
 
-          <div style="font-size: 10.5px; color: #b3c2c9; text-align: center; padding: 6px 22px 14px;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
+          <div style="font-size: 13.5px; color: #b3c2c9; text-align: center; padding: 6px 22px 14px;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
 
         </div>
 
@@ -238,7 +238,7 @@
     });
 
     if (!filtered.length) {
-      container.innerHTML = '<div style="padding: 20px 16px; font-size: 12px; color: #9db0b8; text-align: center;">該当する申請はありません</div>';
+      container.innerHTML = '<div style="padding: 20px 16px; font-size: 12px; color: #5c6b73; text-align: center;">該当する申請はありません</div>';
       return;
     }
 
@@ -261,7 +261,7 @@
               '</div>' +
               '<div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">' +
                 (unread ? '<span class="unread-badge">' + t.unread_count + '</span>' : '') +
-                '<div style="font-size: 9.5px; color: #9db0b8;">' + when + '</div>' +
+                '<div style="font-size: 9.5px; color: #5c6b73;">' + when + '</div>' +
               '</div>' +
             '</div>' +
             '<div style="font-size: 11px; color: ' + (unread ? '#3b454a; font-weight: 700;' : '#5c6b73;') + ' margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(snippet) + '</div>' +
@@ -317,7 +317,7 @@
           '納品する' +
         '</div>' +
         '<div id="composer-box" class="composer deliver-composer">' +
-          '<div style="font-size: 12px; font-weight: 800; color: #3f9457;">会員へのメッセージ（任意）</div>' +
+          '<div style="font-size: 12px; font-weight: 800; color: #2d7a42;">会員へのメッセージ（任意）</div>' +
           '<textarea id="delivery-note-input" style="width: 100%; min-height: 60px; border: 1px solid #cfe8d6; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;" placeholder="例）お待たせしました！ご依頼の一枚絵が完成しましたので、ご確認をお願いいたします。"></textarea>' +
           '<div class="send-deliver-btn" onclick="sendDelivery()">この内容で納品する</div>' +
         '</div>';
@@ -335,7 +335,7 @@
   function renderThreadMessages(messages, application) {
     var container = document.getElementById('thread-messages');
     if (!messages.length) {
-      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">まだメッセージはありません</div>';
+      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">まだメッセージはありません</div>';
       return;
     }
     container.innerHTML = messages.map(function (m) {
@@ -344,7 +344,7 @@
       if (m.kind === 'system') {
         return (
           '<div style="display:flex; justify-content:center;">' +
-            '<div style="background:#f2f6f7; color:#8fa2ac; font-size:11.5px; padding:10px 18px; border-radius:999px; text-align:center; max-width:480px; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
+            '<div style="background:#f2f6f7; color:#5c6b73; font-size:11.5px; padding:10px 18px; border-radius:999px; text-align:center; max-width:480px; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
           '</div>'
         );
       }
@@ -352,8 +352,8 @@
       if (m.kind === 'quote') {
         var priceYen = (m.point_cost * 10000).toLocaleString();
         var statusNote = '';
-        if (m.quote_status === 'pending') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#b3791a; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員の確認待ち</div>';
-        else if (m.quote_status === 'accepted') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#3f9457; background:#e6f7ea; padding:4px 10px; border-radius:999px; align-self:flex-start;">正式受付済み</div>';
+        if (m.quote_status === 'pending') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#8f5f10; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員の確認待ち</div>';
+        else if (m.quote_status === 'accepted') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#2d7a42; background:#e6f7ea; padding:4px 10px; border-radius:999px; align-self:flex-start;">正式受付済み</div>';
         else if (m.quote_status === 'superseded') statusNote = '<div style="font-size:10.5px; color:#b3c2c9;">新しい内容に更新済み</div>';
         return (
           '<div class="msg-row" style="align-items:flex-end;">' +
@@ -362,7 +362,7 @@
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
                 'ポイントのご提示' +
               '</div>' +
-              '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#9db0b8; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
+              '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
               (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
               statusNote +
             '</div>' +
@@ -375,7 +375,7 @@
         return (
           '<div class="msg-row" style="align-items:flex-end;">' +
             '<div class="deliver-card" style="align-self:flex-end;">' +
-              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#3f9457;">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#2d7a42;">' +
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>' +
                 '納品しました' +
               '</div>' +
@@ -394,7 +394,7 @@
             '<div style="max-width:420px; width:100%; align-self:flex-end; display:flex; flex-direction:column; gap:6px;">' +
               '<textarea id="edit-input-' + m.id + '" style="width:100%; min-height:60px; border:1px solid #dcedf5; border-radius:12px; padding:10px 14px; font-size:13px; font-family:inherit; color:#3b454a; outline:none; resize:vertical;">' + escapeHtml(m.body) + '</textarea>' +
               '<div style="display:flex; gap:8px; align-self:flex-end;">' +
-                '<div style="font-size:11px; font-weight:700; color:#9db0b8; padding:7px 14px; border-radius:999px; cursor:pointer; background:#f2f6f7;" onclick="cancelEditMessage()">キャンセル</div>' +
+                '<div style="font-size:11px; font-weight:700; color:#5c6b73; padding:7px 14px; border-radius:999px; cursor:pointer; background:#f2f6f7;" onclick="cancelEditMessage()">キャンセル</div>' +
                 '<div style="font-size:11px; font-weight:700; color:#fff; padding:7px 16px; border-radius:999px; cursor:pointer; background:#2f9bd6;" onclick="saveEditMessage(' + m.id + ')">保存</div>' +
               '</div>' +
             '</div>' +
@@ -536,7 +536,7 @@
   }
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>

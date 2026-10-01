@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ポイントを使う｜[サイト名]</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS 1p', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
-  a:hover { color: #1f7fb3; }
+  a:hover { color: #15608c; }
   .page { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -19,9 +19,9 @@
   .navlinks > a { padding: 8px 16px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
-  .nav-inactive { color: #8fa2ac; }
+  .nav-inactive { color: #5c6b73; }
   .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c; }
 
   .tab-btn { font-size: 13px; font-weight: 700; padding: 11px 20px; border-radius: 999px; cursor: pointer; text-align: center; }
   .tab-btn.active { background: #2f9bd6; color: #fff; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
@@ -31,7 +31,7 @@
   .menu-card.selected { border-color: #2f9bd6; background: #eaf6fb; }
   .menu-pt-badge { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0; }
   .menu-title { font-size: 13.5px; font-weight: 700; }
-  .menu-desc { font-size: 11.5px; color: #9db0b8; margin-top: 2px; }
+  .menu-desc { font-size: 11.5px; color: #5c6b73; margin-top: 2px; }
   .menu-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c9d8de; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .menu-card.selected .menu-radio { border-color: #2f9bd6; background: #2f9bd6; }
   .menu-radio-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; }
@@ -89,29 +89,29 @@
     <div class="user">
       <div class="avatar" data-user-initial>A</div>
       <div class="user-name-row"><span data-user-name>[会員名]</span> さん</div>
-      <a href="#" data-action="logout" style="font-size: 11px; color: #9db0b8; font-weight: 700;">ログアウト</a>
+      <a href="#" data-action="logout" style="font-size: 11px; color: #5c6b73; font-weight: 700;">ログアウト</a>
     </div>
   </div>
 
   <div style="padding: 8px 36px 36px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1;">
 
-    <div style="background: #ffffff; border-radius: 16px; padding: 16px 22px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between;">
-      <div>
-        <div style="font-size: 11px; color: #9db0b8;">今月のポイントプラン受付枠（残り）</div>
+    <div style="background: #ffffff; border-radius: 16px; padding: 16px 22px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div style="flex-shrink: 0;">
+        <div style="font-size: 11px; color: #5c6b73;">今月のポイントプラン受付枠（残り）</div>
         <div style="font-size: 22px; font-weight: 800; color: #2f9bd6; margin-top: 2px;">4pt</div>
       </div>
-      <div style="text-align: right; font-size: 11px; color: #9db0b8; max-width: 380px;">
+      <div style="text-align: right; font-size: 14px; color: #5c6b73; max-width: 380px; flex: 1 1 220px; min-width: 0;">
         月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。<br><br>
         申請は<span style="color: #c0524f; font-weight: 700;">完全先着順</span>で、申請した時点で枠を仮押さえします。<br>枠に達し次第、今月の受付は終了します。
       </div>
     </div>
 
-    <div style="background: #eaf6fb; border: 1px solid #cbe9f7; border-radius: 14px; padding: 12px 18px; font-size: 12px; color: #1f7fb3; display: flex; align-items: center; gap: 8px;">
+    <div style="background: #eaf6fb; border: 1px solid #cbe9f7; border-radius: 14px; padding: 12px 18px; font-size: 12px; color: #15608c; display: flex; align-items: center; gap: 8px;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
       申請受付期間：毎月1日〜10日／現在の保有ポイント：<span id="balance-display" style="font-weight: 800;">読み込み中…</span>
     </div>
 
-    <div id="active-app-blocked" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 14px; padding: 14px 18px; font-size: 12px; color: #a8722a;">
+    <div id="active-app-blocked" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 14px; padding: 14px 18px; font-size: 15px; color: #8a5c1e;">
       現在進行中のご依頼（ヒアリング中・制作中）が1件あるため、新しい申請はできません。メニューから選ぶ場合もご相談の場合も同様です。対応完了後にもう一度お申し込みください。
     </div>
 
@@ -125,7 +125,7 @@
     <!-- ===== メニュー選択タブ ===== -->
     <div id="panel-menu" style="display: flex; flex-direction: column; gap: 18px;">
 
-      <div style="background: #e6f7ea; border: 1px solid #cdebd4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #3f9457;">
+      <div style="background: #e6f7ea; border: 1px solid #cdebd4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #2d7a42;">
         メニューからお選びいただいた内容は、<span style="font-weight: 800;">ヒアリング不要でそのまま正式受付</span>となります。ラフ完成後に内容が大きく変わる大幅な修正が発生した場合のみ、別途10,000円（＋消費税10%）を申し受けます。
       </div>
 
@@ -179,7 +179,7 @@
             <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">参考画像・ポーズ資料など<span style="color: #b3c2c9; font-weight: 500;">（任意）</span></div>
             <div style="display: flex; align-items: center; gap: 14px; border: 1.5px dashed #cbe0e9; border-radius: 12px; padding: 12px 16px;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-              <div style="flex-grow: 1; font-size: 11.5px; color: #9db0b8;">未添付でも受付可能です</div>
+              <div style="flex-grow: 1; font-size: 11.5px; color: #5c6b73;">未添付でも受付可能です</div>
               <div style="border: 1px solid #dcedf5; color: #2f9bd6; font-weight: 700; font-size: 11.5px; padding: 8px 16px; border-radius: 999px; white-space: nowrap;">画像を追加</div>
             </div>
           </div>
@@ -191,7 +191,7 @@
 
           <div id="balance-check" style="border-radius: 12px; padding: 12px 16px; font-size: 12.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
             <div id="balance-check-text">使用ポイント：<span id="selected-pt-text">2pt</span>／保有ポイント：3pt</div>
-            <div id="balance-check-result" style="color: #3f9457;">受付後の残り：1pt</div>
+            <div id="balance-check-result" style="color: #2d7a42;">受付後の残り：1pt</div>
           </div>
 
         </div>
@@ -204,7 +204,7 @@
               <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
               <div style="font-size: 13px;">商用利用</div>
             </div>
-            <div style="font-size: 12px; color: #8fa2ac;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+            <div style="font-size: 12px; color: #5c6b73;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
@@ -212,7 +212,7 @@
               <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
               <div style="font-size: 13px;">実績非公開</div>
             </div>
-            <div style="font-size: 12px; color: #8fa2ac;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+            <div style="font-size: 12px; color: #5c6b73;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
@@ -220,10 +220,10 @@
               <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
               <div style="font-size: 13px;">著作権譲渡</div>
             </div>
-            <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+            <div style="font-size: 12px; color: #5c6b73;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
-          <div style="font-size: 10.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、受付時にStripeから個別の請求書でご案内します。</div>
+          <div style="font-size: 13.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、受付時にStripeから個別の請求書でご案内します。</div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -238,7 +238,7 @@
     <!-- ===== 相談タブ ===== -->
     <div id="panel-consult" style="display: none; flex-direction: column; gap: 18px;">
 
-      <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #6a4fc0;">
+      <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 14.5px; color: #6a4fc0;">
         メニューにない特殊な内容や、4pt以上の大型案件のご相談はこちらから。内容・必要ptについて双方が合意した時点で「正式受付」となります。ポイントプランは正式受付から納品まで2ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。保有ポイント内で複数のご依頼をしたい場合は、依頼内容に「複数枚希望」である旨を必ず含めてお送りください。
       </div>
 
@@ -259,7 +259,7 @@
             <div class="estimate-chip" onclick="selectEstimate(this, '6pt')" style="border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 18px; font-size: 12px; font-weight: 700; color: #5c6b73; cursor: pointer;">6pt</div>
             <div class="estimate-chip" onclick="selectEstimate(this, 'わからない')" style="border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 18px; font-size: 12px; font-weight: 700; color: #5c6b73; cursor: pointer;">わからない</div>
           </div>
-          <div style="font-size: 11px; color: #9db0b8;">※最終的な必要ポイント数はご依頼内容の確認後に確定します</div>
+          <div style="font-size: 11px; color: #5c6b73;">※最終的な必要ポイント数はご依頼内容の確認後に確定します</div>
         </div>
 
         <div id="consult-note" style="display:none; font-size: 11.5px; font-weight: 700;"></div>
@@ -272,7 +272,7 @@
               <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
               <div style="font-size: 13px;">商用利用</div>
             </div>
-            <div style="font-size: 12px; color: #8fa2ac;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+            <div style="font-size: 12px; color: #5c6b73;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
@@ -280,7 +280,7 @@
               <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
               <div style="font-size: 13px;">実績非公開</div>
             </div>
-            <div style="font-size: 12px; color: #8fa2ac;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+            <div style="font-size: 12px; color: #5c6b73;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
@@ -288,10 +288,10 @@
               <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
               <div style="font-size: 13px;">著作権譲渡</div>
             </div>
-            <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
+            <div style="font-size: 12px; color: #5c6b73;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
-          <div style="font-size: 10.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
+          <div style="font-size: 13.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
         </div>
 
         <div style="display: flex; justify-content: flex-start;">
@@ -517,7 +517,7 @@
   }
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>
