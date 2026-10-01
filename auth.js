@@ -127,8 +127,16 @@
         })
       : Promise.resolve({ 'Content-Type': 'application/json' });
 
+    var url = '/.netlify/functions/' + name;
+    if (options.query) {
+      var params = Object.keys(options.query)
+        .filter(function (k) { return options.query[k] !== undefined && options.query[k] !== null && options.query[k] !== ''; })
+        .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(options.query[k]); });
+      if (params.length) url += '?' + params.join('&');
+    }
+
     return headersPromise.then(function (headers) {
-      return fetch('/.netlify/functions/' + name, {
+      return fetch(url, {
         method: options.method || 'GET',
         headers: headers,
         body: options.body ? JSON.stringify(options.body) : undefined

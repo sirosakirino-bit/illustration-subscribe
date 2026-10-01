@@ -14,7 +14,6 @@
   .plan-tag { font-size: 8.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; flex-shrink: 0; white-space: nowrap; }
   .plan-tag.point { background: #eaf6fb; color: #1f7fb3; }
   .plan-tag.monthly { background: #f1eefb; color: #6a4fc0; }
-  .status-pill { cursor: pointer; user-select: none; }
 
   .contact-row.unread { background: #fdf1f0; }
   .contact-row.unread.active { background: #eef8fd; }
@@ -23,7 +22,7 @@
   .deliver-btn { display: inline-flex; align-items: center; gap: 6px; background: #e6f7ea; color: #3f9457; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 999px; cursor: pointer; align-self: flex-start; }
   .deliver-composer { display: none; flex-direction: column; gap: 12px; background: #f3faf5; border: 1px solid #cfe8d6; border-radius: 14px; padding: 18px 20px; }
   .send-deliver-btn { background: #3f9457; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 22px; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; }
-  .deliver-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-end; }
+  .deliver-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
   .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; }
   .navlinks > a { padding: 8px 14px; }
@@ -32,21 +31,21 @@
 
   .contact-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-left: 3px solid transparent; cursor: pointer; }
   .contact-row.active { background: #eef8fd; border-left: 3px solid #2f9bd6; }
+  .contact-row:hover { background: #f7fbff; }
 
-  .msg-panel { display: none; flex-direction: column; flex-grow: 1; }
-  .msg-panel.active { display: flex; }
-
-  .pt-chip { border: 1px solid #dcedf5; border-radius: 999px; padding: 9px 20px; font-size: 13px; font-weight: 700; color: #5c6b73; cursor: pointer; background: #ffffff; }
-  .pt-chip.selected { border: 2px solid #2f9bd6; background: #eef8fd; color: #2f9bd6; }
   .quote-btn { display: inline-flex; align-items: center; gap: 6px; background: #f1eefb; color: #6a4fc0; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 999px; cursor: pointer; align-self: flex-start; }
   .composer { display: none; flex-direction: column; gap: 12px; background: #f9f7fd; border: 1px solid #e3dcf5; border-radius: 14px; padding: 18px 20px; }
-  .option-card { border: 1px solid #e3dcf5; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; background: #ffffff; }
-  .option-card.selected { border: 2px solid #6a4fc0; background: #f3effc; }
   .send-quote-btn { background: #6a4fc0; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 0; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; padding-left: 22px; padding-right: 22px; }
-  .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-end; }
+  .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
+  .pt-input { width: 90px; padding: 9px 10px; border: 1px solid #e3dcf5; border-radius: 10px; font-size: 13px; font-family: inherit; text-align: center; }
+  .bubble { font-size: 13px; padding: 12px 16px; max-width: 420px; line-height: 1.6; }
+  .bubble.mine { background: #2f9bd6; color: #ffffff; border-radius: 16px 4px 16px 16px; align-self: flex-end; }
+  .bubble.theirs { background: #f2f6f7; color: #3b454a; border-radius: 4px 16px 16px 16px; align-self: flex-start; }
+  .meta { font-size: 10px; color: #b3c2c9; }
+  .msg-row { display: flex; flex-direction: column; gap: 4px; }
 </style>
 </head>
-<body>
+<body data-require-auth>
 <div class="page">
 
   <div class="topbar">
@@ -57,6 +56,7 @@
       <a href="admin-requests.html" class="nav-inactive">申請管理</a>
       <a href="admin-inbox.html" class="nav-active">メッセージ</a>
       <a href="admin-payments.html" class="nav-inactive">決済状況</a>
+      <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
     </div>
     <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73;">
       <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
@@ -68,7 +68,7 @@
 
     <div>
       <div style="font-size: 20px; font-weight: 800;">メッセージ</div>
-      <div style="font-size: 12px; color: #9db0b8; margin-top: 2px;">会員とのやり取りを一覧で確認できます。左から会員を選ぶと、右側の表示がそのまま切り替わります。</div>
+      <div style="font-size: 12px; color: #9db0b8; margin-top: 2px;">申請ごとのやり取りを一覧で確認できます。左から選ぶと、右側の表示がそのまま切り替わります。</div>
     </div>
 
     <div style="display: flex; gap: 14px; flex-grow: 1; min-height: 740px;">
@@ -76,303 +76,36 @@
       <div style="width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;">
 
         <div style="padding: 14px 16px 10px;">
-          <div style="border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 14px; font-size: 12px; color: #b3c2c9; display: flex; align-items: center; gap: 8px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b3c2c9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            会員を検索
-          </div>
+          <input id="contact-search" type="text" placeholder="会員・内容で検索" style="width: 100%; border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 14px; font-size: 12px; color: #3b454a; font-family: inherit; outline: none;">
         </div>
 
-        <div style="display: flex; flex-direction: column;">
-
-          <div id="contact-A" class="contact-row active" onclick="selectContact('A')">
-            <div style="width: 34px; height: 34px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #1f7fb3; flex-shrink: 0;">A</div>
-            <div style="flex-grow: 1; min-width: 0;">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                <div style="display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0;">
-                  <div style="font-size: 12.5px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">[会員名A] さん</div>
-                  <span class="plan-tag point">ポイント</span>
-                </div>
-                <div style="font-size: 9.5px; color: #9db0b8; flex-shrink: 0;">9/9 10:15</div>
-              </div>
-              <div style="font-size: 11px; color: #5c6b73; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">かしこまりました！Bの構図で本制作に…</div>
-            </div>
-          </div>
-
-          <div id="contact-C" class="contact-row unread" onclick="selectContact('C')">
-            <div style="width: 34px; height: 34px; border-radius: 50%; background: #eef2f4; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #9db0b8; flex-shrink: 0;">C</div>
-            <div style="flex-grow: 1; min-width: 0;">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                <div style="display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0;">
-                  <div style="font-size: 12.5px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">[会員名C] さん</div>
-                  <span class="plan-tag point">ポイント</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-                  <span id="unread-badge-C" class="unread-badge">1</span>
-                  <div style="font-size: 9.5px; color: #9db0b8;">8/28 13:40</div>
-                </div>
-              </div>
-              <div style="font-size: 11px; color: #3b454a; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">キャラクターラフ案の件、資料お送りします…</div>
-            </div>
-          </div>
-
-          <div id="contact-B" class="contact-row" onclick="selectContact('B')">
-            <div style="width: 34px; height: 34px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #1f7fb3; flex-shrink: 0;">B</div>
-            <div style="flex-grow: 1; min-width: 0;">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                <div style="display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0;">
-                  <div style="font-size: 12.5px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">[会員名B] さん</div>
-                  <span class="plan-tag monthly">月1</span>
-                </div>
-                <div style="font-size: 9.5px; color: #9db0b8; flex-shrink: 0;">8/3 16:02</div>
-              </div>
-              <div style="font-size: 11px; color: #5c6b73; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">承知しました、追加購入でお願いします！</div>
-            </div>
-          </div>
-
-          <div id="contact-D" class="contact-row" onclick="selectContact('D')">
-            <div style="width: 34px; height: 34px; border-radius: 50%; background: #fbecec; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #c0524f; flex-shrink: 0;">D</div>
-            <div style="flex-grow: 1; min-width: 0;">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                <div style="display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0;">
-                  <div style="font-size: 12.5px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">[会員名D] さん</div>
-                  <span class="plan-tag point">ポイント</span>
-                </div>
-                <div style="font-size: 9.5px; color: #9db0b8; flex-shrink: 0;">8/1 09:15</div>
-              </div>
-              <div style="font-size: 11px; color: #5c6b73; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">カード情報を更新しました。</div>
-            </div>
-          </div>
-
+        <div id="contact-rows" style="display: flex; flex-direction: column; overflow-y: auto;">
+          <div style="padding: 20px 16px; font-size: 12px; color: #9db0b8; text-align: center;">読み込み中…</div>
         </div>
 
       </div>
 
       <div style="flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0;">
 
-        <!-- PANEL A -->
-        <div id="panel-A" class="msg-panel active">
+        <div id="panel-empty" style="display: flex; align-items: center; justify-content: center; flex-grow: 1; font-size: 13px; color: #9db0b8;">左の一覧から会員を選んでください</div>
 
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4;">
-            <div>
-              <div style="font-size: 14px; font-weight: 800;">[会員名A] さん</div>
-              <div style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ポイントプラン／バストアップ＋簡易背景（2pt）の件</div>
+        <div id="panel-thread" style="display: none; flex-direction: column; flex-grow: 1;">
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4; gap: 10px;">
+            <div style="min-width: 0;">
+              <div id="thread-member-name" style="font-size: 14px; font-weight: 800;">ー</div>
+              <div id="thread-title" style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ー</div>
             </div>
-            <div id="status-pill-A" class="status-pill" data-status-idx="1" onclick="cycleStatus(this)" title="クリックで状態を切り替え（デモ用の表示切り替えです）" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #fff0da; color: #b3791a;">制作中</div>
+            <div id="thread-status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #8fa2ac; flex-shrink: 0;">ー</div>
           </div>
 
-          <div id="messages-A" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1;">
+          <div id="thread-messages" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1; overflow-y: auto;"></div>
 
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 380px; line-height: 1.6;">こんにちは！ご依頼ありがとうございます。構図案を2パターン考えたので、画像を添付しますね。どちらがお好みですか？</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた（運営）　9/8 19:40</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">Bの方が可愛くて好きです！この構図でお願いしたいです。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名A] さん　9/8 21:02</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 380px; line-height: 1.6;">かしこまりました！Bの構図で本制作に進めますね。もう少々お待ちください。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた（運営）　9/9 10:15</div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px;">
-
-            <div class="deliver-btn" onclick="toggleDeliverA()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
-              納品する
-            </div>
-
-            <div id="deliver-composer-A" class="composer deliver-composer">
-              <div style="font-size: 12px; font-weight: 800; color: #3f9457;">納品ファイル</div>
-              <div style="border: 1px dashed #cfe8d6; background: #ffffff; border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 10px; color: #9db0b8; font-size: 12.5px; cursor: not-allowed;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-                ファイルを添付（表示のみ・アップロード機能は未実装です）
-              </div>
-              <div style="font-size: 12px; font-weight: 800; color: #3f9457; margin-top: 4px;">会員へのメッセージ（任意）</div>
-              <textarea placeholder="例）お待たせしました！ご依頼の一枚絵が完成しましたので、ご確認をお願いいたします。" style="width: 100%; min-height: 60px; border: 1px solid #cfe8d6; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;"></textarea>
-              <div class="send-deliver-btn" onclick="sendDeliveryA()">この内容で納品する</div>
-            </div>
-
-          </div>
+          <div id="thread-composers" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px;"></div>
 
           <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-top: 1px solid #eef2f4;">
-            <div style="width: 34px; height: 34px; border-radius: 10px; background: #f2f6f7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8fa2ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </div>
-            <div style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #b3c2c9;">メッセージを入力…</div>
-            <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0;">送信</div>
-          </div>
-
-        </div>
-
-        <!-- PANEL C: ポイントプラン特殊な依頼のご相談 -->
-        <div id="panel-C" class="msg-panel">
-
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4;">
-            <div>
-              <div style="font-size: 14px; font-weight: 800;">[会員名C] さん</div>
-              <div style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ポイントプラン（保有6pt）／特殊な依頼のご相談：背景込みの一枚絵（複数人・VTuber差分デザイン）</div>
-            </div>
-            <div id="status-pill-C" class="status-pill" data-status-idx="0" onclick="cycleStatus(this)" title="クリックで状態を切り替え（デモ用の表示切り替えです）" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #f1eefb; color: #6a4fc0; flex-shrink: 0;">ヒアリング中</div>
-          </div>
-
-          <div id="messages-C" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1;">
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">特殊な依頼の相談フォームから失礼します。複数人（3人）の背景込み一枚絵をお願いしたいです。詳細は添付の通りです。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名C] さん　9/10 13:02</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 380px; line-height: 1.6;">ご相談ありがとうございます！内容確認しました。人数と背景の書き込み量を踏まえると5〜6pt相当になりそうです。表情差分などは必要ですか？</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた（運営）　9/10 15:40</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">差分は不要です、一枚絵のみで大丈夫です！</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名C] さん　9/10 16:10</div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px;">
-
-            <div class="quote-btn" onclick="toggleComposerC()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
-              ポイントを提示する
-            </div>
-
-            <div id="composer-C" class="composer">
-              <div style="font-size: 12px; font-weight: 800; color: #6a4fc0;">確定ポイント数</div>
-              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <div class="pt-chip selected" onclick="selectAdminPtC(this, 4)">4pt</div>
-                <div class="pt-chip" onclick="selectAdminPtC(this, 5)">5pt</div>
-                <div class="pt-chip" onclick="selectAdminPtC(this, 6)">6pt</div>
-                <div class="pt-chip" onclick="selectAdminPtC(this, 7)">7pt</div>
-                <div class="pt-chip" onclick="selectAdminPtC(this, 8)">8pt</div>
-              </div>
-              <div style="font-size: 10.5px; color: #9a8ec2;">9pt以上など特殊な場合は下の備考欄に金額とあわせてご記入ください</div>
-              <div style="font-size: 12px; font-weight: 800; color: #6a4fc0; margin-top: 4px;">備考（会員に表示されます・任意）</div>
-              <textarea placeholder="例）複数人・背景込みの一枚絵として5ptでご案内します。" style="width: 100%; min-height: 60px; border: 1px solid #e3dcf5; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;"></textarea>
-              <div class="send-quote-btn" onclick="sendQuoteC()">この内容で見積もりを送信</div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-top: 1px solid #eef2f4;">
-            <div style="width: 34px; height: 34px; border-radius: 10px; background: #f2f6f7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8fa2ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </div>
-            <div style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #b3c2c9;">メッセージを入力…</div>
-            <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0;">送信</div>
-          </div>
-
-        </div>
-
-        <!-- PANEL B: 月1プラン追加購入 -->
-        <div id="panel-B" class="msg-panel">
-
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4;">
-            <div>
-              <div style="font-size: 14px; font-weight: 800;">[会員名B] さん</div>
-              <div style="font-size: 11px; color: #9db0b8; margin-top: 2px;">月1プラン（今月の確保枠2pt相当）／今月のご依頼：背景ありの一枚絵＋表情差分2つ</div>
-            </div>
-            <div id="status-pill-B" class="status-pill" data-status-idx="0" onclick="cycleStatus(this)" title="クリックで状態を切り替え（デモ用の表示切り替えです）" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #f1eefb; color: #6a4fc0; flex-shrink: 0;">ヒアリング中</div>
-          </div>
-
-          <div id="messages-B" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1;">
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">今月の依頼です。背景ありの一枚絵に、表情差分を2つ追加してほしいです。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名B] さん　9/3 10:12</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 380px; line-height: 1.6;">ご依頼ありがとうございます！表情差分込みだと3pt相当になりそうです。今月の確保枠（2pt相当）を超える分として、追加購入（+1pt）が必要になりますが、よろしいですか？</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた（運営）　9/3 14:30</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">承知しました、追加購入でお願いします！</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名B] さん　9/3 15:02</div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px;">
-
-            <div class="quote-btn" onclick="toggleComposerB()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
-              ポイントを提示する
-            </div>
-
-            <div id="composer-B" class="composer">
-              <div style="font-size: 12px; font-weight: 800; color: #6a4fc0;">今月の確定内容</div>
-              <div class="option-card" onclick="selectOptionB(this, false)">
-                <div style="font-size: 13px; font-weight: 800;">追加購入なし</div>
-                <div style="font-size: 11px; color: #8fa2ac;">確保済みの2pt相当の範囲内で収める</div>
-              </div>
-              <div class="option-card selected" onclick="selectOptionB(this, true)">
-                <div style="font-size: 13px; font-weight: 800;">追加購入あり：+1pt</div>
-                <div style="font-size: 11px; color: #8fa2ac;">2pt相当を超える分。+10,000円＋消費税10%（最大3pt相当まで）</div>
-              </div>
-              <div style="font-size: 12px; font-weight: 800; color: #6a4fc0; margin-top: 4px;">備考（会員に表示されます・任意）</div>
-              <textarea placeholder="例）表情差分2つを含めて3pt相当としてご案内します。" style="width: 100%; min-height: 60px; border: 1px solid #e3dcf5; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;"></textarea>
-              <div class="send-quote-btn" onclick="sendQuoteB()">この内容で見積もりを送信</div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-top: 1px solid #eef2f4;">
-            <div style="width: 34px; height: 34px; border-radius: 10px; background: #f2f6f7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8fa2ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </div>
-            <div style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #b3c2c9;">メッセージを入力…</div>
-            <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0;">送信</div>
-          </div>
-
-        </div>
-
-        <!-- PANEL D -->
-        <div id="panel-D" class="msg-panel">
-
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4;">
-            <div>
-              <div style="font-size: 14px; font-weight: 800;">[会員名D] さん</div>
-              <div style="font-size: 11px; color: #9db0b8; margin-top: 2px;">ポイントプラン／お支払い方法について</div>
-            </div>
-            <div id="status-pill-D" class="status-pill" data-status-idx="2" onclick="cycleStatus(this)" title="クリックで状態を切り替え（デモ用の表示切り替えです）" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #e6f7ea; color: #3f9457; flex-shrink: 0;">対応完了</div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1;">
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">お支払いが失敗しているとのご連絡をいただきました。確認したところカードの有効期限が切れていたようです。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名D] さん　8/1 08:50</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              <div style="background: #2f9bd6; color: #ffffff; font-size: 13px; padding: 12px 16px; border-radius: 16px 4px 16px 16px; max-width: 380px; line-height: 1.6;">ご連絡ありがとうございます。有効期限切れの場合は、お手数ですがカスタマーポータルから新しいカード情報へのご変更をお願いいたします。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-right: 4px;">あなた（運営）　8/1 09:02</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
-              <div style="background: #f2f6f7; color: #3b454a; font-size: 13px; padding: 12px 16px; border-radius: 4px 16px 16px 16px; max-width: 380px; line-height: 1.6;">カード情報を更新しました。</div>
-              <div style="font-size: 10px; color: #b3c2c9; padding-left: 4px;">[会員名D] さん　8/1 09:15</div>
-            </div>
-
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px; border-top: 1px solid #eef2f4;">
-            <div style="width: 34px; height: 34px; border-radius: 10px; background: #f2f6f7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8fa2ac" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </div>
-            <div style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #b3c2c9;">メッセージを入力…</div>
-            <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0;">送信</div>
+            <input id="thread-send-input" type="text" placeholder="メッセージを入力…" style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 999px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none;">
+            <div id="thread-send-btn" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0; cursor: pointer;">送信</div>
           </div>
 
         </div>
@@ -383,204 +116,270 @@
 
   </div>
 </div>
-
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
 <script>
-  function selectContact(id) {
-    document.querySelectorAll('.contact-row').forEach(function (r) { r.classList.remove('active'); });
-    document.querySelectorAll('.msg-panel').forEach(function (p) { p.classList.remove('active'); });
-    document.getElementById('contact-' + id).classList.add('active');
-    document.getElementById('panel-' + id).classList.add('active');
-    history.replaceState(null, '', '#' + id);
-    markAsRead(id);
+  var STATUS_STYLE = {
+    'ヒアリング中': { bg: '#f1eefb', color: '#6a4fc0' },
+    '制作中': { bg: '#fff0da', color: '#b3791a' },
+    '対応完了': { bg: '#e6f7ea', color: '#3f9457' },
+    'キャンセル': { bg: '#eef2f4', color: '#8fa2ac' }
+  };
+  var PLAN_TAG = {
+    point: { cls: 'point', label: 'ポイント' },
+    monthly: { cls: 'monthly', label: '月1' }
+  };
+
+  var allThreads = [];
+  var selectedId = null;
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  // 未読表示（クリックして開いたら既読にする。表示上のみで、サーバー側への保存はまだ未実装です）
-  function markAsRead(id) {
-    var row = document.getElementById('contact-' + id);
-    if (row && row.classList.contains('unread')) {
-      row.classList.remove('unread');
-      var badge = document.getElementById('unread-badge-' + id);
-      if (badge) { badge.style.display = 'none'; }
+  function formatDateTime(iso) {
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+
+  function renderContactRows() {
+    var filter = (document.getElementById('contact-search').value || '').trim().toLowerCase();
+    var container = document.getElementById('contact-rows');
+    var filtered = allThreads.filter(function (t) {
+      if (!filter) return true;
+      return (t.member_display_name + ' ' + t.title).toLowerCase().indexOf(filter) !== -1;
+    });
+
+    if (!filtered.length) {
+      container.innerHTML = '<div style="padding: 20px 16px; font-size: 12px; color: #9db0b8; text-align: center;">該当する申請はありません</div>';
+      return;
+    }
+
+    container.innerHTML = filtered.map(function (t) {
+      var initial = t.member_display_name ? t.member_display_name.charAt(0) : '?';
+      var planTag = PLAN_TAG[t.member_plan] || PLAN_TAG.point;
+      var unread = t.unread_count > 0;
+      var snippet = t.last_message_body || t.title;
+      var when = t.last_message_at ? formatDateTime(t.last_message_at) : formatDateTime(t.created_at);
+      var rowCls = 'contact-row' + (unread ? ' unread' : '') + (String(t.id) === String(selectedId) ? ' active' : '');
+
+      return (
+        '<div class="' + rowCls + '" data-id="' + t.id + '" onclick="selectContact(' + t.id + ')">' +
+          '<div style="width: 34px; height: 34px; border-radius: 50%; background: ' + (unread ? '#eef2f4' : '#d6f0fb') + '; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: ' + (unread ? '#9db0b8' : '#1f7fb3') + '; flex-shrink: 0;">' + escapeHtml(initial) + '</div>' +
+          '<div style="flex-grow: 1; min-width: 0;">' +
+            '<div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">' +
+              '<div style="display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0;">' +
+                '<div style="font-size: 12.5px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + escapeHtml(t.member_display_name) + ' さん</div>' +
+                '<span class="plan-tag ' + planTag.cls + '">' + planTag.label + '</span>' +
+              '</div>' +
+              '<div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">' +
+                (unread ? '<span class="unread-badge">' + t.unread_count + '</span>' : '') +
+                '<div style="font-size: 9.5px; color: #9db0b8;">' + when + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="font-size: 11px; color: ' + (unread ? '#3b454a; font-weight: 700;' : '#5c6b73;') + ' margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + escapeHtml(snippet) + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function loadInbox() {
+    AuthHelpers.callFunction('admin-data', { method: 'GET', query: { inbox: 1 } }).then(function (data) {
+      allThreads = data.threads || [];
+      renderContactRows();
+      if (selectedId) loadThread(selectedId);
+    }).catch(function (err) {
+      document.getElementById('contact-rows').innerHTML = '<div style="padding: 20px 16px; font-size: 12px; color: #c0524f; text-align: center;">読み込みに失敗しました：' + err.message + '</div>';
+    });
+  }
+
+  function selectContact(id) {
+    selectedId = id;
+    history.replaceState(null, '', '#' + id);
+    renderContactRows();
+    document.getElementById('panel-empty').style.display = 'none';
+    document.getElementById('panel-thread').style.display = 'flex';
+    loadThread(id);
+  }
+
+  function renderComposers(application) {
+    var container = document.getElementById('thread-composers');
+    if (application.status === 'ヒアリング中') {
+      container.innerHTML =
+        '<div class="quote-btn" onclick="toggleComposer()">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>' +
+          'ポイントを提示する' +
+        '</div>' +
+        '<div id="composer-box" class="composer">' +
+          '<div style="font-size: 12px; font-weight: 800; color: #6a4fc0;">確定ポイント数</div>' +
+          '<input id="quote-pt-input" class="pt-input" type="number" min="1" step="1" placeholder="例）5">' +
+          '<div style="font-size: 12px; font-weight: 800; color: #6a4fc0; margin-top: 4px;">備考（会員に表示されます・任意）</div>' +
+          '<textarea id="quote-note-input" style="width: 100%; min-height: 60px; border: 1px solid #e3dcf5; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;" placeholder="例）複数人・背景込みの一枚絵として5ptでご案内します。"></textarea>' +
+          '<div class="send-quote-btn" onclick="sendQuote()">この内容で見積もりを送信</div>' +
+        '</div>';
+    } else if (application.status === '制作中') {
+      container.innerHTML =
+        '<div class="deliver-btn" onclick="toggleComposer()">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>' +
+          '納品する' +
+        '</div>' +
+        '<div id="composer-box" class="composer deliver-composer">' +
+          '<div style="font-size: 12px; font-weight: 800; color: #3f9457;">会員へのメッセージ（任意）</div>' +
+          '<textarea id="delivery-note-input" style="width: 100%; min-height: 60px; border: 1px solid #cfe8d6; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;" placeholder="例）お待たせしました！ご依頼の一枚絵が完成しましたので、ご確認をお願いいたします。"></textarea>' +
+          '<div class="send-deliver-btn" onclick="sendDelivery()">この内容で納品する</div>' +
+        '</div>';
+    } else {
+      container.innerHTML = '';
     }
   }
+
+  function toggleComposer() {
+    var el = document.getElementById('composer-box');
+    if (!el) return;
+    el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
+  }
+
+  function renderThreadMessages(messages, application) {
+    var container = document.getElementById('thread-messages');
+    if (!messages.length) {
+      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #9db0b8; text-align: center;">まだメッセージはありません</div>';
+      return;
+    }
+    container.innerHTML = messages.map(function (m) {
+      var when = formatDateTime(m.created_at);
+
+      if (m.kind === 'system') {
+        return (
+          '<div style="display:flex; justify-content:center;">' +
+            '<div style="background:#f2f6f7; color:#8fa2ac; font-size:11.5px; padding:10px 18px; border-radius:999px; text-align:center; max-width:480px; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
+          '</div>'
+        );
+      }
+
+      if (m.kind === 'quote') {
+        var priceYen = (m.point_cost * 10000).toLocaleString();
+        var statusNote = '';
+        if (m.quote_status === 'pending') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#b3791a; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員の確認待ち</div>';
+        else if (m.quote_status === 'accepted') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#3f9457; background:#e6f7ea; padding:4px 10px; border-radius:999px; align-self:flex-start;">正式受付済み</div>';
+        else if (m.quote_status === 'superseded') statusNote = '<div style="font-size:10.5px; color:#b3c2c9;">新しい内容に更新済み</div>';
+        return (
+          '<div class="msg-row" style="align-items:flex-end;">' +
+            '<div class="quote-card" style="align-self:flex-end;">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#6a4fc0;">' +
+                '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
+                'ポイントのご提示' +
+              '</div>' +
+              '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#9db0b8; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
+              (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
+              statusNote +
+            '</div>' +
+            '<div class="meta">あなた（運営）　' + when + '</div>' +
+          '</div>'
+        );
+      }
+
+      if (m.kind === 'delivery') {
+        return (
+          '<div class="msg-row" style="align-items:flex-end;">' +
+            '<div class="deliver-card" style="align-self:flex-end;">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#3f9457;">' +
+                '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>' +
+                '納品しました' +
+              '</div>' +
+              '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
+            '</div>' +
+            '<div class="meta">あなた（運営）　' + when + '</div>' +
+          '</div>'
+        );
+      }
+
+      var mine = (m.sender === 'admin');
+      return (
+        '<div class="msg-row" style="align-items:' + (mine ? 'flex-end' : 'flex-start') + ';">' +
+          '<div class="bubble ' + (mine ? 'mine' : 'theirs') + '">' + escapeHtml(m.body) + '</div>' +
+          '<div class="meta">' + (mine ? 'あなた（運営）' : escapeHtml(application.member_display_name) + ' さん') + '　' + when + '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function loadThread(id) {
+    AuthHelpers.callFunction('admin-data', { method: 'GET', query: { thread: id } }).then(function (data) {
+      document.getElementById('thread-member-name').textContent = data.application.member_display_name + ' さん';
+      document.getElementById('thread-title').textContent = data.application.title + (data.application.point_cost != null ? '（' + data.application.point_cost + 'pt）' : '');
+      var style = STATUS_STYLE[data.application.status] || { bg: '#eef2f4', color: '#8fa2ac' };
+      var pill = document.getElementById('thread-status-pill');
+      pill.textContent = data.application.status;
+      pill.style.background = style.bg;
+      pill.style.color = style.color;
+
+      renderComposers(data.application);
+      renderThreadMessages(data.messages, data.application);
+
+      // 未読が既読になったので、一覧側の未読バッジも更新する
+      loadInboxQuiet();
+    }).catch(function (err) {
+      document.getElementById('thread-messages').innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #c0524f; text-align: center;">読み込みに失敗しました：' + err.message + '</div>';
+    });
+  }
+
+  function loadInboxQuiet() {
+    AuthHelpers.callFunction('admin-data', { method: 'GET', query: { inbox: 1 } }).then(function (data) {
+      allThreads = data.threads || [];
+      renderContactRows();
+    }).catch(function () {});
+  }
+
+  function sendThreadMessage() {
+    var input = document.getElementById('thread-send-input');
+    var text = input.value.trim();
+    if (!text || !selectedId) return;
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'send-message', application_id: selectedId, body: text } })
+      .then(function () {
+        input.value = '';
+        loadThread(selectedId);
+      })
+      .catch(function (err) { alert('送信に失敗しました：' + err.message); });
+  }
+
+  function sendQuote() {
+    var pt = Number(document.getElementById('quote-pt-input').value);
+    var note = document.getElementById('quote-note-input').value.trim();
+    if (!pt || pt < 1) { alert('提示ポイント数を入力してください。'); return; }
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'send-quote', application_id: selectedId, point_cost: pt, note: note } })
+      .then(function () { loadThread(selectedId); })
+      .catch(function (err) { alert('送信に失敗しました：' + err.message); });
+  }
+
+  function sendDelivery() {
+    var note = document.getElementById('delivery-note-input').value.trim();
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'send-delivery', application_id: selectedId, note: note } })
+      .then(function () { loadThread(selectedId); })
+      .catch(function (err) { alert('納品に失敗しました：' + err.message); });
+  }
+
+  document.getElementById('thread-send-btn').addEventListener('click', sendThreadMessage);
+  document.getElementById('thread-send-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') sendThreadMessage();
+  });
+  document.getElementById('contact-search').addEventListener('input', renderContactRows);
 
   function applyHash() {
     var hash = location.hash.replace('#', '');
-    if (['A', 'B', 'C', 'D'].indexOf(hash) !== -1) {
-      selectContact(hash);
-    }
-  }
-  applyHash();
-  window.addEventListener('hashchange', applyHash);
-
-  // ---- ステータス表示（ヒアリング中／制作中／対応完了） ----
-  // 現時点では自動判定は未実装のため、状態は固定表示です。
-  // クリックで手動切り替えできるようにしてあるので、表示イメージの確認に使えます。
-  var STATUS_CYCLE = [
-    { label: 'ヒアリング中', bg: '#f1eefb', color: '#6a4fc0' },
-    { label: '制作中',       bg: '#fff0da', color: '#b3791a' },
-    { label: '対応完了',     bg: '#e6f7ea', color: '#3f9457' }
-  ];
-
-  function cycleStatus(el) {
-    var idx = (parseInt(el.getAttribute('data-status-idx'), 10) + 1) % STATUS_CYCLE.length;
-    var s = STATUS_CYCLE[idx];
-    el.textContent = s.label;
-    el.style.background = s.bg;
-    el.style.color = s.color;
-    el.setAttribute('data-status-idx', idx);
+    if (hash) selectContact(Number(hash));
   }
 
-  // ---- Panel A: 納品（実装時は「正式受付で制作中」「納品で対応完了」のように
-  //      申請ステータスと連動して status-pill が自動で切り替わる想定です） ----
-  function toggleDeliverA() {
-    var el = document.getElementById('deliver-composer-A');
-    el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-  }
-
-  function sendDeliveryA() {
-    var note = document.querySelector('#deliver-composer-A textarea').value;
-    if (!note) { note = 'お待たせしました！ご依頼のイラストが完成しましたので、ご確認をお願いいたします。'; }
-
-    var wrap = document.createElement('div');
-    wrap.style.display = 'flex';
-    wrap.style.flexDirection = 'column';
-    wrap.style.alignItems = 'flex-end';
-    wrap.style.gap = '4px';
-
-    var card = document.createElement('div');
-    card.className = 'deliver-card';
-    card.innerHTML =
-      '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#3f9457;">' +
-        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>' +
-        '納品しました' +
-      '</div>' +
-      '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + note + '</div>';
-
-    var meta = document.createElement('div');
-    meta.style.fontSize = '10px';
-    meta.style.color = '#b3c2c9';
-    meta.style.paddingRight = '4px';
-    meta.textContent = 'あなた（運営）　9/11 14:05';
-
-    wrap.appendChild(card);
-    wrap.appendChild(meta);
-    document.getElementById('messages-A').appendChild(wrap);
-
-    document.getElementById('deliver-composer-A').style.display = 'none';
-
-    // 納品が完了したら「対応完了」に自動で切り替える（実装時のステータス連動イメージ）
-    var pill = document.getElementById('status-pill-A');
-    pill.textContent = '対応完了';
-    pill.style.background = '#e6f7ea';
-    pill.style.color = '#3f9457';
-    pill.setAttribute('data-status-idx', 2);
-  }
-
-  // ---- Panel C: ポイントプラン特殊相談の見積もり ----
-  var selectedAdminPtC = 4;
-
-  function toggleComposerC() {
-    var el = document.getElementById('composer-C');
-    el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-  }
-
-  function selectAdminPtC(chip, pt) {
-    var chips = document.querySelectorAll('#composer-C .pt-chip');
-    chips.forEach(function (c) { c.classList.remove('selected'); });
-    chip.classList.add('selected');
-    selectedAdminPtC = pt;
-  }
-
-  function sendQuoteC() {
-    var note = document.querySelector('#composer-C textarea').value;
-    if (!note) { note = '複数人・背景込みの一枚絵として' + selectedAdminPtC + 'ptでご案内します。'; }
-    var priceYen = (selectedAdminPtC * 10000).toLocaleString();
-
-    var wrap = document.createElement('div');
-    wrap.style.display = 'flex';
-    wrap.style.flexDirection = 'column';
-    wrap.style.alignItems = 'flex-end';
-    wrap.style.gap = '4px';
-
-    var card = document.createElement('div');
-    card.className = 'quote-card';
-    card.innerHTML =
-      '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#6a4fc0;">' +
-        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
-        'ポイントのご提示' +
-      '</div>' +
-      '<div style="font-size:20px; font-weight:800; color:#3b454a;">' + selectedAdminPtC + 'pt<span style="font-size:12px; font-weight:700; color:#9db0b8; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
-      '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + note + '</div>' +
-      '<div style="font-size:10.5px; font-weight:700; color:#b3791a; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員の確認待ち</div>';
-
-    var meta = document.createElement('div');
-    meta.style.fontSize = '10px';
-    meta.style.color = '#b3c2c9';
-    meta.style.paddingRight = '4px';
-    meta.textContent = 'あなた（運営）　9/11 11:20';
-
-    wrap.appendChild(card);
-    wrap.appendChild(meta);
-    document.getElementById('messages-C').appendChild(wrap);
-
-    document.getElementById('composer-C').style.display = 'none';
-  }
-
-  // ---- Panel B: 月1プラン追加購入の見積もり ----
-  var extraNeededB = true;
-
-  function toggleComposerB() {
-    var el = document.getElementById('composer-B');
-    el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
-  }
-
-  function selectOptionB(card, isExtra) {
-    var cards = document.querySelectorAll('#composer-B .option-card');
-    cards.forEach(function (c) { c.classList.remove('selected'); });
-    card.classList.add('selected');
-    extraNeededB = isExtra;
-  }
-
-  function sendQuoteB() {
-    var note = document.querySelector('#composer-B textarea').value;
-    if (!note) { note = '表情差分2つを含めて3pt相当としてご案内します。'; }
-
-    var wrap = document.createElement('div');
-    wrap.style.display = 'flex';
-    wrap.style.flexDirection = 'column';
-    wrap.style.alignItems = 'flex-end';
-    wrap.style.gap = '4px';
-
-    var card = document.createElement('div');
-    card.className = 'quote-card';
-
-    var extraHtml = extraNeededB
-      ? '<div style="font-size:16px; font-weight:800; color:#3b454a;">確保枠2pt ＋ 追加購入1pt<span style="font-size:12px; font-weight:700; color:#9db0b8; margin-left:6px;">（計3pt相当）</span></div>' +
-        '<div style="font-size:12px; font-weight:700; color:#a8722a; background:#fdf3e8; padding:6px 12px; border-radius:8px;">追加購入：+1pt（+10,000円＋消費税10%）</div>'
-      : '<div style="font-size:16px; font-weight:800; color:#3b454a;">確保枠2pt相当でご案内</div>' +
-        '<div style="font-size:12px; font-weight:700; color:#3f9457; background:#e6f7ea; padding:6px 12px; border-radius:8px;">追加購入：なし</div>';
-
-    card.innerHTML =
-      '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#6a4fc0;">' +
-        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
-        '今月のご依頼内容のご提示' +
-      '</div>' +
-      extraHtml +
-      '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + note + '</div>' +
-      '<div style="font-size:10.5px; font-weight:700; color:#b3791a; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員の確認待ち</div>';
-
-    var meta = document.createElement('div');
-    meta.style.fontSize = '10px';
-    meta.style.color = '#b3c2c9';
-    meta.style.paddingRight = '4px';
-    meta.textContent = 'あなた（運営）　9/3 15:30';
-
-    wrap.appendChild(card);
-    wrap.appendChild(meta);
-    document.getElementById('messages-B').appendChild(wrap);
-
-    document.getElementById('composer-B').style.display = 'none';
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) {
+      if (!user || !window.AuthHelpers) return;
+      loadInbox();
+      applyHash();
+    });
   }
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">

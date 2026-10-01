@@ -50,7 +50,7 @@
     <div class="navlinks">
       <a href="mypage.html" class="nav-inactive">マイページ</a>
       <a href="apply.html" class="nav-active">ポイントを使う</a>
-      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span id="history-nav-badge" style="display: none; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">0</span></a>
       <a href="settings.html" class="nav-inactive">設定</a>
     </div>
     <div class="user">
@@ -309,6 +309,17 @@
     selectedEstimate = value;
   }
 
+  function updateNavBadge(applications) {
+    var total = (applications || []).reduce(function (sum, a) { return sum + (a.unread_count || 0); }, 0);
+    var badge = document.getElementById('history-nav-badge');
+    if (total > 0) {
+      badge.textContent = total;
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
   function loadMemberData() {
     if (!window.AuthHelpers) return;
     AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
@@ -318,6 +329,7 @@
         return app.status === 'ヒアリング中' || app.status === '制作中';
       });
       applyActiveAppLock();
+      updateNavBadge(data.applications);
     }).catch(function (err) {
       document.getElementById('balance-display').textContent = '取得できませんでした';
       console.error(err);

@@ -80,7 +80,7 @@
     <div class="navlinks">
       <a href="mypage.html" class="nav-active">マイページ</a>
       <a href="apply.html" class="nav-inactive">ポイントを使う</a>
-      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span id="history-nav-badge" style="display: none; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">0</span></a>
       <a href="settings.html" class="nav-inactive">設定</a>
     </div>
     <div class="user">
@@ -165,16 +165,30 @@
     }
     container.innerHTML = recent.map(function (app, i) {
       var style = STATUS_STYLE[app.status] || { bg: '#eef2f4', color: '#8fa2ac' };
-      var cls = 'history-row' + (i < recent.length - 1 ? ' divider' : '');
+      var cls = 'history-row linked' + (i < recent.length - 1 ? ' divider' : '');
       var ptText = app.point_cost != null ? ('（' + app.point_cost + 'pt）') : '';
+      var unread = app.unread_count > 0;
       return (
-        '<div class="' + cls + '">' +
+        '<a class="' + cls + '" href="message.html?id=' + app.id + '" style="text-decoration:none; color:inherit;">' +
           '<div class="history-date">' + formatDate(app.created_at) + '</div>' +
-          '<div class="history-name">' + app.title + ptText + '</div>' +
+          '<div class="history-name">' + (unread ? '<span class="dot"></span>' : '') + app.title + ptText + '</div>' +
           '<div class="status-pill" style="background:' + style.bg + ';color:' + style.color + ';">' + app.status + '</div>' +
-        '</div>'
+        '</a>'
       );
     }).join('');
+  }
+
+  function updateNavBadge(applications) {
+    var total = (applications || []).reduce(function (sum, a) { return sum + (a.unread_count || 0); }, 0);
+    var badges = document.querySelectorAll('#history-nav-badge');
+    badges.forEach(function (badge) {
+      if (total > 0) {
+        badge.textContent = total;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    });
   }
 
   if (window.netlifyIdentity) {
@@ -184,6 +198,7 @@
         document.getElementById('stat-plan').textContent = PLAN_LABELS[data.member.plan] || data.member.plan;
         document.getElementById('stat-balance').textContent = data.member.point_balance + ' pt';
         renderMypageHistory(data.applications);
+        updateNavBadge(data.applications);
       }).catch(function (err) {
         document.getElementById('stat-plan').textContent = '取得失敗';
         document.getElementById('stat-balance').textContent = '取得失敗';

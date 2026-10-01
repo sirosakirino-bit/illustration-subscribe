@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>お知らせ配信｜[サイト名] 管理画面</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; min-height: 100vh; }
+  a { color: #2f9bd6; text-decoration: none; }
+  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
+  .navlinks { display: flex; gap: 8px; font-size: 12.5px; font-weight: 700; flex-wrap: wrap; }
+  .navlinks > a { padding: 8px 14px; }
+  .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
+  .nav-inactive { color: #8fa2ac; }
+</style>
+</head>
+<body data-require-auth>
+<div class="page">
+
+  <div class="topbar">
+    <div style="font-size: 20px; font-weight: 800; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div class="navlinks">
+      <a href="admin-members.html" class="nav-inactive">会員一覧</a>
+      <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
+      <a href="admin-requests.html" class="nav-inactive">申請管理</a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ</a>
+      <a href="admin-payments.html" class="nav-inactive">決済状況</a>
+      <a href="admin-announce.html" class="nav-active">お知らせ配信</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
+      <div>あなた（運営）</div>
+    </div>
+  </div>
+
+  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
+
+    <div style="font-size: 20px; font-weight: 800;">会員全体へのお知らせ配信</div>
+    <div style="font-size: 11.5px; color: #8fa2ac; line-height: 1.7;">ここで送信すると、現在登録されているすべての会員の登録メールアドレス宛に、一斉にお知らせメールが届きます。運営休止のご案内や、重要なお知らせなど、全員に伝える必要がある内容のときにご利用ください。サイト内には表示されず、メールのみでの通知です。</div>
+
+    <div id="announce-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
+    <div id="announce-success" style="display:none; background:#e6f7ea; border:1px solid #cdeed6; color:#3f9457; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px;">
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">件名</div>
+        <input id="announce-subject" type="text" placeholder="例）メンテナンスに伴う一時休止のお知らせ" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #3b454a; font-family: inherit;">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">本文</div>
+        <textarea id="announce-body" placeholder="例）いつもご利用いただきありがとうございます。○月○日〜○日の間、サーバーメンテナンスのためサービスを一時休止いたします。ご不便をおかけしますが、よろしくお願いいたします。" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 160px; font-family: inherit; resize: vertical; line-height: 1.8;"></textarea>
+      </div>
+
+      <div style="font-size: 10.5px; color: #b3c2c9;">※ 改行はメール本文にもそのまま反映されます。送信前に内容をよくご確認ください。</div>
+
+      <div style="display: flex; justify-content: flex-start;">
+        <div id="announce-submit" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">
+          全員に送信する
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+<script>
+  function showError(msg) {
+    document.getElementById('announce-success').style.display = 'none';
+    var box = document.getElementById('announce-error');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function showSuccess(msg) {
+    document.getElementById('announce-error').style.display = 'none';
+    var box = document.getElementById('announce-success');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  document.getElementById('announce-submit').addEventListener('click', function () {
+    var subject = document.getElementById('announce-subject').value.trim();
+    var body = document.getElementById('announce-body').value.trim();
+    document.getElementById('announce-error').style.display = 'none';
+    document.getElementById('announce-success').style.display = 'none';
+
+    if (!subject) { showError('件名を入力してください。'); return; }
+    if (!body) { showError('本文を入力してください。'); return; }
+    if (!window.confirm('この内容で、登録されている全会員にお知らせメールを送信します。よろしいですか？')) return;
+
+    var btn = document.getElementById('announce-submit');
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+    btn.textContent = '送信中…';
+
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'broadcast-announcement', subject: subject, body: body } }).then(function (data) {
+      showSuccess('送信しました（' + data.sent + ' / ' + data.total + ' 件）。');
+      document.getElementById('announce-subject').value = '';
+      document.getElementById('announce-body').value = '';
+    }).catch(function (err) {
+      showError('送信に失敗しました：' + err.message);
+    }).then(function () {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+      btn.textContent = '全員に送信する';
+    });
+  });
+</script>
+<div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
+  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #9db0b8; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+</div>
+</body>
+</html>
