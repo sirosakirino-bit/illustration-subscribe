@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>メッセージ｜[サイト名]</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Zen Maru Gothic', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   a:hover { color: #15608c; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
-  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6;  font-family: 'Zen Maru Gothic', system-ui, sans-serif;}
+  .logo { font-size: 20px; font-weight: 800; color: #2f9bd6;  font-family: 'Dela Gothic One', system-ui, sans-serif;}
   .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; }
   .navlinks > a { padding: 8px 16px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
@@ -217,7 +217,7 @@
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
                 '運営からのポイントご提示' +
               '</div>' +
-              '<div style="font-family: 'Zen Maru Gothic', system-ui, sans-serif; font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
+              '<div style="font-family: 'Dela Gothic One', system-ui, sans-serif; font-size:20px; font-weight:800; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
               (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
               actions +
             '</div>' +
