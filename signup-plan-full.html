@@ -8,7 +8,7 @@
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.75; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.9; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
 
   .page { width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; margin: 0 auto; }
@@ -32,7 +32,7 @@
   .plan-card.full { opacity: 0.62; filter: grayscale(0.4); cursor: not-allowed; }
   .plan-card.selected { box-shadow: 0 0 0 3px rgba(47,155,214,0.28), 0 4px 14px rgba(47,155,214,0.12); }
   .full-ribbon { position: absolute; top: 18px; right: -8px; background: #8fa2ac; color: #fff; font-size: 11px; font-weight: 800; padding: 5px 16px 5px 20px; border-radius: 999px 0 0 999px; letter-spacing: 1px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
-  .plan-banner { font-size: 11.5px; font-weight: 700; line-height: 1.65; padding: 10px 14px; border-radius: 10px; }
+  .plan-banner { font-size: 11.5px; font-weight: 700; padding: 10px 14px; border-radius: 10px; }
   .plan-banner.blue { background: #eaf6fb; color: #1f7fb3; }
   .plan-banner.gray { background: #f2f6f7; color: #5c6b73; }
   .plan-name { font-size: 17px; font-weight: 800; }
@@ -40,7 +40,7 @@
   .plan-price { font-size: 22px; font-weight: 800; margin-top: 4px; }
   .plan-price-note { font-size: 11px; color: #9db0b8; margin-top: 2px; }
   .plan-divider { height: 1px; background: #eef2f4; }
-  .plan-list { display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #4b5a61; line-height: 1.7; }
+  .plan-list { display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #4b5a61; }
   .plan-select-btn { font-weight: 700; font-size: 13px; padding: 12px 0; border-radius: 999px; text-align: center; margin-top: 6px; }
   .plan-select-btn.disabled { background: #eef2f4; color: #9db0b8; cursor: not-allowed; }
   .plan-pick-indicator { display: flex; align-items: center; gap: 9px; margin-top: 4px; padding-top: 14px; border-top: 1px solid #eef2f4; font-weight: 700; font-size: 13px; color: #9db0b8; }
@@ -56,7 +56,7 @@
   .confirm-next-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 14px 32px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer; white-space: nowrap; }
 
   .wide-block { width: 100%; max-width: 828px; box-sizing: border-box; }
-  .info-banner { margin: 22px auto 0; padding: 14px 22px; background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; font-size: 12px; color: #6a4fc0; line-height: 1.8; text-align: center; }
+  .info-banner { margin: 22px auto 0; padding: 14px 22px; background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; font-size: 12px; color: #6a4fc0; text-align: center; }
 
   .examples-head { margin: 32px auto 0; padding: 0 36px; }
   .examples-title { font-size: 15px; font-weight: 800; }
@@ -65,9 +65,9 @@
   .examples-row { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 16px; padding: 0 36px; }
   .example-card { width: 148px; max-width: 100%; background: #ffffff; border-radius: 16px; padding: 16px 14px; box-shadow: 0 3px 10px rgba(47,155,214,0.06); display: flex; flex-direction: column; gap: 8px; }
   .example-tag { align-self: flex-start; font-size: 12px; font-weight: 800; color: #fff; padding: 3px 12px; border-radius: 999px; }
-  .example-desc { font-size: 11px; color: #4b5a61; line-height: 1.7; }
+  .example-desc { font-size: 11px; color: #4b5a61; }
 
-  .footnote { font-size: 11px; color: #9db0b8; margin-top: 26px; text-align: center; max-width: 700px; padding: 0 18px 40px; line-height: 1.7; }
+  .footnote { font-size: 11px; color: #9db0b8; margin-top: 26px; text-align: center; max-width: 700px; padding: 0 18px 40px; }
 
   @media (max-width: 480px) {
     .logo-bar { padding: 18px 20px; }

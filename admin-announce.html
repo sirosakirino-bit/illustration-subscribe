@@ -8,7 +8,7 @@
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.75; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.9; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -82,7 +82,7 @@
   <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 16px; flex-grow: 1;">
 
     <div style="font-size: 20px; font-weight: 800;">会員全体へのお知らせ配信</div>
-    <div style="font-size: 11.5px; color: #8fa2ac; line-height: 1.7;">ここで送信すると、現在登録されているすべての会員の登録メールアドレス宛に、一斉にお知らせメールが届きます。運営休止のご案内や、重要なお知らせなど、全員に伝える必要がある内容のときにご利用ください。サイト内には表示されず、メールのみでの通知です。</div>
+    <div style="font-size: 11.5px; color: #8fa2ac;">ここで送信すると、現在登録されているすべての会員の登録メールアドレス宛に、一斉にお知らせメールが届きます。運営休止のご案内や、重要なお知らせなど、全員に伝える必要がある内容のときにご利用ください。サイト内には表示されず、メールのみでの通知です。</div>
 
     <div id="announce-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
     <div id="announce-success" style="display:none; background:#e6f7ea; border:1px solid #cdeed6; color:#3f9457; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
@@ -96,7 +96,7 @@
 
       <div style="display: flex; flex-direction: column; gap: 6px;">
         <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">本文</div>
-        <textarea id="announce-body" placeholder="例）いつもご利用いただきありがとうございます。○月○日〜○日の間、サーバーメンテナンスのためサービスを一時休止いたします。ご不便をおかけしますが、よろしくお願いいたします。" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 160px; font-family: inherit; resize: vertical; line-height: 1.8;"></textarea>
+        <textarea id="announce-body" placeholder="例）いつもご利用いただきありがとうございます。○月○日〜○日の間、サーバーメンテナンスのためサービスを一時休止いたします。ご不便をおかけしますが、よろしくお願いいたします。" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 160px; font-family: inherit; resize: vertical;"></textarea>
       </div>
 
       <div style="font-size: 10.5px; color: #b3c2c9;">※ 改行はメール本文にもそのまま反映されます。送信前に内容をよくご確認ください。</div>

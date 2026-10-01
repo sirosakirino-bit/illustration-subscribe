@@ -8,7 +8,7 @@
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.75; min-height: 100vh; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'M PLUS Rounded 1c', system-ui, sans-serif; color: #3b454a; line-height: 1.9; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   a:hover { color: #1f7fb3; }
   .page { width: 100%; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; }
@@ -100,7 +100,7 @@
         <div style="font-size: 11px; color: #9db0b8;">今月のポイントプラン受付枠（残り）</div>
         <div style="font-size: 22px; font-weight: 800; color: #2f9bd6; margin-top: 2px;">4pt</div>
       </div>
-      <div style="text-align: right; font-size: 11px; color: #9db0b8; max-width: 380px; line-height: 1.7;">
+      <div style="text-align: right; font-size: 11px; color: #9db0b8; max-width: 380px;">
         月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。<br><br>
         申請は<span style="color: #c0524f; font-weight: 700;">完全先着順</span>で、申請した時点で枠を仮押さえします。<br>枠に達し次第、今月の受付は終了します。
       </div>
@@ -111,7 +111,7 @@
       申請受付期間：毎月1日〜10日／現在の保有ポイント：<span id="balance-display" style="font-weight: 800;">読み込み中…</span>
     </div>
 
-    <div id="active-app-blocked" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 14px; padding: 14px 18px; font-size: 12px; color: #a8722a; line-height: 1.7;">
+    <div id="active-app-blocked" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 14px; padding: 14px 18px; font-size: 12px; color: #a8722a;">
       現在進行中のご依頼（ヒアリング中・制作中）が1件あるため、新しい申請はできません。メニューから選ぶ場合もご相談の場合も同様です。対応完了後にもう一度お申し込みください。
     </div>
 
@@ -125,7 +125,7 @@
     <!-- ===== メニュー選択タブ ===== -->
     <div id="panel-menu" style="display: flex; flex-direction: column; gap: 18px;">
 
-      <div style="background: #e6f7ea; border: 1px solid #cdebd4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #3f9457; line-height: 1.7;">
+      <div style="background: #e6f7ea; border: 1px solid #cdebd4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #3f9457;">
         メニューからお選びいただいた内容は、<span style="font-weight: 800;">ヒアリング不要でそのまま正式受付</span>となります。ラフ完成後に内容が大きく変わる大幅な修正が発生した場合のみ、別途10,000円（＋消費税10%）を申し受けます。
       </div>
 
@@ -223,7 +223,7 @@
             <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
-          <div style="font-size: 10.5px; color: #b3c2c9; line-height: 1.6;">※オプション料金は月額サブスクの請求とは別に、受付時にStripeから個別の請求書でご案内します。</div>
+          <div style="font-size: 10.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、受付時にStripeから個別の請求書でご案内します。</div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -238,7 +238,7 @@
     <!-- ===== 相談タブ ===== -->
     <div id="panel-consult" style="display: none; flex-direction: column; gap: 18px;">
 
-      <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #6a4fc0; line-height: 1.7;">
+      <div style="background: #f7f5fc; border: 1px solid #e3dcf5; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #6a4fc0;">
         メニューにない特殊な内容や、4pt以上の大型案件のご相談はこちらから。内容・必要ptについて双方が合意した時点で「正式受付」となります。ポイントプランは正式受付から納品まで2ヶ月が目安です（ヒアリングの状況やデザイン内容によっては、納品がずれることがあります）。保有ポイント内で複数のご依頼をしたい場合は、依頼内容に「複数枚希望」である旨を必ず含めてお送りください。
       </div>
 
@@ -291,7 +291,7 @@
             <div style="font-size: 12px; color: #8fa2ac;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
           </div>
 
-          <div style="font-size: 10.5px; color: #b3c2c9; line-height: 1.6;">※オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
+          <div style="font-size: 10.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
         </div>
 
         <div style="display: flex; justify-content: flex-start;">
