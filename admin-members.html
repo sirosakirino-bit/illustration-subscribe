@@ -70,7 +70,7 @@
   .leave-row { display: flex; align-items: center; padding: 10px 0; font-size: 13px; gap: 8px; flex-wrap: wrap; }
   .leave-row .leave-name { flex: 1 1 140px; min-width: 0; }
   .leave-row .leave-date { width: 140px; flex-shrink: 0; color: #9a8264; font-size: 11.5px; }
-  .leave-row .leave-due { width: 140px; flex-shrink: 0; color: #8a5c1e; font-weight: 700; font-size: 11.5px; }
+  .leave-row .leave-due { width: 140px; flex-shrink: 0; color: #a8722a; font-weight: 700; font-size: 11.5px; }
 
   .member-table-head { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #5c6b73; }
   .member-table-head .col-name { flex-grow: 1; }
@@ -94,6 +94,7 @@
     .leave-row { flex-direction: column; align-items: flex-start; gap: 1px; }
     .leave-row .leave-name { flex-basis: auto; }
     .leave-row .leave-date, .leave-row .leave-due { width: auto; }
+    .leave-row .leave-due { align-self: flex-end; }
 
     .member-table-head { display: none; }
     .member-row { flex-direction: column; align-items: flex-start; gap: 3px; padding: 14px 0; }
@@ -119,7 +120,7 @@
       <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
     </div>
     <div class="admin-user-info">
-      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c;">運</div>
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3;">運</div>
       <div>あなた（運営）</div>
     </div>
   </div>
@@ -130,7 +131,7 @@
       <div class="status-card-left">
         <div class="status-title-row">
           <div style="font-size: 13px; font-weight: 700; color: #5c6b73;">サービス運営ステータス</div>
-          <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #2d7a42;">通常運営中</span>
+          <span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">通常運営中</span>
         </div>
         <div style="font-size: 11.5px; color: #5c6b73;">休止は会員個別ではなく、サービス全体を対象に運営が行います。休止する場合は原則前月中に全会員へお知らせします。</div>
       </div>
@@ -139,8 +140,8 @@
 
     <div style="background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 18px; padding: 18px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="font-size: 13px; font-weight: 800; color: #8a5c1e;">退会予告</div>
-        <span style="font-size: 10.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #f2e0c4; color: #8a5c1e;">翌月1日付・2件</span>
+        <div style="font-size: 13px; font-weight: 800; color: #a8722a;">退会予告</div>
+        <span style="font-size: 10.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #f2e0c4; color: #a8722a;">翌月1日付・2件</span>
       </div>
       <div style="font-size: 11px; color: #8a6524;">退会の申告があった会員です。当月末までの申告分は、翌月1日から請求が停止し退会となります。</div>
 
@@ -222,7 +223,7 @@
       return (
         '<div class="member-row" style="' + border + '">' +
           '<div class="col-name">' +
-            '<div style="width: 26px; height: 26px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #15608c; flex-shrink: 0;">' + initial + '</div>' +
+            '<div style="width: 26px; height: 26px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #1f7fb3; flex-shrink: 0;">' + initial + '</div>' +
             name + ' さん' +
           '</div>' +
           '<div class="col-plan">' + (PLAN_LABELS[m.plan] || m.plan) + '</div>' +

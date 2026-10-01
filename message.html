@@ -11,7 +11,7 @@
   html, body { margin: 0; min-height: 100%; }
   body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
-  a:hover { color: #15608c; }
+  a:hover { color: #1f7fb3; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -22,11 +22,11 @@
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #5c6b73; }
   .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #15608c; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
 
   .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; max-width: 420px; align-self: flex-start; }
   .delivery-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 420px; align-self: flex-start; }
-  .balance-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; background: #e6f7ea; border: 1px solid #cdebd4; color: #2d7a42; }
+  .balance-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; background: #e6f7ea; border: 1px solid #cdebd4; color: #3f9457; }
   .accept-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 12.5px; padding: 10px 0; border-radius: 999px; text-align: center; cursor: pointer; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
   .accept-btn:hover { opacity: 0.92; }
   .msg-row { display: flex; flex-direction: column; gap: 4px; }
@@ -205,7 +205,7 @@
               '<div class="accept-btn" onclick="acceptQuote()">この内容で正式受付する</div>' +
             '</div>';
         } else if (m.quote_status === 'accepted') {
-          actions = '<div style="font-size:12px; font-weight:800; color:#2d7a42; display:flex; align-items:center; gap:6px;">' +
+          actions = '<div style="font-size:12px; font-weight:800; color:#3f9457; display:flex; align-items:center; gap:6px;">' +
             '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
             '正式受付済み</div>';
         } else if (m.quote_status === 'superseded') {
@@ -231,7 +231,7 @@
         return (
           '<div class="msg-row" style="align-items:flex-start;">' +
             '<div class="delivery-card">' +
-              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#2d7a42;">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#3f9457;">' +
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 17v-1"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>' +
                 '納品のお知らせ' +
               '</div>' +
