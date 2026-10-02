@@ -8,10 +8,10 @@
 <style>
   @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
+  html, body { margin: 0; height: 100%; }
+  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; height: 100vh; overflow: hidden; }
   a { color: #2f9bd6; text-decoration: none; }
-  .page { width: 100%; max-width: 1320px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .page { width: 100%; max-width: 1320px; height: 100vh; margin: 0 auto; display: flex; flex-direction: column; overflow: hidden; }
   .plan-tag { font-size: 8.5px; font-weight: 700; padding: 1px 7px; border-radius: 999px; flex-shrink: 0; white-space: nowrap; }
   .plan-tag.point { background: #eaf6fb; color: #1f7fb3; }
   .plan-tag.monthly { background: #f1eefb; color: #6a4fc0; }
@@ -49,9 +49,9 @@
   .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
   .edit-link { color: #2f9bd6; cursor: pointer; text-decoration: underline; }
 
-  .inbox-split { display: flex; gap: 14px; flex-grow: 1; min-height: 740px; }
-  .inbox-list { width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
-  .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; }
+  .inbox-split { display: flex; gap: 14px; flex-grow: 1; min-height: 0; }
+  .inbox-list { width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; min-height: 0; }
+  .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
   .thread-back-link { display: none; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #2f9bd6; cursor: pointer; flex-shrink: 0; }
 
   @media (max-width: 820px) {
@@ -66,8 +66,8 @@
 
   @media (max-width: 820px) {
     .inbox-split { flex-direction: column; min-height: 0; }
-    .inbox-list { width: 100%; }
-    .inbox-thread { display: none; min-height: 72vh; }
+    .inbox-list { width: 100%; flex-grow: 1; }
+    .inbox-thread { display: none; flex-grow: 1; min-height: 0; }
     .thread-back-link { display: flex; }
     body.mobile-thread-open .inbox-list { display: none; }
     body.mobile-thread-open .inbox-thread { display: flex; }
@@ -126,9 +126,9 @@
     </a>
   </div>
 
-  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+  <div style="padding: 4px 36px 36px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; min-height: 0; overflow: hidden;">
 
-    <div>
+    <div style="flex-shrink: 0;">
       <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400;">メッセージ</div>
       <div style="font-size: 12px; color: #5c6b73; margin-top: 2px;">申請ごとのやり取りを一覧で確認できます。左から選ぶと、右側の表示がそのまま切り替わります。</div>
     </div>
@@ -141,7 +141,7 @@
           <input id="contact-search" type="text" placeholder="会員・内容で検索" style="width: 100%; border: 1px solid #dcedf5; border-radius: 999px; padding: 8px 14px; font-size: 12px; color: #3b454a; font-family: inherit; outline: none;">
         </div>
 
-        <div id="contact-rows" style="display: flex; flex-direction: column; overflow-y: auto;">
+        <div id="contact-rows" style="display: flex; flex-direction: column; overflow-y: auto; flex-grow: 1; min-height: 0;">
           <div style="padding: 20px 16px; font-size: 12px; color: #5c6b73; text-align: center;">読み込み中…</div>
         </div>
 
@@ -151,9 +151,9 @@
 
         <div id="panel-empty" style="display: flex; align-items: center; justify-content: center; flex-grow: 1; font-size: 13px; color: #5c6b73;">左の一覧から会員を選んでください</div>
 
-        <div id="panel-thread" style="display: none; flex-direction: column; flex-grow: 1;">
+        <div id="panel-thread" style="display: none; flex-direction: column; flex-grow: 1; min-height: 0;">
 
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4; gap: 10px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #eef2f4; gap: 10px; flex-shrink: 0;">
             <div style="min-width: 0; display: flex; align-items: center; gap: 10px;">
               <div class="thread-back-link" onclick="backToList()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -166,18 +166,18 @@
             <div id="thread-status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #5c6b73; flex-shrink: 0;">ー</div>
           </div>
 
-          <div id="thread-request-summary"></div>
+          <div id="thread-request-summary" style="flex-shrink: 0;"></div>
 
-          <div id="thread-messages" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1; overflow-y: auto;"></div>
+          <div id="thread-messages" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1; min-height: 0; overflow-y: auto;"></div>
 
-          <div id="thread-composers" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px;"></div>
+          <div id="thread-composers" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px; flex-shrink: 0;"></div>
 
-          <div style="display: flex; align-items: flex-end; gap: 10px; padding: 14px 22px 0; border-top: 1px solid #eef2f4;">
+          <div style="display: flex; align-items: flex-end; gap: 10px; padding: 14px 22px 0; border-top: 1px solid #eef2f4; flex-shrink: 0;">
             <textarea id="thread-send-input" rows="1" placeholder="メッセージを入力…" style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 18px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none; resize: none; max-height: 160px; line-height: 1.5;"></textarea>
             <div id="thread-send-btn" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0; cursor: pointer;">送信</div>
           </div>
 
-          <div id="thread-send-hint" style="font-size: 10.5px; color: #b3c2c9; text-align: right; padding: 4px 22px 0;"></div>
+          <div id="thread-send-hint" style="font-size: 10.5px; color: #b3c2c9; text-align: right; padding: 4px 22px 0; flex-shrink: 0;"></div>
 
           <div style="font-size: 10.5px; color: #b3c2c9; text-align: center; padding: 6px 22px 14px;">お知らせメールが届かない場合は、迷惑メールフォルダに振り分けられていないかご確認ください。</div>
 
@@ -263,7 +263,7 @@
       : '';
 
     return (
-      '<div id="request-summary-card" style="background:#eef8fd; border:1.5px solid #cbe9f7; border-radius:14px; padding:16px 20px; margin:16px 22px 0; display:flex; flex-direction:column; gap:10px;">' +
+      '<div id="request-summary-card" style="background:#eef8fd; border:1.5px solid #cbe9f7; border-radius:14px; padding:16px 20px; margin:16px 22px 0; max-width:440px; display:flex; flex-direction:column; gap:10px;">' +
         '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#1f7fb3;">' +
           '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' +
           '依頼内容' +
