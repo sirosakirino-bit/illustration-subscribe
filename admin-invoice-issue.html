@@ -333,8 +333,11 @@ function toggleIssuerInfo() {
   // そのため、実際のページと同じフォント・スタイルでHTMLを組み立ててhtml2canvasで画像化し、
   // その画像をPDFに貼り付ける方式にしている（ブラウザが描画する日本語をそのまま使うので文字化けしない）。
   function buildReceiptHtml(opts) {
+    // 角印はここではプレースホルダー（枠だけ）を置いてレイアウト上の場所を確保するだけにする。
+    // 実際の画像はhtml2canvasでは描画せず、後でjsPDFに直接貼り付ける（html2canvas経由だと
+    // 透過PNGの透明部分が黒く描画されてしまう問題があるため）。
     var stampHtml = (opts.issuer && opts.issuer.stamp_image_data_url)
-      ? '<img src="' + opts.issuer.stamp_image_data_url + '" style="width:50px;height:50px;object-fit:contain;flex-shrink:0;">'
+      ? '<div id="receipt-stamp-slot" style="width:50px;height:50px;flex-shrink:0;"></div>'
       : '';
     var issuerLines = [];
     if (opts.issuer) {
@@ -388,38 +391,65 @@ function toggleIssuerInfo() {
     );
   }
 
-  function waitImagesLoaded(container) {
-    var imgs = Array.prototype.slice.call(container.querySelectorAll('img'));
-    return Promise.all(imgs.map(function (img) {
-      if (img.complete) return Promise.resolve();
-      return new Promise(function (resolve) {
-        img.onload = resolve;
-        img.onerror = resolve;
-      });
-    }));
+  function detectImageFormat(dataUrl) {
+    var m = /^data:image\/(png|jpeg|jpg|webp)/i.exec(dataUrl || '');
+    if (!m) return 'PNG';
+    var ext = m[1].toUpperCase();
+    return ext === 'JPG' ? 'JPEG' : ext;
   }
 
+  // renderReceiptCanvas は {canvas, stampRectPx} を返す。stampRectPxは角印プレースホルダーの
+  // コンテナ内での位置・サイズ（CSS px）。角印はhtml2canvasに描画させず、この位置情報を使って
+  // 後からjsPDFへ直接貼り付ける（透過PNGがhtml2canvas経由だと黒くなる問題を避けるため）。
   function renderReceiptCanvas(opts) {
     if (!window.html2canvas) return Promise.reject(new Error('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。'));
     var container = document.createElement('div');
     container.style.cssText = 'position:fixed;left:-99999px;top:0;';
     container.innerHTML = buildReceiptHtml(opts);
     document.body.appendChild(container);
-    return waitImagesLoaded(container)
-      .then(function () { return document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(); })
-      .then(function () { return window.html2canvas(container.firstChild, { scale: 2, backgroundColor: '#ffffff' }); })
-      .then(function (canvas) { document.body.removeChild(container); return canvas; })
+    var receiptEl = container.firstChild;
+    return (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+      .then(function () { return window.html2canvas(receiptEl, { scale: 2, backgroundColor: '#ffffff' }); })
+      .then(function (canvas) {
+        // getBoundingClientRect()はCSSのwidth指定(640px)ではなく、padding込みの実際の描画幅
+        // （box-sizingがcontent-boxのため640px+左右padding分）を返す。html2canvasが撮影した
+        // canvasの幅(＝この実描画幅をscale倍したもの)とpx⇔mm変換の基準を必ず一致させるため、
+        // 「640px」を決め打ちにせず、ここで測った実際のコンテナ幅をそのまま返す。
+        var stampSlot = receiptEl.querySelector('#receipt-stamp-slot');
+        var stampRectPx = null;
+        var containerBox = receiptEl.getBoundingClientRect();
+        if (stampSlot) {
+          var slotBox = stampSlot.getBoundingClientRect();
+          stampRectPx = {
+            x: slotBox.left - containerBox.left,
+            y: slotBox.top - containerBox.top,
+            w: slotBox.width,
+            h: slotBox.height
+          };
+        }
+        var containerWidthPx = containerBox.width;
+        document.body.removeChild(container);
+        return { canvas: canvas, stampRectPx: stampRectPx, containerWidthPx: containerWidthPx };
+      })
       .catch(function (err) { if (container.parentNode) document.body.removeChild(container); throw err; });
   }
 
   function buildReceiptPdf(opts) {
     var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
     if (!jsPDFCtor) return Promise.reject(new Error('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。'));
-    return renderReceiptCanvas(opts).then(function (canvas) {
+    return renderReceiptCanvas(opts).then(function (result) {
       var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
       var pageW = doc.internal.pageSize.getWidth();
-      var imgH = pageW * canvas.height / canvas.width;
-      doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pageW, imgH);
+      var imgH = pageW * result.canvas.height / result.canvas.width;
+      doc.addImage(result.canvas.toDataURL('image/png'), 'PNG', 0, 0, pageW, imgH);
+      if (result.stampRectPx && opts.issuer && opts.issuer.stamp_image_data_url) {
+        var mmPerPx = pageW / result.containerWidthPx;
+        var r = result.stampRectPx;
+        var dataUrl = opts.issuer.stamp_image_data_url;
+        try {
+          doc.addImage(dataUrl, detectImageFormat(dataUrl), r.x * mmPerPx, r.y * mmPerPx, r.w * mmPerPx, r.h * mmPerPx);
+        } catch (e) { /* 画像形式が合わない場合は角印を省略して続行 */ }
+      }
       return doc;
     });
   }
