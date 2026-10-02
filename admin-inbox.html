@@ -49,6 +49,11 @@
   .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
   .edit-link { color: #2f9bd6; cursor: pointer; text-decoration: underline; }
 
+  #contact-rows, #thread-messages { scrollbar-width: thin; scrollbar-color: #cfe6f1 transparent; }
+  #contact-rows::-webkit-scrollbar, #thread-messages::-webkit-scrollbar { width: 7px; }
+  #contact-rows::-webkit-scrollbar-track, #thread-messages::-webkit-scrollbar-track { background: transparent; }
+  #contact-rows::-webkit-scrollbar-thumb, #thread-messages::-webkit-scrollbar-thumb { background: #cfe6f1; border-radius: 999px; }
+  #contact-rows::-webkit-scrollbar-thumb:hover, #thread-messages::-webkit-scrollbar-thumb:hover { background: #9ed2ea; }
   .inbox-split { display: flex; gap: 14px; flex-grow: 1; min-height: 0; }
   .inbox-list { width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; min-height: 0; }
   .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
@@ -166,8 +171,6 @@
             <div id="thread-status-pill" style="font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; background: #eef2f4; color: #5c6b73; flex-shrink: 0;">ー</div>
           </div>
 
-          <div id="thread-request-summary" style="flex-shrink: 0;"></div>
-
           <div id="thread-messages" style="display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; flex-grow: 1; min-height: 0; overflow-y: auto;"></div>
 
           <div id="thread-composers" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px; flex-shrink: 0;"></div>
@@ -263,7 +266,7 @@
       : '';
 
     return (
-      '<div id="request-summary-card" style="background:#eef8fd; border:1.5px solid #cbe9f7; border-radius:14px; padding:16px 20px; margin:16px 22px 0; max-width:440px; display:flex; flex-direction:column; gap:10px;">' +
+      '<div id="request-summary-card" style="background:#eef8fd; border:1.5px solid #cbe9f7; border-radius:14px; padding:16px 20px; max-width:440px; align-self:flex-start; flex-shrink:0; display:flex; flex-direction:column; gap:10px;">' +
         '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#1f7fb3;">' +
           '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' +
           '依頼内容' +
@@ -405,11 +408,13 @@
 
   function renderThreadMessages(messages, application) {
     var container = document.getElementById('thread-messages');
+    // 依頼内容カードは、やり取りと同じスクロール領域の先頭に差し込む（上部固定にはしない）
+    var summaryCardHtml = renderRequestSummaryCard(application);
     if (!messages.length) {
-      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">まだメッセージはありません</div>';
+      container.innerHTML = summaryCardHtml + '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">まだメッセージはありません</div>';
       return;
     }
-    container.innerHTML = messages.map(function (m) {
+    container.innerHTML = summaryCardHtml + messages.map(function (m) {
       var when = formatDateTime(m.created_at);
 
       if (m.kind === 'system') {
@@ -514,7 +519,6 @@
       currentApplication = data.application;
       editingMessageId = null;
 
-      document.getElementById('thread-request-summary').innerHTML = renderRequestSummaryCard(data.application);
       renderComposers(data.application);
       renderThreadMessages(data.messages, data.application);
 
