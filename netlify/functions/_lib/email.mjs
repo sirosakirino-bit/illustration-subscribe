@@ -18,11 +18,31 @@ export function siteUrl(path) {
   return base + '/' + String(path || '').replace(/^\//, '');
 }
 
+// どのメール通知にも共通で付けるフッター。
+// サイト名・URL・送信専用である旨・カスタマーサポート窓口（対応時間含む）を案内する。
+// メーラーによってはCSSのwhite-space指定が効かないため、改行は<br>で明示する。
+var EMAIL_FOOTER_LINES = [
+  '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+',
+  '▍くらげいかイラストサブスクライブ',
+  'サイトURL：' + DEFAULT_SITE_URL + '/',
+  '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+',
+  '※ このメールは送信専用です。直接返答されないようお願いいたします。',
+  '※ このメールは当サービスにご登録された方に配信しております。',
+  '　お心当たりのない場合は下記カスタマーサポートまでご連絡ください。',
+  '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+',
+  '▍カスタマーサポート（9:00~17:00）',
+  'kurageika_sup@appmail.uk',
+  '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+'
+];
+
 function wrapHtml(bodyHtml) {
+  var footerHtml = EMAIL_FOOTER_LINES.map(function (line) { return escapeHtml(line); }).join('<br>');
   return (
     '<div style="font-family: sans-serif; font-size: 14px; color: #3b454a; line-height: 1.8;">' +
       bodyHtml +
-      '<p style="margin-top: 24px; font-size: 11px; color: #9db0b8;">このメールは くらげいかイラストサブスクライブ からの自動通知です。</p>' +
+      '<div style="margin-top: 28px; padding-top: 16px; border-top: 1px solid #e4ecef; font-family: \'Courier New\', monospace; font-size: 11px; color: #5c6b73; line-height: 1.7;">' +
+        footerHtml +
+      '</div>' +
     '</div>'
   );
 }
