@@ -344,13 +344,13 @@ export async function handler(event, context) {
         if (member.leave_requested_at) return jsonResponse(400, { error: '退会予告中はプラン変更できません。先に退会予告を取り消してください。' });
         if (newPlan === member.plan) return jsonResponse(400, { error: 'すでにこのプランをご利用中です' });
 
-        if (newPlan === 'point') {
+        if (!TEST_MODE_SKIP_LIMITS && newPlan === 'point') {
           const monthsSinceSignup = (Date.now() - new Date(member.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30);
           if (monthsSinceSignup < 3) {
             return jsonResponse(400, { error: '月1プラン→ポイントプランへの変更は、初回決済日から3ヶ月経過後に可能です' });
           }
         }
-        if (newPlan === 'monthly') {
+        if (!TEST_MODE_SKIP_LIMITS && newPlan === 'monthly') {
           const monthlyCountRows = await db.sql`SELECT COUNT(*)::int AS c FROM members WHERE plan = 'monthly' AND is_removed = false`;
           if (monthlyCountRows[0].c >= 2) {
             return jsonResponse(400, { error: '月1プランは現在定員に達しているため変更できません' });

@@ -124,6 +124,12 @@
   var currentMember = null;
   var monthlyPlanFull = false;
 
+  // ============================================================
+  // テスト開発中のみ: 「3ヶ月経過後」「月1プラン定員」のプラン変更制限チェックを無効化する一時フラグ。
+  // 本番公開前に必ず false に戻すこと（member-data.mjsのTEST_MODE_SKIP_LIMITSと合わせて戻す）。
+  // ============================================================
+  var TEST_MODE_SKIP_LIMITS = true;
+
   function showPlanError(msg) {
     var box = document.getElementById('plan-error');
     box.textContent = msg;
@@ -163,7 +169,7 @@
       var created = new Date(member.created_at);
       var eligibleDate = new Date(created.getFullYear(), created.getMonth() + 3, created.getDate());
       var now = new Date();
-      if (now < eligibleDate) {
+      if (!TEST_MODE_SKIP_LIMITS && now < eligibleDate) {
         var daysLeft = Math.ceil((eligibleDate - now) / (1000 * 60 * 60 * 24));
         noteEl.style.display = 'flex';
         noteTextEl.textContent = 'あと' + daysLeft + '日でプラン変更が可能になります（変更可能日：' + formatDate(eligibleDate) + '）';
@@ -181,7 +187,7 @@
       }
     } else {
       descEl.textContent = 'ポイントプラン → 月1プランへの変更は、定員（2名）に空きがある場合のみ可能です。変更は翌月から適用され、保有ポイントはすべて失効します。';
-      if (monthlyPlanFull) {
+      if (!TEST_MODE_SKIP_LIMITS && monthlyPlanFull) {
         noteEl.style.display = 'flex';
         noteTextEl.textContent = '現在、月1プランは定員に達しているため変更できません。';
         btnEl.style.background = '#e4e9eb';

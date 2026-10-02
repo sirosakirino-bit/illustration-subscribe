@@ -178,6 +178,12 @@
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
 <script>
+  // ============================================================
+  // テスト開発中のみ: 「今月のご依頼は1件まで」の制限チェックを無効化する一時フラグ。
+  // 本番公開前に必ず false に戻すこと（member-data.mjsのTEST_MODE_SKIP_LIMITSと合わせて戻す）。
+  // ============================================================
+  var TEST_MODE_SKIP_LIMITS = true;
+
   function toggleOption(row) {
     var box = row.querySelector('.opt-box');
     var checked = row.getAttribute('data-checked') === '1';
@@ -224,11 +230,13 @@
         showMonthlyBlocked('このページは月1プラン会員向けのページです。');
         return;
       }
-      var hasActive = (data.applications || []).some(function (app) {
-        return app.kind === 'monthly' && (app.status === 'ヒアリング中' || app.status === '制作中');
-      });
-      if (hasActive) {
-        showMonthlyBlocked('今月のご依頼はすでにお送りいただいています。対応完了後、来月またお申し込みください。');
+      if (!TEST_MODE_SKIP_LIMITS) {
+        var hasActive = (data.applications || []).some(function (app) {
+          return app.kind === 'monthly' && (app.status === 'ヒアリング中' || app.status === '制作中');
+        });
+        if (hasActive) {
+          showMonthlyBlocked('今月のご依頼はすでにお送りいただいています。対応完了後、来月またお申し込みください。');
+        }
       }
     }).catch(function (err) {
       console.error(err);

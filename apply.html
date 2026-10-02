@@ -329,7 +329,14 @@
   var selectedEstimate = '4pt';
   var hasActiveApplication = false;
 
+  // ============================================================
+  // テスト開発中のみ: 「進行中の依頼は1件まで」「受付枠が不足」の制限チェックを無効化する一時フラグ。
+  // 本番公開前に必ず false に戻すこと（member-data.mjsのTEST_MODE_SKIP_LIMITSと合わせて戻す）。
+  // ============================================================
+  var TEST_MODE_SKIP_LIMITS = true;
+
   function applyActiveAppLock() {
+    if (TEST_MODE_SKIP_LIMITS) return;
     var blocked = document.getElementById('active-app-blocked');
     var forms = document.getElementById('apply-forms');
     if (hasActiveApplication) {
@@ -409,7 +416,7 @@
       if (data.capacity) {
         capacityRemaining = data.capacity.remaining;
         document.getElementById('capacity-remaining-display').textContent = capacityRemaining + 'pt';
-        if (capacityRemaining <= 0) {
+        if (!TEST_MODE_SKIP_LIMITS && capacityRemaining <= 0) {
           location.href = 'apply-full.html';
         }
       }
@@ -486,9 +493,9 @@
 
   function submitMenu() {
     if (selectedPt === null) return;
-    if (hasActiveApplication) return;
+    if (!TEST_MODE_SKIP_LIMITS && hasActiveApplication) return;
     var remaining = memberBalance - selectedPt;
-    if (remaining < 0) return;
+    if (!TEST_MODE_SKIP_LIMITS && remaining < 0) return;
 
     var notesEl = document.getElementById('menu-notes');
     if (!notesEl.value.trim()) {
@@ -524,7 +531,7 @@
     var noteEl = document.getElementById('consult-note');
     var btn = document.getElementById('submit-consult');
 
-    if (hasActiveApplication) {
+    if (!TEST_MODE_SKIP_LIMITS && hasActiveApplication) {
       noteEl.style.display = 'block';
       noteEl.style.color = '#c0524f';
       noteEl.textContent = '現在進行中のご依頼が1件あるため、新しい申請はできません。';
