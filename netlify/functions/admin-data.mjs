@@ -35,6 +35,12 @@ export async function handler(event, context) {
         return jsonResponse(200, { threads });
       }
 
+      // ---- お知らせ配信：保存済みテンプレート一覧 ----
+      if (query.announcement_templates) {
+        const templates = await db.sql`SELECT * FROM announcement_templates ORDER BY created_at DESC`;
+        return jsonResponse(200, { templates });
+      }
+
       // ---- メッセージ管理：スレッド詳細 ----
       if (query.thread) {
         const applicationId = Number(query.thread);
@@ -313,7 +319,33 @@ export async function handler(event, context) {
         );
         const sent = results.filter(function (r) { return r.status === 'fulfilled'; }).length;
 
+        await db.sql`
+          INSERT INTO announcements (subject, body, recipient_count, sent_count)
+          VALUES (${subject}, ${text}, ${members.length}, ${sent})
+        `;
+
         return jsonResponse(200, { sent: sent, total: members.length });
+      }
+
+      // ---- お知らせ配信：テンプレートを保存 ----
+      if (action === 'save-announcement-template') {
+        const name = (body.name || '').trim();
+        const subject = (body.subject || '').trim();
+        const text = (body.body || '').trim();
+        if (!name || !subject || !text) return jsonResponse(400, { error: 'テンプレート名・件名・本文はすべて必須です' });
+
+        const inserted = await db.sql`
+          INSERT INTO announcement_templates (name, subject, body) VALUES (${name}, ${subject}, ${text}) RETURNING *
+        `;
+        return jsonResponse(200, { template: inserted[0] });
+      }
+
+      // ---- お知らせ配信：テンプレートを削除 ----
+      if (action === 'delete-announcement-template') {
+        const templateId = Number(body.template_id);
+        if (!templateId) return jsonResponse(400, { error: 'テンプレートIDが不正です' });
+        await db.sql`DELETE FROM announcement_templates WHERE id = ${templateId}`;
+        return jsonResponse(200, { ok: true });
       }
 
       return jsonResponse(400, { error: '不明な操作です' });

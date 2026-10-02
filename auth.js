@@ -40,6 +40,31 @@
     document.querySelectorAll('[data-user-email]').forEach(function (el) {
       el.textContent = (user && user.email) || '';
     });
+    applyAvatarImage(user);
+  }
+
+  // アイコン画像（設定ページでアップロードしたもの）があれば、
+  // data-user-initial / data-admin-icon の丸アイコンの中身を画像に差し替えます。
+  // なければ中のテキスト（頭文字や「運」など）はそのまま表示されます。
+  function applyAvatarImage(user) {
+    var meta = (user && user.user_metadata) || {};
+    var url = meta.avatar_data_url;
+    var slots = document.querySelectorAll('[data-user-initial], [data-admin-icon]');
+    slots.forEach(function (el) {
+      var existingImg = el.querySelector('img[data-avatar-img]');
+      if (url) {
+        if (!existingImg) {
+          existingImg = document.createElement('img');
+          existingImg.setAttribute('data-avatar-img', '1');
+          existingImg.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;';
+          el.textContent = '';
+          el.appendChild(existingImg);
+        }
+        existingImg.src = url;
+      } else if (existingImg) {
+        existingImg.remove();
+      }
+    });
   }
 
   // 新規登録フォームで入力した「本名・住所・ハンドルネームなど」は
@@ -154,6 +179,58 @@
   }
 
   // signup-account.html から呼び出して使う補助関数
+  // アイコン画像ファイルを正方形に縮小・圧縮してdata URLにする（アップロード容量を抑えるため）
+  function resizeImageFile(file, size) {
+    size = size || 160;
+    return new Promise(function (resolve, reject) {
+      if (!file || file.type.indexOf('image/') !== 0) {
+        reject(new Error('画像ファイルを選択してください'));
+        return;
+      }
+      var reader = new FileReader();
+      reader.onerror = function () { reject(new Error('ファイルの読み込みに失敗しました')); };
+      reader.onload = function () {
+        var img = new Image();
+        img.onerror = function () { reject(new Error('画像の読み込みに失敗しました')); };
+        img.onload = function () {
+          var canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          var ctx = canvas.getContext('2d');
+          var srcSize = Math.min(img.width, img.height);
+          var sx = (img.width - srcSize) / 2;
+          var sy = (img.height - srcSize) / 2;
+          ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // 設定画面から呼び出す：アイコン画像をアップロードして保存する
+  function setAvatar(file) {
+    return resizeImageFile(file, 160).then(function (dataUrl) {
+      var user = netlifyIdentity.currentUser();
+      if (!user) return Promise.reject(new Error('ログインが必要です'));
+      return user.update({ data: { avatar_data_url: dataUrl } }).then(function (updatedUser) {
+        fillUserDisplay(updatedUser);
+        return dataUrl;
+      });
+    });
+  }
+
+  // 設定画面から呼び出す：アイコン画像を削除して頭文字表示に戻す
+  function removeAvatar() {
+    var user = netlifyIdentity.currentUser();
+    if (!user) return Promise.reject(new Error('ログインが必要です'));
+    return user.update({ data: { avatar_data_url: null } }).then(function (updatedUser) {
+      fillUserDisplay(updatedUser);
+      return true;
+    });
+  }
+
   window.AuthHelpers = {
     beginSignup: function (email, fullName, extraProfileData) {
       try {
@@ -163,6 +240,8 @@
       }
       netlifyIdentity.open('signup', { email: email, full_name: fullName });
     },
-    callFunction: callFunction
+    callFunction: callFunction,
+    setAvatar: setAvatar,
+    removeAvatar: removeAvatar
   };
 })();

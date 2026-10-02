@@ -64,7 +64,16 @@ export async function handler(event, context) {
         WHERE a.member_id = ${member.id}
         ORDER BY a.created_at DESC
       `;
-      return jsonResponse(200, { member, applications });
+
+      // 直近30日以内に配信された全体お知らせ（マイページでの告知表示用）
+      const recentAnnouncements = await db.sql`
+        SELECT id, subject, created_at FROM announcements
+        WHERE created_at > now() - interval '30 days'
+        ORDER BY created_at DESC
+        LIMIT 3
+      `;
+
+      return jsonResponse(200, { member, applications, recentAnnouncements });
     }
 
     if (event.httpMethod === 'POST') {
