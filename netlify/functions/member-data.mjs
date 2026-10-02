@@ -16,6 +16,15 @@ function memberLabel(member) {
   return member.handle_name || member.full_name || member.email;
 }
 
+// 管理者向けメール通知で、オプションの選択状況をまとめて表示するためのヘルパー
+function formatOptionsForEmail(optCommercial, optHidden, optCopyright) {
+  var tags = [];
+  if (optCommercial) tags.push('商用利用（＋20,000円＋税10%）');
+  if (optHidden) tags.push('実績非公開（＋50,000円＋税10%）');
+  if (optCopyright) tags.push('著作権譲渡（＋100,000円＋税10%）');
+  return tags.length ? tags.join('／') : 'なし';
+}
+
 const MENU_TITLES = {
   1: 'ミニキャラ／SNSアイコン等（1pt・メニュー選択）',
   2: 'バストアップ＋簡易背景（2pt・メニュー選択）',
@@ -171,8 +180,11 @@ export async function handler(event, context) {
           subject: '【新しい申請】' + memberLabel(member) + ' さんから制作メニューの申請がありました',
           html:
             '<p>' + escapeHtml(memberLabel(member)) + ' さんから、新しい申請がありました。</p>' +
-            '<p>内容：' + escapeHtml(inserted[0].title) + '</p>' +
-            '<p>ご要望メモ：' + escapeHtml(notes) + '</p>' +
+            '<p>プラン：' + (PLAN_LABELS[member.plan] || member.plan) + '</p>' +
+            '<p>メニュー：' + escapeHtml(inserted[0].title) + '（ヒアリング不要・即時受付）</p>' +
+            '<p>ポイント数：' + pt + 'pt</p>' +
+            '<p>ご要望メモ：<br>' + escapeHtml(notes).replace(/\n/g, '<br>') + '</p>' +
+            '<p>オプション：' + formatOptionsForEmail(optCommercial, optHidden, optCopyright) + '</p>' +
             '<p><a href="' + siteUrl('admin-inbox.html#' + inserted[0].id) + '">管理画面で確認する</a></p>'
         }).catch(function () {});
         return jsonResponse(200, { member: updatedMembers[0], application: inserted[0] });
@@ -202,7 +214,11 @@ export async function handler(event, context) {
           subject: '【新しい申請】' + memberLabel(member) + ' さんから特殊な依頼のご相談がありました',
           html:
             '<p>' + escapeHtml(memberLabel(member)) + ' さんから、特殊な依頼のご相談がありました。</p>' +
-            '<p>内容：' + escapeHtml(details) + '</p>' +
+            '<p>プラン：' + (PLAN_LABELS[member.plan] || member.plan) + '</p>' +
+            '<p>タイトル：' + escapeHtml(inserted[0].title) + '</p>' +
+            '<p>希望ポイント数の目安：' + escapeHtml(body.point_estimate || '相談中') + '</p>' +
+            '<p>依頼内容：<br>' + escapeHtml(details).replace(/\n/g, '<br>') + '</p>' +
+            '<p>オプション：' + formatOptionsForEmail(optCommercial, optHidden, optCopyright) + '</p>' +
             '<p><a href="' + siteUrl('admin-inbox.html#' + inserted[0].id) + '">管理画面で確認する</a></p>'
         }).catch(function () {});
         return jsonResponse(200, { member, application: inserted[0] });
@@ -242,8 +258,9 @@ export async function handler(event, context) {
           subject: '【新しい申請】' + memberLabel(member) + ' さんから今月のご依頼がありました（月1プラン）',
           html:
             '<p>' + escapeHtml(memberLabel(member)) + ' さんから、今月のご依頼がありました。</p>' +
-            '<p>内容：' + escapeHtml(details) + '</p>' +
-            (wantsExtra ? '<p>追加購入（+1pt）を希望されています。</p>' : '') +
+            '<p>基礎枠：2pt相当' + (wantsExtra ? '＋追加購入1pt（計3pt相当・追加料金+10,000円＋消費税10%）' : '（追加購入なし）') + '</p>' +
+            '<p>依頼内容：<br>' + escapeHtml(details).replace(/\n/g, '<br>') + '</p>' +
+            '<p>オプション：' + formatOptionsForEmail(optCommercial, optHidden, optCopyright) + '</p>' +
             '<p><a href="' + siteUrl('admin-inbox.html#' + inserted[0].id) + '">管理画面で確認する</a></p>'
         }).catch(function () {});
         return jsonResponse(200, { member, application: inserted[0] });
