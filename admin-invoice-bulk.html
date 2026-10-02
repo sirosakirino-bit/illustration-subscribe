@@ -296,11 +296,27 @@
     );
   }
 
-  function detectImageFormat(dataUrl) {
-    var m = /^data:image\/(png|jpeg|jpg|webp)/i.exec(dataUrl || '');
-    if (!m) return 'PNG';
-    var ext = m[1].toUpperCase();
-    return ext === 'JPG' ? 'JPEG' : ext;
+  // 角印画像を、ブラウザ標準のCanvas 2D APIだけを使って「白背景に合成した不透明画像」に変換する。
+  // jsPDFのaddImage自体にもPNGの透過（アルファチャンネル）を処理する機能はあるが、ライブラリの
+  // バージョンや画像の作られ方によっては正しく動かず黒く表示されてしまうことがあるため、
+  // jsPDF側のアルファ処理には一切頼らず、ここで完全に不透明な画像にしてから渡すようにする。
+  // レシート自体の背景が白なので、白背景に合成しても見た目は透過しているのと同じになる。
+  function flattenStampToWhite(dataUrl) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onerror = function () { reject(new Error('角印画像の読み込みに失敗しました')); };
+      img.onload = function () {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || img.width || 160;
+        canvas.height = img.naturalHeight || img.height || 160;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.src = dataUrl;
+    });
   }
 
   // renderReceiptCanvas は {canvas, stampRectPx, containerWidthPx} を返す。stampRectPxは角印
@@ -346,10 +362,11 @@
       if (result.stampRectPx && opts.issuer && opts.issuer.stamp_image_data_url) {
         var mmPerPx = pageW / result.containerWidthPx;
         var r = result.stampRectPx;
-        var dataUrl = opts.issuer.stamp_image_data_url;
-        try {
-          doc.addImage(dataUrl, detectImageFormat(dataUrl), r.x * mmPerPx, r.y * mmPerPx, r.w * mmPerPx, r.h * mmPerPx);
-        } catch (e) { /* 画像形式が合わない場合は角印を省略して続行 */ }
+        return flattenStampToWhite(opts.issuer.stamp_image_data_url).then(function (flatDataUrl) {
+          try {
+            doc.addImage(flatDataUrl, 'PNG', r.x * mmPerPx, r.y * mmPerPx, r.w * mmPerPx, r.h * mmPerPx);
+          } catch (e) { /* 角印の貼り付けに失敗した場合は省略して続行 */ }
+        }).catch(function () {});
       }
     });
   }
