@@ -6,6 +6,13 @@
 <title>プラン選択（月1プラン満席時）｜[サイト名]</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
 <style>
+  /* サイト全体で表示されるスクロールバーの配色を統一（水色） */
+  *::-webkit-scrollbar { width: 9px; height: 9px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb { background: #cfe6f1; border-radius: 999px; }
+  *::-webkit-scrollbar-thumb:hover { background: #9ed2ea; }
+  html { scrollbar-width: thin; scrollbar-color: #cfe6f1 transparent; }
+
   @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }

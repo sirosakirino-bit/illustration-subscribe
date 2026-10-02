@@ -6,6 +6,13 @@
 <title>メッセージ｜[サイト名] 管理画面</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
 <style>
+  /* サイト全体で表示されるスクロールバーの配色を統一（水色） */
+  *::-webkit-scrollbar { width: 9px; height: 9px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb { background: #cfe6f1; border-radius: 999px; }
+  *::-webkit-scrollbar-thumb:hover { background: #9ed2ea; }
+  html { scrollbar-width: thin; scrollbar-color: #cfe6f1 transparent; }
+
   @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -49,11 +56,6 @@
   .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
   .edit-link { color: #2f9bd6; cursor: pointer; text-decoration: underline; }
 
-  #contact-rows, #thread-messages { scrollbar-width: thin; scrollbar-color: #cfe6f1 transparent; }
-  #contact-rows::-webkit-scrollbar, #thread-messages::-webkit-scrollbar { width: 7px; }
-  #contact-rows::-webkit-scrollbar-track, #thread-messages::-webkit-scrollbar-track { background: transparent; }
-  #contact-rows::-webkit-scrollbar-thumb, #thread-messages::-webkit-scrollbar-thumb { background: #cfe6f1; border-radius: 999px; }
-  #contact-rows::-webkit-scrollbar-thumb:hover, #thread-messages::-webkit-scrollbar-thumb:hover { background: #9ed2ea; }
   .inbox-split { display: flex; gap: 14px; flex-grow: 1; min-height: 0; }
   .inbox-list { width: 300px; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; min-height: 0; }
   .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
