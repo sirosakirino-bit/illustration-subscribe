@@ -216,6 +216,7 @@ function toggleIssuerInfo() {
 }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
 <script>
@@ -236,8 +237,17 @@ function toggleIssuerInfo() {
     });
   }
 
+  // 管理画面での識別用（ハンドルネーム優先・本名併記）
   function memberDisplayName(m) {
-    return m.handle_name || m.full_name || m.email;
+    var handle = (m.handle_name || '').trim();
+    var full = (m.full_name || '').trim();
+    if (handle && full && handle !== full) return handle + '（' + full + '）';
+    return handle || full || m.email;
+  }
+
+  // 領収書の宛名用（本名を優先。記帳・確定申告用の書類のため、ハンドルネームではなく本名を既定値にする）
+  function legalRecipientName(m) {
+    return (m.full_name || '').trim() || (m.handle_name || '').trim() || m.email;
   }
 
   function memberAddressLines(m) {
@@ -307,7 +317,7 @@ function toggleIssuerInfo() {
     var addrLines = memberAddressLines(member);
     summary.textContent = (addrLines.length ? addrLines.join(' ') + ' ／ ' : '') + (PLAN_LABELS[member.plan] || member.plan);
 
-    document.getElementById('issue-recipient').value = memberDisplayName(member);
+    document.getElementById('issue-recipient').value = legalRecipientName(member);
     document.getElementById('issue-memo').value = PLAN_MEMO[member.plan] || '';
 
     var total = PLAN_AMOUNTS[member.plan] || 0;
@@ -319,74 +329,99 @@ function toggleIssuerInfo() {
   }
 
   // ---- PDF生成 ----
+  // jsPDFの標準フォントは日本語に対応していないため文字化けする。
+  // そのため、実際のページと同じフォント・スタイルでHTMLを組み立ててhtml2canvasで画像化し、
+  // その画像をPDFに貼り付ける方式にしている（ブラウザが描画する日本語をそのまま使うので文字化けしない）。
+  function buildReceiptHtml(opts) {
+    var stampHtml = (opts.issuer && opts.issuer.stamp_image_data_url)
+      ? '<img src="' + opts.issuer.stamp_image_data_url + '" style="width:50px;height:50px;object-fit:contain;flex-shrink:0;">'
+      : '';
+    var issuerLines = [];
+    if (opts.issuer) {
+      if (opts.issuer.zip) issuerLines.push('〒' + escapeHtml(opts.issuer.zip));
+      if (opts.issuer.address) issuerLines.push(escapeHtml(opts.issuer.address));
+      if (opts.issuer.phone) issuerLines.push('TEL：' + escapeHtml(opts.issuer.phone));
+    }
+    return (
+      '<div style="width:640px;background:#ffffff;padding:56px 60px;display:flex;flex-direction:column;font-family:\'Kosugi Maru\',system-ui,sans-serif;color:#33393d;line-height:1.85;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+          '<div style="font-family:\'GenEi Kiwami Gothic\',\'Dela Gothic One\',system-ui,sans-serif;font-size:26px;font-weight:800;letter-spacing:4px;">領収書</div>' +
+          '<div style="text-align:right;font-size:11.5px;color:#6b767c;line-height:1.8;">' +
+            '<div>発行番号：No. ' + escapeHtml(opts.receiptNo) + '</div>' +
+            '<div>発行日：' + formatDateJa(opts.issueDate) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:40px;display:flex;align-items:flex-end;gap:10px;border-bottom:2px solid #33393d;padding-bottom:10px;width:100%;max-width:360px;">' +
+          '<div style="font-family:\'GenEi Kiwami Gothic\',\'Dela Gothic One\',system-ui,sans-serif;font-size:20px;font-weight:700;">' + escapeHtml(opts.recipient) + '</div>' +
+          '<div style="font-size:14px;color:#5c6b73;padding-bottom:2px;">様</div>' +
+        '</div>' +
+        '<div style="margin-top:28px;display:flex;align-items:baseline;gap:12px;">' +
+          '<div style="font-size:13px;color:#5c6b73;">金額</div>' +
+          '<div style="font-size:32px;font-weight:800;letter-spacing:1px;">' + yen(opts.total) + '<span style="font-family:\'GenEi Kiwami Gothic\',\'Dela Gothic One\',system-ui,sans-serif;font-size:16px;font-weight:700;">-（税込）</span></div>' +
+        '</div>' +
+        '<div style="margin-top:18px;font-size:12.5px;color:#4b5a61;line-height:1.9;">' + escapeHtml(opts.memo) + '<br>上記正に領収いたしました。</div>' +
+        '<div style="margin-top:32px;display:flex;flex-direction:column;border-top:1px solid #dfe4e6;">' +
+          '<div style="display:flex;padding:10px 0;border-bottom:1px solid #eef2f4;font-size:12.5px;">' +
+            '<div style="flex-grow:1;color:#4b5a61;">' + escapeHtml(opts.itemLabel) + '</div>' +
+            '<div style="width:110px;text-align:right;">' + Math.round(opts.subtotal).toLocaleString() + '円</div>' +
+          '</div>' +
+          '<div style="display:flex;padding:10px 0;border-bottom:1px solid #eef2f4;font-size:12.5px;">' +
+            '<div style="flex-grow:1;color:#4b5a61;">消費税（10%）</div>' +
+            '<div style="width:110px;text-align:right;">' + Math.round(opts.tax).toLocaleString() + '円</div>' +
+          '</div>' +
+          '<div style="display:flex;padding:12px 0;font-size:13.5px;font-weight:800;">' +
+            '<div style="flex-grow:1;">合計（税込）</div>' +
+            '<div style="width:110px;text-align:right;color:#2f9bd6;">' + Math.round(opts.total).toLocaleString() + '円</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:56px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;">' +
+          '<div style="font-size:10px;color:#b3c2c9;line-height:1.8;max-width:280px;">電子発行のため収入印紙は不要です。</div>' +
+          '<div style="display:flex;align-items:flex-end;gap:14px;">' +
+            stampHtml +
+            '<div style="text-align:right;font-size:11.5px;color:#4b5a61;line-height:1.9;">' +
+              '<div style="font-weight:700;font-size:13px;">' + escapeHtml((opts.issuer && opts.issuer.full_name) || '') + '</div>' +
+              issuerLines.map(function (t) { return '<div>' + t + '</div>'; }).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function waitImagesLoaded(container) {
+    var imgs = Array.prototype.slice.call(container.querySelectorAll('img'));
+    return Promise.all(imgs.map(function (img) {
+      if (img.complete) return Promise.resolve();
+      return new Promise(function (resolve) {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
+  }
+
+  function renderReceiptCanvas(opts) {
+    if (!window.html2canvas) return Promise.reject(new Error('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。'));
+    var container = document.createElement('div');
+    container.style.cssText = 'position:fixed;left:-99999px;top:0;';
+    container.innerHTML = buildReceiptHtml(opts);
+    document.body.appendChild(container);
+    return waitImagesLoaded(container)
+      .then(function () { return document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(); })
+      .then(function () { return window.html2canvas(container.firstChild, { scale: 2, backgroundColor: '#ffffff' }); })
+      .then(function (canvas) { document.body.removeChild(container); return canvas; })
+      .catch(function (err) { if (container.parentNode) document.body.removeChild(container); throw err; });
+  }
+
   function buildReceiptPdf(opts) {
     var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
-    if (!jsPDFCtor) throw new Error('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。');
-    var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
-    var pageW = doc.internal.pageSize.getWidth();
-    var marginX = 22;
-    var y = 26;
-
-    doc.setFontSize(22);
-    doc.text('領収書', marginX, y);
-    doc.setFontSize(9);
-    doc.text('発行番号：No. ' + opts.receiptNo, pageW - marginX, y - 6, { align: 'right' });
-    doc.text('発行日：' + formatDateJa(opts.issueDate), pageW - marginX, y, { align: 'right' });
-
-    y += 16;
-    doc.setFontSize(15);
-    doc.text(opts.recipient + ' 様', marginX, y);
-    doc.setLineWidth(0.5);
-    doc.line(marginX, y + 2, marginX + 90, y + 2);
-
-    y += 14;
-    doc.setFontSize(10);
-    doc.text('金額', marginX, y);
-    doc.setFontSize(20);
-    doc.text(yen(opts.total) + '-（税込）', marginX + 16, y);
-
-    y += 12;
-    doc.setFontSize(10);
-    var memoLines = doc.splitTextToSize(opts.memo + '\n上記正に領収いたしました。', pageW - marginX * 2);
-    doc.text(memoLines, marginX, y);
-    y += memoLines.length * 5 + 6;
-
-    doc.setLineWidth(0.2);
-    doc.line(marginX, y, pageW - marginX, y);
-    y += 7;
-    doc.text(opts.itemLabel, marginX, y);
-    doc.text(yen(opts.subtotal), pageW - marginX, y, { align: 'right' });
-    y += 8;
-    doc.line(marginX, y - 5, pageW - marginX, y - 5);
-    doc.text('消費税（10%）', marginX, y);
-    doc.text(yen(opts.tax), pageW - marginX, y, { align: 'right' });
-    y += 9;
-    doc.setFontSize(12);
-    doc.text('合計（税込）', marginX, y);
-    doc.text(yen(opts.total), pageW - marginX, y, { align: 'right' });
-
-    y += 20;
-    doc.setFontSize(8);
-    doc.text('電子発行のため収入印紙は不要です。', marginX, y);
-
-    var issuerX = pageW - marginX;
-    var issuerY = y - 6;
-    if (opts.issuer) {
-      if (opts.issuer.stamp_image_data_url) {
-        try { doc.addImage(opts.issuer.stamp_image_data_url, 'JPEG', issuerX - 60, issuerY - 4, 16, 16); } catch (e) { /* 画像形式が合わない場合は無視 */ }
-      }
-      doc.setFontSize(11);
-      doc.text(opts.issuer.full_name || '', issuerX, issuerY, { align: 'right' });
-      doc.setFontSize(9);
-      var line2 = opts.issuer.zip ? ('〒' + opts.issuer.zip) : '';
-      var line3 = opts.issuer.address || '';
-      var line4 = opts.issuer.phone ? ('TEL：' + opts.issuer.phone) : '';
-      [line2, line3, line4].filter(Boolean).forEach(function (t, i) {
-        doc.text(t, issuerX, issuerY + 5 + i * 5, { align: 'right' });
-      });
-    }
-
-    return doc;
+    if (!jsPDFCtor) return Promise.reject(new Error('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。'));
+    return renderReceiptCanvas(opts).then(function (canvas) {
+      var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
+      var pageW = doc.internal.pageSize.getWidth();
+      var imgH = pageW * canvas.height / canvas.width;
+      doc.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pageW, imgH);
+      return doc;
+    });
   }
 
   function issueReceiptClicked() {
@@ -417,7 +452,7 @@ function toggleIssuerInfo() {
       body: { action: 'issue-receipt', member_id: member.id, period_month: periodMonth }
     }).then(function (data) {
       var receiptNo = periodMonth.replace('-', '') + '-' + String(data.receipt.id).padStart(3, '0');
-      var pdf = buildReceiptPdf({
+      return buildReceiptPdf({
         receiptNo: receiptNo,
         issueDate: issueDate,
         recipient: recipient,
@@ -427,9 +462,10 @@ function toggleIssuerInfo() {
         tax: tax,
         total: total,
         issuer: currentIssuer
+      }).then(function (pdf) {
+        pdf.save('領収書_' + memberDisplayName(member) + '_' + periodMonth + '.pdf');
+        return loadReceipts();
       });
-      pdf.save('領収書_' + memberDisplayName(member) + '_' + periodMonth + '.pdf');
-      return loadReceipts();
     }).catch(function (err) {
       showIssueError(err.message || '領収書の発行に失敗しました');
     }).then(function () {
@@ -517,8 +553,9 @@ function toggleIssuerInfo() {
           var srcSize = Math.min(img.width, img.height);
           var sx = (img.width - srcSize) / 2;
           var sy = (img.height - srcSize) / 2;
+          // 角印は背景を透過したまま使うのが前提のため、常にPNGで書き出し透過を保持する。
           ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size);
-          resolve(canvas.toDataURL('image/jpeg', 0.85));
+          resolve(canvas.toDataURL('image/png'));
         };
         img.src = reader.result;
       };

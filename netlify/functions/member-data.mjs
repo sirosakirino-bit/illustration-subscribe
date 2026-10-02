@@ -1,6 +1,6 @@
 import { getDb } from './_lib/db.mjs';
 import { requireUser, jsonResponse } from './_lib/auth.mjs';
-import { notifyAdmin, escapeHtml, siteUrl } from './_lib/email.mjs';
+import { notifyAdmin, notifyMember, escapeHtml, siteUrl } from './_lib/email.mjs';
 import { computeCapacity } from './_lib/capacity.mjs';
 
 const PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
@@ -15,6 +15,15 @@ const MENU_TITLES = {
   2: 'バストアップ＋簡易背景（2pt・メニュー選択）',
   3: '腰上＋背景／人物2人まで（3pt・メニュー選択）'
 };
+
+// 正式受付（見積もり承諾）の直後に自動送信する、今後の制作の流れの案内文
+const PRODUCTION_FLOW_MESSAGE =
+  'ここから制作を進めてまいります。今後の流れは以下の通りです。\n\n' +
+  '①ラフ提案\n線画のラフスケッチで、全体の形を決めていきます。\n\n' +
+  '②色決め\n①を元に清書に近い形にし、色を決めていきます。\n\n' +
+  '③完成\n最終確認をしていただき、納品いたします。\n\n' +
+  '①②の段階で修正のご希望があれば、こちらのメッセージでお気軽にお知らせください。\n' +
+  'それでは、どうぞよろしくお願いいたします！';
 
 async function ensureMember(db, user) {
   const existing = await db.sql`SELECT * FROM members WHERE identity_user_id = ${user.sub}`;
@@ -277,6 +286,18 @@ export async function handler(event, context) {
           INSERT INTO messages (application_id, sender, kind, body, read_by_member, read_by_admin)
           VALUES (${applicationId}, 'system', 'system', ${'正式受付されました（' + quote.point_cost + 'pt）'}, true, true)
         `;
+        // 正式受付の直後に、今後の制作の流れを案内する自動メッセージを送る
+        await db.sql`
+          INSERT INTO messages (application_id, sender, kind, body, read_by_member, read_by_admin)
+          VALUES (${applicationId}, 'admin', 'text', ${PRODUCTION_FLOW_MESSAGE}, false, true)
+        `;
+        const threadPage = application.kind === 'monthly' ? 'message-monthly.html' : 'message.html';
+        notifyMember(updatedMembers[0], {
+          subject: '【正式受付】今後の制作の流れのご案内',
+          html:
+            '<p>ご依頼の正式受付が完了しました。今後の流れをメッセージでご案内しています。</p>' +
+            '<p><a href="' + siteUrl(threadPage + '?id=' + applicationId) + '">やり取りを確認する</a></p>'
+        }).catch(function () {});
         notifyAdmin({
           subject: '【正式受付】' + memberLabel(member) + ' さんが見積もりを承諾しました',
           html:

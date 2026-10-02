@@ -26,7 +26,7 @@
   function displayNameOf(user) {
     if (!user) return '';
     var meta = user.user_metadata || {};
-    return meta.full_name || meta.handle_name || user.email || '';
+    return meta.handle_name || meta.full_name || user.email || '';
   }
 
   function fillUserDisplay(user) {
@@ -200,8 +200,15 @@
           var srcSize = Math.min(img.width, img.height);
           var sx = (img.width - srcSize) / 2;
           var sy = (img.height - srcSize) / 2;
+          // 透過（アルファチャンネル）を持ちうる形式はPNGで書き出し、透過を保持する。
+          // 写真など透過を持たない形式はJPEGで圧縮してアップロード容量を抑える。
+          var preservesAlpha = /image\/(png|gif|webp|svg\+xml)/.test(file.type);
+          if (!preservesAlpha) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+          }
           ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size);
-          resolve(canvas.toDataURL('image/jpeg', 0.82));
+          resolve(preservesAlpha ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.82));
         };
         img.src = reader.result;
       };

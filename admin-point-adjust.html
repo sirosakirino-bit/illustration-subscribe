@@ -199,10 +199,18 @@
     box.style.display = 'block';
   }
 
+  // 運営側の会員名表示：ハンドルネーム（本名）の形式で両方表示する
+  function adminMemberName(m) {
+    var handle = (m.handle_name || '').trim();
+    var full = (m.full_name || '').trim();
+    if (handle && full && handle !== full) return handle + '（' + full + '）';
+    return handle || full || m.email;
+  }
+
   function renderMember(member) {
     currentMember = member;
-    var name = member.handle_name || member.full_name || member.email;
-    document.getElementById('member-initial').textContent = name ? name.charAt(0) : '?';
+    var name = adminMemberName(member);
+    document.getElementById('member-initial').textContent = (member.handle_name || member.full_name || '').charAt(0) || '?';
     document.getElementById('member-name').textContent = name + ' さん';
     document.getElementById('member-plan').textContent = PLAN_LABELS[member.plan] || member.plan;
     document.getElementById('member-balance').textContent = member.point_balance + 'pt';
@@ -278,7 +286,7 @@
     document.getElementById('remove-error').style.display = 'none';
     if (!memberId) { showRemoveError('会員が指定されていません。'); return; }
     if (!reason) { showRemoveError('強制退会の理由を入力してください。'); return; }
-    var name = currentMember ? (currentMember.handle_name || currentMember.full_name || currentMember.email) : 'この会員';
+    var name = currentMember ? adminMemberName(currentMember) : 'この会員';
     if (!window.confirm(name + ' さんを即時に強制退会させます。この操作は取り消せません。よろしいですか？')) return;
 
     var btn = this;

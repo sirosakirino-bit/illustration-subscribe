@@ -201,6 +201,13 @@
   var currentFilter = 'all';
   var currentSearch = '';
 
+  // 運営側の会員名表示：ハンドルネーム（本名）の形式で両方表示する（本名がなければハンドルネームのみ、どちらもなければメール）
+  function adminMemberName(m) {
+    var handle = (m.handle_name || '').trim();
+    var full = (m.full_name || '').trim();
+    if (handle && full && handle !== full) return handle + '（' + full + '）';
+    return handle || full || m.email;
+  }
   function formatDate(iso) {
     var d = new Date(iso);
     return (d.getMonth() + 1) + '/' + d.getDate();
@@ -217,7 +224,7 @@
     card.style.display = 'flex';
     document.getElementById('leave-notice-count').textContent = '翌月1日付・' + pending.length + '件';
     document.getElementById('leave-notice-rows').innerHTML = pending.map(function (m, i) {
-      var name = m.handle_name || m.full_name || m.email;
+      var name = adminMemberName(m);
       var border = (i < pending.length - 1) ? 'border-bottom: 1px dashed #f2e0c4;' : '';
       var requestedAt = new Date(m.leave_requested_at);
       return (
@@ -236,7 +243,7 @@
       if (currentFilter === 'active' && m.is_removed) return false;
       if (currentFilter === 'removed' && !m.is_removed) return false;
       if (currentSearch) {
-        var name = (m.handle_name || m.full_name || m.email || '').toLowerCase();
+        var name = adminMemberName(m).toLowerCase();
         var email = (m.email || '').toLowerCase();
         if (name.indexOf(currentSearch) === -1 && email.indexOf(currentSearch) === -1) return false;
       }
@@ -249,8 +256,8 @@
     }
     container.innerHTML = filtered.map(function (m, i) {
       var border = (i < filtered.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
-      var name = m.handle_name || m.full_name || m.email;
-      var initial = name ? name.charAt(0) : '?';
+      var name = adminMemberName(m);
+      var initial = (m.handle_name || m.full_name || '').charAt(0) || '?';
       var badges = '';
       if (m.is_removed) badges += '<span style="font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #fbecec; color: #c0524f; margin-left: 6px;">強制退会済み</span>';
       else if (m.leave_requested_at) badges += '<span style="font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #f2e0c4; color: #a8722a; margin-left: 6px;">退会予告</span>';

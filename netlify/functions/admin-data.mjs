@@ -24,7 +24,12 @@ export async function handler(event, context) {
       if (query.inbox) {
         const threads = await db.sql`
           SELECT a.*,
-            COALESCE(m.handle_name, m.full_name, m.email) AS member_display_name,
+            CASE
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL AND NULLIF(m.full_name, '') IS NOT NULL AND m.handle_name <> m.full_name THEN m.handle_name || '（' || m.full_name || '）'
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL THEN m.handle_name
+              WHEN NULLIF(m.full_name, '') IS NOT NULL THEN m.full_name
+              ELSE m.email
+            END AS member_display_name,
             m.plan AS member_plan,
             (SELECT COUNT(*) FROM messages msg WHERE msg.application_id = a.id AND msg.sender = 'member' AND msg.read_by_admin = false)::int AS unread_count,
             (SELECT msg2.body FROM messages msg2 WHERE msg2.application_id = a.id ORDER BY msg2.created_at DESC LIMIT 1) AS last_message_body,
@@ -60,7 +65,12 @@ export async function handler(event, context) {
       // ---- 領収書：発行履歴 ----
       if (query.receipts) {
         const receipts = await db.sql`
-          SELECT receipts.*, COALESCE(members.handle_name, members.full_name, members.email) AS member_display_name
+          SELECT receipts.*, CASE
+               WHEN NULLIF(members.handle_name, '') IS NOT NULL AND NULLIF(members.full_name, '') IS NOT NULL AND members.handle_name <> members.full_name THEN members.handle_name || '（' || members.full_name || '）'
+               WHEN NULLIF(members.handle_name, '') IS NOT NULL THEN members.handle_name
+               WHEN NULLIF(members.full_name, '') IS NOT NULL THEN members.full_name
+               ELSE members.email
+             END AS member_display_name
           FROM receipts JOIN members ON members.id = receipts.member_id
           ORDER BY receipts.issued_at DESC LIMIT 100
         `;
@@ -82,7 +92,12 @@ export async function handler(event, context) {
       if (query.thread) {
         const applicationId = Number(query.thread);
         const appRows = await db.sql`
-          SELECT a.*, COALESCE(m.handle_name, m.full_name, m.email) AS member_display_name, m.plan AS member_plan
+          SELECT a.*, CASE
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL AND NULLIF(m.full_name, '') IS NOT NULL AND m.handle_name <> m.full_name THEN m.handle_name || '（' || m.full_name || '）'
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL THEN m.handle_name
+              WHEN NULLIF(m.full_name, '') IS NOT NULL THEN m.full_name
+              ELSE m.email
+            END AS member_display_name, m.plan AS member_plan
           FROM applications a JOIN members m ON m.id = a.member_id
           WHERE a.id = ${applicationId}
         `;
@@ -101,14 +116,24 @@ export async function handler(event, context) {
       const members = await db.sql`SELECT * FROM members ORDER BY created_at ASC`;
       const applications = await db.sql`
         SELECT applications.*, members.email AS member_email,
-               COALESCE(members.handle_name, members.full_name, members.email) AS member_display_name
+               CASE
+               WHEN NULLIF(members.handle_name, '') IS NOT NULL AND NULLIF(members.full_name, '') IS NOT NULL AND members.handle_name <> members.full_name THEN members.handle_name || '（' || members.full_name || '）'
+               WHEN NULLIF(members.handle_name, '') IS NOT NULL THEN members.handle_name
+               WHEN NULLIF(members.full_name, '') IS NOT NULL THEN members.full_name
+               ELSE members.email
+             END AS member_display_name
         FROM applications
         JOIN members ON members.id = applications.member_id
         ORDER BY applications.created_at DESC
       `;
       const adjustments = await db.sql`
         SELECT point_adjustments.*,
-               COALESCE(members.handle_name, members.full_name, members.email) AS member_display_name
+               CASE
+               WHEN NULLIF(members.handle_name, '') IS NOT NULL AND NULLIF(members.full_name, '') IS NOT NULL AND members.handle_name <> members.full_name THEN members.handle_name || '（' || members.full_name || '）'
+               WHEN NULLIF(members.handle_name, '') IS NOT NULL THEN members.handle_name
+               WHEN NULLIF(members.full_name, '') IS NOT NULL THEN members.full_name
+               ELSE members.email
+             END AS member_display_name
         FROM point_adjustments
         JOIN members ON members.id = point_adjustments.member_id
         ORDER BY point_adjustments.created_at DESC
