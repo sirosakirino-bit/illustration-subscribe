@@ -2,6 +2,7 @@ import { getDb } from './_lib/db.mjs';
 import { requireAdmin, jsonResponse } from './_lib/auth.mjs';
 import { notifyMember, escapeHtml, siteUrl } from './_lib/email.mjs';
 import { computeCapacity, setCapacity } from './_lib/capacity.mjs';
+import { getStripe } from './_lib/stripe.mjs';
 
 const PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
 const PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
@@ -86,6 +87,57 @@ export async function handler(event, context) {
           ORDER BY created_at ASC
         `;
         return jsonResponse(200, { members });
+      }
+
+      // ---- 決済状況（Stripe連携） ----
+      if (query.payments) {
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+        const revenueRows = await db.sql`
+          SELECT COALESCE(SUM(amount), 0)::int AS total, COUNT(*)::int AS c
+          FROM payment_events
+          WHERE event_type = 'invoice.paid' AND status = '成功' AND created_at >= ${monthStart}
+        `;
+
+        const canceledRows = await db.sql`
+          SELECT COUNT(*)::int AS c FROM payment_events
+          WHERE event_type = 'customer.subscription.deleted' AND created_at >= ${monthStart}
+        `;
+
+        const pastDueMembers = await db.sql`
+          SELECT m.*,
+            (SELECT COUNT(*)::int FROM payment_events pe WHERE pe.member_id = m.id AND pe.event_type = 'invoice.payment_failed' AND pe.created_at >= COALESCE(m.payment_failed_at, m.created_at)) AS retry_count
+          FROM members m
+          WHERE m.payment_status = 'past_due' AND m.is_removed = false
+          ORDER BY m.payment_failed_at ASC
+        `;
+
+        const recentEvents = await db.sql`
+          SELECT pe.*,
+            CASE
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL AND NULLIF(m.full_name, '') IS NOT NULL AND m.handle_name <> m.full_name THEN m.handle_name || '（' || m.full_name || '）'
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL THEN m.handle_name
+              WHEN NULLIF(m.full_name, '') IS NOT NULL THEN m.full_name
+              ELSE m.email
+            END AS member_display_name,
+            m.plan AS member_plan,
+            m.id AS member_id
+          FROM payment_events pe
+          JOIN members m ON m.id = pe.member_id
+          WHERE pe.event_type IN ('invoice.paid', 'invoice.payment_failed')
+          ORDER BY pe.created_at DESC
+          LIMIT 50
+        `;
+
+        return jsonResponse(200, {
+          revenue_total: revenueRows[0].total,
+          revenue_count: revenueRows[0].c,
+          canceled_count: canceledRows[0].c,
+          past_due_members: pastDueMembers,
+          recent_events: recentEvents,
+          overdue_days: 14
+        });
       }
 
       // ---- メッセージ管理：スレッド詳細 ----
@@ -427,11 +479,24 @@ export async function handler(event, context) {
         const reason = (body.reason || '').trim();
         if (!memberId || !reason) return jsonResponse(400, { error: '会員・理由はどちらも必須です' });
 
+        const beforeRows = await db.sql`SELECT * FROM members WHERE id = ${memberId}`;
+        if (beforeRows.length === 0) return jsonResponse(404, { error: '会員が見つかりません' });
+        const targetBefore = beforeRows[0];
+
         const rows = await db.sql`
           UPDATE members SET is_removed = true, removed_reason = ${reason}, removed_at = now(), point_balance = 0
           WHERE id = ${memberId} RETURNING *
         `;
-        if (rows.length === 0) return jsonResponse(404, { error: '会員が見つかりません' });
+
+        // Stripe側のサブスクリプションも即時キャンセルし、以降の請求が発生しないようにする
+        if (targetBefore.stripe_subscription_id) {
+          try {
+            const stripe = getStripe();
+            await stripe.subscriptions.cancel(targetBefore.stripe_subscription_id);
+          } catch (err) {
+            console.error('強制退会に伴うStripeサブスクリプションのキャンセルに失敗しました:', err);
+          }
+        }
 
         // 進行中の申請はすべて取り消し扱いにする
         await db.sql`
@@ -440,6 +505,38 @@ export async function handler(event, context) {
         `;
 
         return jsonResponse(200, { member: rows[0] });
+      }
+
+      // ---- サブスクリプションの休止／再開（Stripeのpause collection機能を使用。契約は維持したまま課金のみ止める） ----
+      if (action === 'pause-member' || action === 'resume-member') {
+        const memberId = Number(body.member_id);
+        if (!memberId) return jsonResponse(400, { error: '会員の指定が必要です' });
+
+        const rows = await db.sql`SELECT * FROM members WHERE id = ${memberId}`;
+        if (rows.length === 0) return jsonResponse(404, { error: '会員が見つかりません' });
+        const target = rows[0];
+        if (!target.stripe_subscription_id) {
+          return jsonResponse(400, { error: 'この会員はまだStripeのサブスクリプションと紐付いていません' });
+        }
+
+        const stripe = getStripe();
+        try {
+          if (action === 'pause-member') {
+            await stripe.subscriptions.update(target.stripe_subscription_id, { pause_collection: { behavior: 'void' } });
+          } else {
+            await stripe.subscriptions.update(target.stripe_subscription_id, { pause_collection: '' });
+          }
+        } catch (err) {
+          console.error('サブスクリプションの休止/再開に失敗しました:', err);
+          return jsonResponse(500, { error: '処理に失敗しました：' + err.message });
+        }
+
+        // 実際のpayment_statusの更新は、Stripeから届くcustomer.subscription.updated Webhookで行われる。
+        // ここでは画面側の即時反映用に、わかっている範囲で先に反映しておく。
+        const updated = await db.sql`
+          UPDATE members SET payment_status = ${action === 'pause-member' ? 'paused' : 'active'} WHERE id = ${memberId} RETURNING *
+        `;
+        return jsonResponse(200, { member: updated[0] });
       }
 
       // ---- 領収書：発行者情報（フルネーム・電話番号・住所・角印画像）を保存 ----

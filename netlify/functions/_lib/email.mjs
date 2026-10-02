@@ -3,9 +3,9 @@
 
 const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 const DEFAULT_FROM_EMAIL = 'kurageika125@gmail.com';
-const DEFAULT_FROM_NAME = 'くらげいかイラストサブスクライブ';
+const DEFAULT_FROM_NAME = 'Xovy Studio';
 const DEFAULT_ADMIN_EMAIL = 'kurageika125@gmail.com';
-const DEFAULT_SITE_URL = 'https://kurageika-illustration-subscription.netlify.app';
+const DEFAULT_SITE_URL = 'https://xovy-studio.netlify.app';
 
 export function escapeHtml(s) {
   return String(s == null ? '' : s)
@@ -23,7 +23,7 @@ export function siteUrl(path) {
 // メーラーによってはCSSのwhite-space指定が効かないため、改行は<br>で明示する。
 var EMAIL_FOOTER_LINES = [
   '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+',
-  '▍くらげいかイラストサブスクライブ',
+  '▍Xovy Studio',
   'サイトURL：' + DEFAULT_SITE_URL + '/',
   '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+',
   '※ このメールは送信専用です。直接返答されないようお願いいたします。',
@@ -31,7 +31,7 @@ var EMAIL_FOOTER_LINES = [
   '　お心当たりのない場合は下記カスタマーサポートまでご連絡ください。',
   '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+',
   '▍カスタマーサポート（9:00~17:00）',
-  'kurageika_sup@appmail.uk',
+  'xovy_studio_sup@appmail.uk',
   '+‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥‥+'
 ];
 

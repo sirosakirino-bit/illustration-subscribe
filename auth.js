@@ -1,5 +1,5 @@
 /*
-  [サイト名] 会員ログイン共通処理（Netlify Identity）
+  Xovy Studio 会員ログイン共通処理（Netlify Identity）
   このファイルは全ページで共通して読み込みます。
   各ページ側は <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   の直後にこのファイルを読み込んでください。
@@ -108,10 +108,18 @@
     });
 
     netlifyIdentity.on('login', function (user) {
+      // 新規登録直後（pendingProfileが残っている状態）は、決済手続きへ進んでもらう。
+      // 通常のログイン（2回目以降）は今まで通りマイページへ。
+      var isNewSignup = false;
+      try {
+        isNewSignup = !!localStorage.getItem('pendingProfile');
+      } catch (e) {
+        /* 読み取りに失敗した場合は通常ログイン扱いにする */
+      }
       applyPendingProfile(user);
       fillUserDisplay(user);
       netlifyIdentity.close();
-      location.href = 'mypage.html';
+      location.href = isNewSignup ? 'signup-payment.html' : 'mypage.html';
     });
 
     netlifyIdentity.on('logout', function () {

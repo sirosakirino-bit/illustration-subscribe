@@ -2,6 +2,7 @@ import { getDb } from './_lib/db.mjs';
 import { requireUser, jsonResponse } from './_lib/auth.mjs';
 import { notifyAdmin, notifyMember, escapeHtml, siteUrl } from './_lib/email.mjs';
 import { computeCapacity } from './_lib/capacity.mjs';
+import { getStripe, priceIdForPlan } from './_lib/stripe.mjs';
 
 const PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
 const PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
@@ -134,6 +135,20 @@ export async function handler(event, context) {
     if (event.httpMethod === 'POST') {
       const body = JSON.parse(event.body || '{}');
       const action = body.action;
+
+      // お支払いが完了していない（決済未完了・支払い失敗中・休止中・解約済み）会員は、
+      // 新しいご依頼（ポイント使用・特殊な依頼・月1プランの今月のご依頼）を送れないようにする
+      // （TEST_MODE_SKIP_LIMITS中はこの制限を無視する）
+      const PAYMENT_GATED_ACTIONS = ['submit-menu', 'submit-consult', 'submit-monthly'];
+      if (!TEST_MODE_SKIP_LIMITS && PAYMENT_GATED_ACTIONS.includes(action) && member.payment_status !== 'active') {
+        const messages = {
+          pending: 'お支払い手続きがまだ完了していないため、現在は新しいご依頼をお送りいただけません。お支払いを完了してください。',
+          past_due: 'お支払いが確認できていないため、現在は新しいご依頼をお送りいただけません。お支払い方法をご確認ください。',
+          paused: '現在サブスクリプションが休止中のため、新しいご依頼をお送りいただけません。',
+          canceled: 'サブスクリプションが解約済みのため、新しいご依頼をお送りいただけません。'
+        };
+        return jsonResponse(400, { error: messages[member.payment_status] || 'お支払い状況をご確認ください。' });
+      }
 
       // 会員1人につき、同時に進行できる申請（ヒアリング中・制作中）は1件までとする
       // （TEST_MODE_SKIP_LIMITS中はこの制限を無視する）
@@ -377,6 +392,23 @@ export async function handler(event, context) {
           }
         }
 
+        // Stripe側のサブスクリプションの価格（Price）も新プランのものに切り替える。
+        // proration_behavior: 'none' により、今期分の請求はそのまま・次回請求日から新プランの金額が適用される。
+        if (member.stripe_subscription_id) {
+          try {
+            const stripe = getStripe();
+            const subscription = await stripe.subscriptions.retrieve(member.stripe_subscription_id);
+            const itemId = subscription.items.data[0].id;
+            await stripe.subscriptions.update(member.stripe_subscription_id, {
+              items: [{ id: itemId, price: priceIdForPlan(newPlan) }],
+              proration_behavior: 'none'
+            });
+          } catch (err) {
+            console.error('Stripeサブスクリプションのプラン変更に失敗しました:', err);
+            return jsonResponse(500, { error: 'お支払いプランの変更に失敗しました。時間をおいて再度お試しいただくか、運営までお問い合わせください。' });
+          }
+        }
+
         const updated = await db.sql`UPDATE members SET plan = ${newPlan}, point_balance = 0 WHERE id = ${member.id} RETURNING *`;
         notifyAdmin({
           subject: '【プラン変更】' + memberLabel(member) + ' さんがプランを変更しました',
@@ -388,6 +420,19 @@ export async function handler(event, context) {
       // ---- 退会を申告する（当月末までの申告で翌月1日付け退会。運営の会員一覧「退会予告」に表示される） ----
       if (action === 'request-leave') {
         if (member.leave_requested_at) return jsonResponse(400, { error: 'すでに退会を申告済みです' });
+
+        // Stripe側は即時解約ではなく「現在の請求期間の終了時に解約」を予約する
+        // （全会員共通で請求日が毎月1日のため、これが「翌月1日から請求停止」の仕様に一致する）
+        if (member.stripe_subscription_id) {
+          try {
+            const stripe = getStripe();
+            await stripe.subscriptions.update(member.stripe_subscription_id, { cancel_at_period_end: true });
+          } catch (err) {
+            console.error('Stripeサブスクリプションの解約予約に失敗しました:', err);
+            return jsonResponse(500, { error: '退会予告の処理に失敗しました。時間をおいて再度お試しいただくか、運営までお問い合わせください。' });
+          }
+        }
+
         const updated = await db.sql`UPDATE members SET leave_requested_at = now() WHERE id = ${member.id} RETURNING *`;
         notifyAdmin({
           subject: '【退会予告】' + memberLabel(member) + ' さんが退会を申告しました',
@@ -399,6 +444,17 @@ export async function handler(event, context) {
       // ---- 退会申告を取り消す ----
       if (action === 'cancel-leave-request') {
         if (!member.leave_requested_at) return jsonResponse(400, { error: '退会の申告はありません' });
+
+        if (member.stripe_subscription_id) {
+          try {
+            const stripe = getStripe();
+            await stripe.subscriptions.update(member.stripe_subscription_id, { cancel_at_period_end: false });
+          } catch (err) {
+            console.error('Stripeサブスクリプションの解約予約の取り消しに失敗しました:', err);
+            return jsonResponse(500, { error: '退会申告の取り消しに失敗しました。時間をおいて再度お試しいただくか、運営までお問い合わせください。' });
+          }
+        }
+
         const updated = await db.sql`UPDATE members SET leave_requested_at = NULL WHERE id = ${member.id} RETURNING *`;
         return jsonResponse(200, { member: updated[0] });
       }

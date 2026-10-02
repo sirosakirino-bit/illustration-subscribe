@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>決済状況｜[サイト名] 管理画面</title>
+<title>決済状況｜Xovy Studio 管理画面</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="180x180" href="favicon-180.png">
+<link rel="apple-touch-icon" href="favicon-180.png">
 <style>
   /* サイト全体で表示されるスクロールバーの配色を統一（水色） */
   *::-webkit-scrollbar { width: 9px; height: 9px; }
@@ -16,7 +19,7 @@
   @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
+  body { background: radial-gradient(circle, #c9e2ef 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: wrap; gap: 10px; }
@@ -74,7 +77,7 @@
 <div class="page">
 
   <div class="topbar">
-    <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400; color: #2f9bd6;"><a href="admin-members.html" style="display:flex;align-items:center;gap:7px;color:#2f9bd6;"><img src="logo-icon.png" alt="" style="height:20px;width:auto;display:block;">Xovy Studio 管理画面</a></div>
     <div class="nav-toggle-btn" onclick="toggleMobileNav()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
     <div class="navlinks">
       <a href="admin-members.html" class="nav-inactive">会員一覧</a>
@@ -97,28 +100,28 @@
       <div style="font-size: 12px; color: #5c6b73; margin-top: 4px;">Stripe連携による入金状況です。未払いの会員は自動リトライの状況と、自動退会までの残り日数を確認できます。金額はすべて消費税込みの実際の決済額です（プラン料金は税抜表示のため、決済額は表示価格＋消費税10%）。</div>
     </div>
 
-    <div style="display: flex; gap: 14px;">
-      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 180px; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">今月の売上（確定分・税込）</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #3f9457;">60,500円</div>
-        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">入金済み 3件</div>
+        <div id="stat-revenue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #3f9457;">ー</div>
+        <div id="stat-revenue-note" style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">読み込み中…</div>
       </div>
-      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+      <div style="flex: 1; min-width: 180px; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">未払い・要確認</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #c0524f;">1件</div>
+        <div id="stat-pastdue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #c0524f;">ー</div>
         <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">自動リトライ中</div>
       </div>
-      <div style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
+      <div style="flex: 1; min-width: 180px; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">今月の解約（自動退会含む）</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px;">0件</div>
-        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">現時点</div>
+        <div id="stat-canceled" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px;">ー</div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">今月</div>
       </div>
     </div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
       <div style="font-size: 13px; font-weight: 800; color: #c0524f;">未払い会員（要フォロー）</div>
 
-      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #5c6b73;">
+      <div id="pastdue-header" style="display: none; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #5c6b73;">
         <div style="flex-grow: 1;">会員</div>
         <div style="width: 110px;">プラン</div>
         <div style="width: 150px;">金額</div>
@@ -126,20 +129,16 @@
         <div style="width: 130px;">自動退会まで</div>
       </div>
 
-      <div style="display: flex; align-items: center; padding: 12px 0; font-size: 13px;">
-        <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;"><div style="width: 26px; height: 26px; border-radius: 50%; background: #fbecec; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #c0524f;">D</div>[会員名D] さん</div>
-        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
-        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
-        <div style="width: 150px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fff0da; color: #b3791a;">2回目のリトライ中</span></div>
-        <div style="width: 130px; color: #c0524f; font-weight: 700;">あと6日（9/17）</div>
+      <div id="pastdue-rows">
+        <div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">読み込み中…</div>
       </div>
     </div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
         <div>
-          <div style="font-size: 13px; font-weight: 800;">直近の決済履歴</div>
-          <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 2px;">「領収書」から、運営の記帳・確定申告用に保管する領収書PDFを発行できます（会員へは送付されません）</div>
+          <div style="font-size: 13px; font-weight: 800;">直近の決済履歴（Stripe）</div>
+          <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 2px;">Stripeから届いた請求（成功・失敗）の記録です。「領収書」から、運営の記帳・確定申告用に保管する領収書PDFを手動で発行できます（会員へは送付されません）</div>
         </div>
         <a href="admin-invoice-bulk.html" style="flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; background: #eaf6fb; color: #1f7fb3; font-size: 11.5px; font-weight: 700; padding: 9px 16px; border-radius: 999px; white-space: nowrap;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -147,7 +146,7 @@
         </a>
       </div>
 
-      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #5c6b73;">
+      <div id="history-header" style="display: none; align-items: center; padding: 12px 0; border-bottom: 1px solid #eef2f4; font-size: 11px; font-weight: 700; color: #5c6b73;">
         <div style="width: 90px;">請求日</div>
         <div style="flex-grow: 1;">会員</div>
         <div style="width: 110px;">プラン</div>
@@ -156,40 +155,8 @@
         <div style="width: 70px;"></div>
       </div>
 
-      <a href="admin-invoice-issue.html" style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px; color: inherit; text-decoration: none;">
-        <div style="width: 90px; color: #5c6b73;">9/1</div>
-        <div style="flex-grow: 1;">[会員名A] さん</div>
-        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
-        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
-        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span></div>
-        <div style="width: 70px; font-size: 11px; font-weight: 700; color: #2f9bd6;">領収書</div>
-      </a>
-
-      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px;">
-        <div style="width: 90px; color: #5c6b73;">9/1</div>
-        <div style="flex-grow: 1;">[会員名B] さん</div>
-        <div style="width: 110px; color: #4b5a61;">月1プラン</div>
-        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">27,500円（税込）</div>
-        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span></div>
-        <div style="width: 70px; font-size: 11px; font-weight: 700; color: #2f9bd6;"><a href="admin-invoice-issue.html">領収書</a></div>
-      </div>
-
-      <div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px;">
-        <div style="width: 90px; color: #5c6b73;">9/1</div>
-        <div style="flex-grow: 1;">[会員名D] さん</div>
-        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
-        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
-        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fbecec; color: #c0524f;">失敗</span></div>
-        <div style="width: 70px; font-size: 11px; color: #d3dde1;">ー</div>
-      </div>
-
-      <div style="display: flex; align-items: center; padding: 12px 0; font-size: 13px;">
-        <div style="width: 90px; color: #5c6b73;">9/2</div>
-        <div style="flex-grow: 1;">[会員名A] さん</div>
-        <div style="width: 110px; color: #4b5a61;">オプション請求（商用利用）</div>
-        <div style="width: 150px; color: #4b5a61; white-space: nowrap;">22,000円（税込）</div>
-        <div style="width: 110px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span></div>
-        <div style="width: 70px; font-size: 11px; font-weight: 700; color: #2f9bd6;"><a href="admin-invoice-issue.html">領収書</a></div>
+      <div id="payment-history-rows">
+        <div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">読み込み中…</div>
       </div>
 
     </div>
@@ -197,7 +164,7 @@
   </div>
 </div>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 Xovy Studio&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 <script>
   function toggleMobileNav() {
@@ -213,5 +180,106 @@
 </script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
+<script>
+  var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  function yen(n) { return Math.round(n || 0).toLocaleString() + '円（税込）'; }
+
+  function formatMd(iso) {
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function memberInitial(m) {
+    var name = (m.handle_name || m.full_name || m.email || '？');
+    return name.charAt(0);
+  }
+
+  function renderPastDue(members, overdueDays) {
+    var wrap = document.getElementById('pastdue-rows');
+    var header = document.getElementById('pastdue-header');
+    document.getElementById('stat-pastdue').textContent = members.length + '件';
+
+    if (!members.length) {
+      header.style.display = 'none';
+      wrap.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">現在、お支払いが滞っている会員はいません</div>';
+      return;
+    }
+    header.style.display = 'flex';
+    wrap.innerHTML = members.map(function (m) {
+      var failedAt = m.payment_failed_at ? new Date(m.payment_failed_at) : null;
+      var deadline = failedAt ? new Date(failedAt.getTime() + overdueDays * 24 * 60 * 60 * 1000) : null;
+      var daysLeft = deadline ? Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (24 * 60 * 60 * 1000))) : null;
+      var deadlineText = deadline ? ('あと' + daysLeft + '日（' + formatMd(deadline) + '）') : 'ー';
+      var retryText = (m.retry_count > 0) ? (m.retry_count + '回目のリトライ中') : 'リトライ待ち';
+      var name = escapeHtml(m.handle_name || m.full_name || m.email);
+      return (
+        '<a href="admin-point-adjust.html?member=' + m.id + '" style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px; color: inherit; text-decoration: none;">' +
+          '<div style="flex-grow: 1; display: flex; align-items: center; gap: 10px;"><div style="width: 26px; height: 26px; border-radius: 50%; background: #fbecec; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #c0524f; flex-shrink: 0;">' + escapeHtml(memberInitial(m)) + '</div>' + name + ' さん</div>' +
+          '<div style="width: 110px; color: #4b5a61;">' + (PLAN_LABELS[m.plan] || m.plan) + '</div>' +
+          '<div style="width: 150px; color: #4b5a61; white-space: nowrap;">' + yen(m.plan === 'monthly' ? 27500 : 11000) + '</div>' +
+          '<div style="width: 150px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fff0da; color: #b3791a;">' + retryText + '</span></div>' +
+          '<div style="width: 130px; color: #c0524f; font-weight: 700;">' + deadlineText + '</div>' +
+        '</a>'
+      );
+    }).join('');
+  }
+
+  function renderHistory(events) {
+    var wrap = document.getElementById('payment-history-rows');
+    var header = document.getElementById('history-header');
+    if (!events.length) {
+      header.style.display = 'none';
+      wrap.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">まだ決済履歴はありません</div>';
+      return;
+    }
+    header.style.display = 'flex';
+    wrap.innerHTML = events.map(function (e) {
+      var isSuccess = e.event_type === 'invoice.paid';
+      var statusBadge = isSuccess
+        ? '<span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span>'
+        : '<span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fbecec; color: #c0524f;">失敗</span>';
+      var receiptCell = isSuccess
+        ? '<a href="admin-invoice-issue.html?member_id=' + e.member_id + '" style="color:#2f9bd6;">領収書</a>'
+        : '<span style="color: #d3dde1;">ー</span>';
+      var name = escapeHtml(e.member_display_name);
+      return (
+        '<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px;">' +
+          '<div style="width: 90px; color: #5c6b73;">' + formatMd(e.created_at) + '</div>' +
+          '<div style="flex-grow: 1;">' + name + ' さん</div>' +
+          '<div style="width: 110px; color: #4b5a61;">' + (PLAN_LABELS[e.member_plan] || e.member_plan) + '</div>' +
+          '<div style="width: 150px; color: #4b5a61; white-space: nowrap;">' + yen(e.amount) + '</div>' +
+          '<div style="width: 110px;">' + statusBadge + '</div>' +
+          '<div style="width: 70px; font-size: 11px; font-weight: 700;">' + receiptCell + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function loadPayments() {
+    window.AuthHelpers.callFunction('admin-data', { query: { payments: 1 } }).then(function (data) {
+      document.getElementById('stat-revenue').textContent = Math.round(data.revenue_total || 0).toLocaleString() + '円';
+      document.getElementById('stat-revenue-note').textContent = '入金済み ' + (data.revenue_count || 0) + '件';
+      document.getElementById('stat-canceled').textContent = (data.canceled_count || 0) + '件';
+      renderPastDue(data.past_due_members || [], data.overdue_days || 14);
+      renderHistory(data.recent_events || []);
+    }).catch(function (err) {
+      document.getElementById('stat-revenue').textContent = '取得失敗';
+      document.getElementById('pastdue-rows').innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #c0524f;">読み込みに失敗しました：' + escapeHtml(err.message) + '</div>';
+      document.getElementById('payment-history-rows').innerHTML = '';
+    });
+  }
+
+  netlifyIdentity.on('init', function (user) {
+    if (!user) return;
+    loadPayments();
+  });
+</script>
 </body>
 </html>

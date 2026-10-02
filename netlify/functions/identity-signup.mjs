@@ -11,7 +11,7 @@ export async function handler(event) {
     var name = meta.handle_name || meta.full_name || user.email || '（お名前不明）';
 
     await notifyAdmin({
-      subject: '【くらげいかイラストサブスクライブ】新しい会員登録がありました',
+      subject: '【Xovy Studio】新しい会員登録がありました',
       html:
         '<p>新しい会員登録がありました。</p>' +
         '<p>' +

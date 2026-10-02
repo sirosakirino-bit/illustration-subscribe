@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>領収書の発行｜[サイト名] 管理画面</title>
+<title>領収書の発行｜Xovy Studio 管理画面</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="180x180" href="favicon-180.png">
+<link rel="apple-touch-icon" href="favicon-180.png">
 <style>
   /* サイト全体で表示されるスクロールバーの配色を統一（水色） */
   *::-webkit-scrollbar { width: 9px; height: 9px; }
@@ -16,7 +19,7 @@
   @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
+  body { background: radial-gradient(circle, #c9e2ef 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; }
@@ -64,7 +67,7 @@
 <div class="page">
 
   <div class="topbar">
-    <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400; color: #2f9bd6;"><a href="admin-members.html" style="color:#2f9bd6;">[サイト名] 管理画面</a></div>
+    <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400; color: #2f9bd6;"><a href="admin-members.html" style="display:flex;align-items:center;gap:7px;color:#2f9bd6;"><img src="logo-icon.png" alt="" style="height:20px;width:auto;display:block;">Xovy Studio 管理画面</a></div>
     <div class="nav-toggle-btn" onclick="toggleMobileNav()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
     <div class="navlinks">
       <a href="admin-members.html" class="nav-inactive">会員一覧</a>
@@ -85,7 +88,7 @@
     <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400;">領収書の発行</div>
     <div style="font-size: 12px; color: #5c6b73;">運営の記帳・確定申告用に保管する領収書をPDFで発行します（会員へは送付されません）。金額・宛先は会員情報と決済履歴から自動で入力されます。</div>
 
-    <div style="background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #8a6524;">※まだ決済（Stripe）連携前のため、会員情報とプランの金額から領収書を作成します。実際の決済記録と連動した自動発行ではありませんので、発行前に内容をご確認ください。</div>
+    <div style="background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #8a6524;">※実際の請求・入金処理はStripe側で自動的に行われます。こちらは、会員情報とプランの金額をもとに、運営の記帳・確定申告用の領収書PDFを手動で作成するための補助ツールです（Stripeの決済記録と自動連動する発行ではありませんので、発行前に金額・宛先をご確認ください）。</div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 14px;">
       <div style="display: flex; gap: 14px; flex-wrap: wrap;">
@@ -671,6 +674,12 @@ function toggleIssuerInfo() {
     window.AuthHelpers.callFunction('admin-data', { query: { invoice_candidates: 1 } }).then(function (data) {
       allMembers = data.members || [];
       renderMemberSelect();
+      // 決済状況ページ等から「member_id」付きで遷移してきた場合は、その会員を自動で選択する
+      var presetMemberId = new URLSearchParams(location.search).get('member_id');
+      if (presetMemberId) {
+        document.getElementById('issue-member-select').value = presetMemberId;
+        onSelectionChange();
+      }
     }).catch(function (err) {
       showIssueError(err.message || '会員一覧の読み込みに失敗しました');
     });
@@ -679,7 +688,7 @@ function toggleIssuerInfo() {
   });
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 Xovy Studio&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 <script>
   function toggleMobileNav() {

@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>設定｜[サイト名]</title>
+<title>設定｜Xovy Studio</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="180x180" href="favicon-180.png">
+<link rel="apple-touch-icon" href="favicon-180.png">
 <style>
   /* サイト全体で表示されるスクロールバーの配色を統一（水色） */
   *::-webkit-scrollbar { width: 9px; height: 9px; }
@@ -16,7 +19,7 @@
   @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
-  body { background: radial-gradient(circle, #e3f0f7 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
+  body { background: radial-gradient(circle, #c9e2ef 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
 
@@ -66,7 +69,7 @@
 <div class="page">
 
   <div class="topbar">
-    <div class="logo"><a href="mypage.html" style="color:#2f9bd6;">[サイト名] ✧</a></div>
+    <div class="logo"><a href="mypage.html" style="display:flex;align-items:center;gap:7px;color:#2f9bd6;"><img src="logo-icon.png" alt="" style="height:20px;width:auto;display:block;">Xovy Studio ✧</a></div>
     <div class="nav-toggle-btn" onclick="toggleMobileNav()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
     <div class="navlinks">
       <a href="mypage.html" class="nav-inactive">マイページ</a>
@@ -125,22 +128,23 @@
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
         <div>
           <div style="font-size: 11px; color: #5c6b73;">現在のプラン</div>
-          <div style="font-size: 13px; margin-top: 3px; font-weight: 700; color: #2f9bd6;">ポイントプラン（月額10,000円＋消費税10%）</div>
+          <div id="plan-name" style="font-size: 13px; margin-top: 3px; font-weight: 700; color: #2f9bd6;">読み込み中…</div>
         </div>
-        <div style="font-size: 11px; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">利用中</div>
+        <div id="plan-status-badge" style="font-size: 11px; padding: 4px 12px; border-radius: 999px; background: #eef2f4; color: #8fa2ac;">ー</div>
       </div>
+      <div id="payment-error" style="display:none; font-size: 12px; color: #c0524f;"></div>
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
         <div>
-          <div style="font-size: 11px; color: #5c6b73;">次回請求日</div>
-          <div style="font-size: 13px; margin-top: 3px;">2026/10/1／11,000円（税込）</div>
+          <div id="billing-label" style="font-size: 11px; color: #5c6b73;">次回請求日</div>
+          <div id="billing-value" style="font-size: 13px; margin-top: 3px;">ー</div>
         </div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 14px;">
         <div>
           <div style="font-size: 11px; color: #5c6b73;">お支払い方法</div>
-          <div style="font-size: 13px; margin-top: 3px;">クレジットカード（下4桁 4242）</div>
+          <div id="card-info" style="font-size: 13px; margin-top: 3px;">ー</div>
         </div>
-        <div style="font-size: 12px; color: #2f9bd6; font-weight: 700;">Stripeで変更する</div>
+        <div id="portal-btn" style="font-size: 12px; color: #2f9bd6; font-weight: 700; cursor: pointer;">Stripeで変更する</div>
       </div>
     </div>
 
@@ -197,8 +201,96 @@
 </script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
+<script>
+  var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+  var PLAN_AMOUNTS = { point: '10,000円＋消費税10%', monthly: '25,000円＋消費税10%' };
+  var PAYMENT_STATUS_BADGES = {
+    pending: { label: '決済手続き待ち', bg: '#eef2f4', color: '#8fa2ac' },
+    active: { label: '利用中', bg: '#e6f7ea', color: '#3f9457' },
+    past_due: { label: '支払い失敗・リトライ中', bg: '#fbecec', color: '#c0524f' },
+    paused: { label: '休止中', bg: '#fff0da', color: '#b3791a' },
+    canceled: { label: '解約済み', bg: '#eef2f4', color: '#8fa2ac' }
+  };
+
+  function formatDateSlash(iso) {
+    var d = new Date(iso);
+    return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function showPaymentError(msg) {
+    var box = document.getElementById('payment-error');
+    if (!msg) { box.style.display = 'none'; return; }
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function renderPaymentInfo(member) {
+    document.getElementById('plan-name').textContent = (PLAN_LABELS[member.plan] || member.plan) + '（月額' + (PLAN_AMOUNTS[member.plan] || '') + '）';
+
+    var badge = PAYMENT_STATUS_BADGES[member.payment_status] || { label: member.payment_status, bg: '#eef2f4', color: '#8fa2ac' };
+    var badgeEl = document.getElementById('plan-status-badge');
+    badgeEl.textContent = badge.label;
+    badgeEl.style.background = badge.bg;
+    badgeEl.style.color = badge.color;
+
+    var billingLabel = document.getElementById('billing-label');
+    var billingValue = document.getElementById('billing-value');
+    var amount = (member.plan === 'monthly' ? '27,500' : '11,000') + '円（税込）';
+
+    if (member.payment_status === 'active') {
+      billingLabel.textContent = member.leave_requested_at ? '退会予定日' : '次回請求日';
+      billingValue.textContent = (member.current_period_end ? formatDateSlash(member.current_period_end) : 'ー') + (member.leave_requested_at ? '' : '／' + amount);
+    } else if (member.payment_status === 'pending') {
+      billingLabel.textContent = '次回請求日';
+      billingValue.textContent = 'お支払い手続きの完了後に確定します';
+    } else if (member.payment_status === 'past_due') {
+      billingLabel.textContent = '次回請求日';
+      billingValue.textContent = '支払い失敗のため自動リトライ中です';
+    } else if (member.payment_status === 'paused') {
+      billingLabel.textContent = '次回請求日';
+      billingValue.textContent = '休止中のためご請求は発生しません';
+    } else {
+      billingLabel.textContent = '次回請求日';
+      billingValue.textContent = 'ー';
+    }
+
+    document.getElementById('card-info').textContent = member.card_brand && member.card_last4
+      ? ('クレジットカード（下4桁 ' + member.card_last4 + '）')
+      : '未登録';
+  }
+
+  function loadPaymentInfo() {
+    AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
+      renderPaymentInfo(data.member);
+    }).catch(function (err) {
+      document.getElementById('plan-name').textContent = '取得に失敗しました';
+      showPaymentError(err.message || '会員情報の取得に失敗しました');
+    });
+  }
+
+  document.getElementById('portal-btn').addEventListener('click', function () {
+    showPaymentError('');
+    var btn = this;
+    var originalText = btn.textContent;
+    btn.textContent = '処理しています…';
+    AuthHelpers.callFunction('stripe-portal', { method: 'POST' }).then(function (data) {
+      if (!data || !data.url) throw new Error('カスタマーポータルの作成に失敗しました');
+      location.href = data.url;
+    }).catch(function (err) {
+      btn.textContent = originalText;
+      showPaymentError(err.message || 'カスタマーポータルの作成に失敗しました');
+    });
+  });
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) {
+      if (!user) return;
+      loadPaymentInfo();
+    });
+  }
+</script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
-  &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
+  &copy; 2026 Xovy Studio&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
 </body>
 </html>
