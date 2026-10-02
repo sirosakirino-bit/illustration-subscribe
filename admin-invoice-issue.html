@@ -78,14 +78,25 @@
     <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400;">領収書の発行</div>
     <div style="font-size: 12px; color: #5c6b73;">運営の記帳・確定申告用に保管する領収書をPDFで発行します（会員へは送付されません）。金額・宛先は会員情報と決済履歴から自動で入力されます。</div>
 
-    <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-      <div style="width: 34px; height: 34px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #1f7fb3; font-weight: 700;">A</div>
-      <div style="flex-grow: 1;">
-        <div style="font-size: 13px; font-weight: 700;">[会員名A] さん（山田 花子）</div>
-        <div style="font-size: 11px; color: #5c6b73; margin-top: 2px;">ポイントプラン ／ 請求日：9/1 ／ ステータス：成功</div>
+    <div style="background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 14px; padding: 12px 18px; font-size: 11.5px; color: #8a6524;">※まだ決済（Stripe）連携前のため、会員情報とプランの金額から領収書を作成します。実際の決済記録と連動した自動発行ではありませんので、発行前に内容をご確認ください。</div>
+
+    <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">対象の会員</div>
+          <select id="issue-member-select" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; background: #ffffff;">
+            <option value="">（会員を選択）</option>
+          </select>
+        </div>
+        <div style="flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">対象月</div>
+          <input id="issue-month-input" type="month" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a;">
+        </div>
       </div>
-      <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 18px; font-weight: 800; font-weight: 400; color: #2f9bd6;">11,000円<span style="font-size: 11px; font-weight: 700; color: #5c6b73;">（税込）</span></div>
+      <div id="issue-member-summary" style="font-size: 11.5px; color: #5c6b73;"></div>
     </div>
+
+    <div id="issue-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 16px;">
       <div style="font-size: 13px; font-weight: 800;">発行内容の確認</div>
@@ -93,28 +104,28 @@
       <div style="display: flex; gap: 14px; flex-wrap: wrap;">
         <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px;">
           <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">宛名</div>
-          <div style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px;">山田 花子 様</div>
+          <input id="issue-recipient" type="text" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a;">
         </div>
         <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px;">
           <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">発行日</div>
-          <div style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px;">2026年9月11日</div>
+          <input id="issue-date" type="date" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a;">
         </div>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 6px;">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">但し書き</div>
-        <div style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px;">イラスト制作サブスクリプション（ポイントプラン）ご利用料として</div>
+        <input id="issue-memo" type="text" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a;">
       </div>
 
       <div style="border-top: 1px dashed #eef2f4; padding-top: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px;">
-        <div style="display: flex; justify-content: space-between; color: #5c6b73;"><div>小計（税抜）</div><div>10,000円</div></div>
-        <div style="display: flex; justify-content: space-between; color: #5c6b73;"><div>消費税（10%）</div><div>1,000円</div></div>
-        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; padding-top: 6px; border-top: 1px solid #eef2f4;"><div>合計（税込）</div><div style="color: #2f9bd6;">11,000円</div></div>
+        <div style="display: flex; justify-content: space-between; color: #5c6b73;"><div>小計（税抜）</div><div id="issue-subtotal">ー</div></div>
+        <div style="display: flex; justify-content: space-between; color: #5c6b73;"><div>消費税（10%）</div><div id="issue-tax">ー</div></div>
+        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; padding-top: 6px; border-top: 1px solid #eef2f4;"><div>合計（税込）</div><div id="issue-total" style="color: #2f9bd6;">ー</div></div>
       </div>
 
-      <a href="admin-invoice-document.html" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 0; border-radius: 999px; text-align: center; box-shadow: 0 4px 12px rgba(47,155,214,0.3);">
+      <div id="issue-submit" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 0; border-radius: 999px; text-align: center; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">
         領収書PDFを発行する
-      </a>
+      </div>
     </div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
@@ -125,30 +136,11 @@
         <div style="flex-grow: 1;">宛名</div>
         <div style="width: 110px;">プラン</div>
         <div style="width: 120px;">金額</div>
-        <div style="width: 80px;"></div>
       </div>
 
-      <a href="admin-invoice-document.html" style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eef2f4; font-size: 13px; color: inherit; text-decoration: none;">
-        <div style="width: 90px; color: #5c6b73;">8/1</div>
-        <div style="flex-grow: 1;">山田 花子 様</div>
-        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
-        <div style="width: 120px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
-        <div style="width: 80px; font-size: 11px; font-weight: 700; color: #2f9bd6; display: flex; align-items: center; gap: 4px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-          PDF
-        </div>
-      </a>
-
-      <a href="admin-invoice-document.html" style="display: flex; align-items: center; padding: 12px 0; font-size: 13px; color: inherit; text-decoration: none;">
-        <div style="width: 90px; color: #5c6b73;">7/1</div>
-        <div style="flex-grow: 1;">山田 花子 様</div>
-        <div style="width: 110px; color: #4b5a61;">ポイントプラン</div>
-        <div style="width: 120px; color: #4b5a61; white-space: nowrap;">11,000円（税込）</div>
-        <div style="width: 80px; font-size: 11px; font-weight: 700; color: #2f9bd6; display: flex; align-items: center; gap: 4px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2f9bd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-          PDF
-        </div>
-      </a>
+      <div id="receipt-history-rows">
+        <div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">読み込み中…</div>
+      </div>
 
     </div>
 
@@ -156,10 +148,10 @@
       <div onclick="toggleIssuerInfo()" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <div style="font-size: 13px; font-weight: 800;">発行者情報</div>
-          <div style="font-size: 10.5px; font-weight: 700; color: #3f9457; background: #e6f7ea; padding: 3px 10px; border-radius: 999px;">保存済み</div>
+          <div id="issuer-saved-badge" style="display:none; font-size: 10.5px; font-weight: 700; color: #3f9457; background: #e6f7ea; padding: 3px 10px; border-radius: 999px;">保存済み</div>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="font-size: 11.5px; color: #5c6b73;">山田 太郎 ／ 090-0000-0000</div>
+          <div id="issuer-summary-line" style="font-size: 11.5px; color: #5c6b73;">未設定</div>
           <svg id="issuer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; flex-shrink: 0;"><path d="m6 9 6 6 6-6"/></svg>
         </div>
       </div>
@@ -170,39 +162,42 @@
         <div style="display: flex; gap: 14px; flex-wrap: wrap;">
           <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px;">
             <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">発行者名（フルネーム）</div>
-            <input type="text" value="山田 太郎" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
+            <input id="issuer-full-name" type="text" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
           </div>
           <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px;">
             <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">電話番号</div>
-            <input type="text" value="090-0000-0000" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
+            <input id="issuer-phone" type="text" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
           </div>
         </div>
 
         <div style="display: flex; gap: 14px; flex-wrap: wrap;">
           <div style="width: 150px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
             <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">郵便番号</div>
-            <input type="text" value="000-0000" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
+            <input id="issuer-zip" type="text" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
           </div>
           <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px;">
             <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">住所</div>
-            <input type="text" value="東京都〇〇区〇〇1-2-3" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
+            <input id="issuer-address" type="text" style="border: 1px solid #dcedf5; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-family: inherit; color: #3b454a; outline: none;">
           </div>
         </div>
 
         <div style="display: flex; align-items: center; gap: 16px; border-top: 1px solid #eef2f4; padding-top: 16px; flex-wrap: wrap;">
-          <div style="width: 60px; height: 60px; border-radius: 10px; border: 1.5px dashed #cbe0e9; background: #f7fbff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <div id="issuer-stamp-preview" style="width: 60px; height: 60px; border-radius: 10px; border: 1.5px dashed #cbe0e9; background: #f7fbff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
           </div>
           <div style="flex-grow: 1;">
             <div style="font-size: 12px; font-weight: 700;">角印画像</div>
             <div style="font-size: 10.5px; color: #5c6b73; margin-top: 2px;">アップロードした画像が領収書の発行者情報欄に表示されます</div>
           </div>
-          <div style="border: 1px solid #dcedf5; color: #2f9bd6; font-weight: 700; font-size: 11.5px; padding: 9px 18px; border-radius: 999px; white-space: nowrap; cursor: not-allowed;">
+          <label style="border: 1px solid #dcedf5; color: #2f9bd6; font-weight: 700; font-size: 11.5px; padding: 9px 18px; border-radius: 999px; white-space: nowrap; cursor: pointer;">
             画像をアップロード
-          </div>
+            <input id="issuer-stamp-input" type="file" accept="image/*" style="display: none;">
+          </label>
         </div>
 
-        <div style="align-self: flex-start; background: #2f9bd6; color: #fff; font-weight: 700; font-size: 12px; padding: 10px 22px; border-radius: 999px; cursor: not-allowed;">
+        <div id="issuer-status" style="font-size: 11px; min-height: 14px;"></div>
+
+        <div id="issuer-save-btn" style="align-self: flex-start; background: #2f9bd6; color: #fff; font-weight: 700; font-size: 12px; padding: 10px 22px; border-radius: 999px; cursor: pointer;">
           発行者情報を保存する
         </div>
       </div>
@@ -220,6 +215,377 @@ function toggleIssuerInfo() {
   chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
+<script>
+  var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+  var PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
+  var PLAN_MEMO = {
+    point: 'イラスト制作サブスクリプション（ポイントプラン）ご利用料として',
+    monthly: 'イラスト制作サブスクリプション（月1プラン）ご利用料として'
+  };
+
+  var allMembers = [];
+  var currentIssuer = null;
+  var pendingStampDataUrl = undefined; // undefined=未変更 / null=削除 / 文字列=新規
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  function memberDisplayName(m) {
+    return m.handle_name || m.full_name || m.email;
+  }
+
+  function memberAddressLines(m) {
+    var lines = [];
+    if (m.zip) lines.push('〒' + m.zip);
+    var addr = [m.prefecture, m.address1, m.address2].filter(Boolean).join('');
+    if (addr) lines.push(addr);
+    return lines;
+  }
+
+  function showIssueError(msg) {
+    var box = document.getElementById('issue-error');
+    if (!msg) { box.style.display = 'none'; box.textContent = ''; return; }
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function yen(n) { return '¥' + Math.round(n).toLocaleString(); }
+
+  function todayStr() {
+    var d = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function thisMonthStr() {
+    var d = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1);
+  }
+
+  function formatDateJa(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  }
+
+  // ---- 会員セレクト ----
+  function renderMemberSelect() {
+    var sel = document.getElementById('issue-member-select');
+    var current = sel.value;
+    sel.innerHTML = '<option value="">（会員を選択）</option>';
+    allMembers.forEach(function (m) {
+      var opt = document.createElement('option');
+      opt.value = m.id;
+      opt.textContent = memberDisplayName(m) + '（' + (PLAN_LABELS[m.plan] || m.plan) + '）';
+      sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
+  }
+
+  function onSelectionChange() {
+    showIssueError('');
+    var sel = document.getElementById('issue-member-select');
+    var memberId = Number(sel.value);
+    var member = allMembers.find(function (m) { return m.id === memberId; });
+    var summary = document.getElementById('issue-member-summary');
+
+    if (!member) {
+      summary.textContent = '';
+      document.getElementById('issue-subtotal').textContent = 'ー';
+      document.getElementById('issue-tax').textContent = 'ー';
+      document.getElementById('issue-total').textContent = 'ー';
+      return;
+    }
+
+    var addrLines = memberAddressLines(member);
+    summary.textContent = (addrLines.length ? addrLines.join(' ') + ' ／ ' : '') + (PLAN_LABELS[member.plan] || member.plan);
+
+    document.getElementById('issue-recipient').value = memberDisplayName(member);
+    document.getElementById('issue-memo').value = PLAN_MEMO[member.plan] || '';
+
+    var total = PLAN_AMOUNTS[member.plan] || 0;
+    var subtotal = Math.round(total / 1.1);
+    var tax = total - subtotal;
+    document.getElementById('issue-subtotal').textContent = yen(subtotal);
+    document.getElementById('issue-tax').textContent = yen(tax);
+    document.getElementById('issue-total').textContent = yen(total);
+  }
+
+  // ---- PDF生成 ----
+  function buildReceiptPdf(opts) {
+    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) throw new Error('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。');
+    var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
+    var pageW = doc.internal.pageSize.getWidth();
+    var marginX = 22;
+    var y = 26;
+
+    doc.setFontSize(22);
+    doc.text('領収書', marginX, y);
+    doc.setFontSize(9);
+    doc.text('発行番号：No. ' + opts.receiptNo, pageW - marginX, y - 6, { align: 'right' });
+    doc.text('発行日：' + formatDateJa(opts.issueDate), pageW - marginX, y, { align: 'right' });
+
+    y += 16;
+    doc.setFontSize(15);
+    doc.text(opts.recipient + ' 様', marginX, y);
+    doc.setLineWidth(0.5);
+    doc.line(marginX, y + 2, marginX + 90, y + 2);
+
+    y += 14;
+    doc.setFontSize(10);
+    doc.text('金額', marginX, y);
+    doc.setFontSize(20);
+    doc.text(yen(opts.total) + '-（税込）', marginX + 16, y);
+
+    y += 12;
+    doc.setFontSize(10);
+    var memoLines = doc.splitTextToSize(opts.memo + '\n上記正に領収いたしました。', pageW - marginX * 2);
+    doc.text(memoLines, marginX, y);
+    y += memoLines.length * 5 + 6;
+
+    doc.setLineWidth(0.2);
+    doc.line(marginX, y, pageW - marginX, y);
+    y += 7;
+    doc.text(opts.itemLabel, marginX, y);
+    doc.text(yen(opts.subtotal), pageW - marginX, y, { align: 'right' });
+    y += 8;
+    doc.line(marginX, y - 5, pageW - marginX, y - 5);
+    doc.text('消費税（10%）', marginX, y);
+    doc.text(yen(opts.tax), pageW - marginX, y, { align: 'right' });
+    y += 9;
+    doc.setFontSize(12);
+    doc.text('合計（税込）', marginX, y);
+    doc.text(yen(opts.total), pageW - marginX, y, { align: 'right' });
+
+    y += 20;
+    doc.setFontSize(8);
+    doc.text('電子発行のため収入印紙は不要です。', marginX, y);
+
+    var issuerX = pageW - marginX;
+    var issuerY = y - 6;
+    if (opts.issuer) {
+      if (opts.issuer.stamp_image_data_url) {
+        try { doc.addImage(opts.issuer.stamp_image_data_url, 'JPEG', issuerX - 60, issuerY - 4, 16, 16); } catch (e) { /* 画像形式が合わない場合は無視 */ }
+      }
+      doc.setFontSize(11);
+      doc.text(opts.issuer.full_name || '', issuerX, issuerY, { align: 'right' });
+      doc.setFontSize(9);
+      var line2 = opts.issuer.zip ? ('〒' + opts.issuer.zip) : '';
+      var line3 = opts.issuer.address || '';
+      var line4 = opts.issuer.phone ? ('TEL：' + opts.issuer.phone) : '';
+      [line2, line3, line4].filter(Boolean).forEach(function (t, i) {
+        doc.text(t, issuerX, issuerY + 5 + i * 5, { align: 'right' });
+      });
+    }
+
+    return doc;
+  }
+
+  function issueReceiptClicked() {
+    showIssueError('');
+    var sel = document.getElementById('issue-member-select');
+    var memberId = Number(sel.value);
+    var member = allMembers.find(function (m) { return m.id === memberId; });
+    var periodMonth = document.getElementById('issue-month-input').value;
+
+    if (!member) { showIssueError('対象の会員を選択してください'); return; }
+    if (!periodMonth) { showIssueError('対象月を選択してください'); return; }
+
+    var recipient = document.getElementById('issue-recipient').value.trim();
+    var issueDate = document.getElementById('issue-date').value || todayStr();
+    var memo = document.getElementById('issue-memo').value.trim();
+    if (!recipient) { showIssueError('宛名を入力してください'); return; }
+
+    var total = PLAN_AMOUNTS[member.plan] || 0;
+    var subtotal = Math.round(total / 1.1);
+    var tax = total - subtotal;
+
+    var btn = document.getElementById('issue-submit');
+    var originalText = btn.textContent;
+    btn.textContent = '発行しています…';
+
+    window.AuthHelpers.callFunction('admin-data', {
+      method: 'POST',
+      body: { action: 'issue-receipt', member_id: member.id, period_month: periodMonth }
+    }).then(function (data) {
+      var receiptNo = periodMonth.replace('-', '') + '-' + String(data.receipt.id).padStart(3, '0');
+      var pdf = buildReceiptPdf({
+        receiptNo: receiptNo,
+        issueDate: issueDate,
+        recipient: recipient,
+        memo: memo || (PLAN_MEMO[member.plan] || ''),
+        itemLabel: (PLAN_LABELS[member.plan] || member.plan) + '利用料（' + periodMonth + '）',
+        subtotal: subtotal,
+        tax: tax,
+        total: total,
+        issuer: currentIssuer
+      });
+      pdf.save('領収書_' + memberDisplayName(member) + '_' + periodMonth + '.pdf');
+      return loadReceipts();
+    }).catch(function (err) {
+      showIssueError(err.message || '領収書の発行に失敗しました');
+    }).then(function () {
+      btn.textContent = originalText;
+    });
+  }
+
+  // ---- 発行履歴 ----
+  function renderReceipts(receipts) {
+    var wrap = document.getElementById('receipt-history-rows');
+    if (!receipts || receipts.length === 0) {
+      wrap.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">まだ発行した領収書はありません</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    receipts.forEach(function (r) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display: flex; align-items: center; padding: 11px 0; border-bottom: 1px solid #f3f6f7; font-size: 12px;';
+      row.innerHTML =
+        '<div style="width: 90px; color: #5c6b73;">' + escapeHtml(r.issued_at ? r.issued_at.slice(0, 10) : '') + '</div>' +
+        '<div style="flex-grow: 1;">' + escapeHtml(r.member_display_name) + '</div>' +
+        '<div style="width: 110px; color: #5c6b73;">' + escapeHtml(PLAN_LABELS[r.plan] || r.plan) + '</div>' +
+        '<div style="width: 120px; font-weight: 700;">' + yen(r.amount_total) + '</div>';
+      wrap.appendChild(row);
+    });
+  }
+
+  function loadReceipts() {
+    return window.AuthHelpers.callFunction('admin-data', { query: { receipts: 1 } }).then(function (data) {
+      renderReceipts(data.receipts || []);
+    }).catch(function () {
+      document.getElementById('receipt-history-rows').innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #c0524f;">発行履歴の読み込みに失敗しました</div>';
+    });
+  }
+
+  // ---- 発行者情報 ----
+  function renderIssuer(issuer) {
+    currentIssuer = issuer;
+    var badge = document.getElementById('issuer-saved-badge');
+    var line = document.getElementById('issuer-summary-line');
+    if (issuer && issuer.full_name) {
+      badge.style.display = 'inline-block';
+      line.textContent = (issuer.full_name || '') + (issuer.phone ? '　／　' + issuer.phone : '');
+    } else {
+      badge.style.display = 'none';
+      line.textContent = '未設定';
+    }
+    document.getElementById('issuer-full-name').value = (issuer && issuer.full_name) || '';
+    document.getElementById('issuer-phone').value = (issuer && issuer.phone) || '';
+    document.getElementById('issuer-zip').value = (issuer && issuer.zip) || '';
+    document.getElementById('issuer-address').value = (issuer && issuer.address) || '';
+    renderStampPreview((issuer && issuer.stamp_image_data_url) || null);
+  }
+
+  function renderStampPreview(dataUrl) {
+    var box = document.getElementById('issuer-stamp-preview');
+    if (dataUrl) {
+      box.innerHTML = '<img src="' + dataUrl + '" style="width:100%;height:100%;object-fit:cover;display:block;">';
+    } else {
+      box.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>';
+    }
+  }
+
+  function loadIssuer() {
+    return window.AuthHelpers.callFunction('admin-data', { query: { invoice_issuer: 1 } }).then(function (data) {
+      renderIssuer(data.issuer);
+    }).catch(function () {
+      /* 未設定のまま表示を継続 */
+    });
+  }
+
+  function resizeStampImage(file, size) {
+    size = size || 160;
+    return new Promise(function (resolve, reject) {
+      if (!file || file.type.indexOf('image/') !== 0) { reject(new Error('画像ファイルを選択してください')); return; }
+      var reader = new FileReader();
+      reader.onerror = function () { reject(new Error('ファイルの読み込みに失敗しました')); };
+      reader.onload = function () {
+        var img = new Image();
+        img.onerror = function () { reject(new Error('画像の読み込みに失敗しました')); };
+        img.onload = function () {
+          var canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          var ctx = canvas.getContext('2d');
+          var srcSize = Math.min(img.width, img.height);
+          var sx = (img.width - srcSize) / 2;
+          var sy = (img.height - srcSize) / 2;
+          ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size);
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function saveIssuerClicked() {
+    var statusEl = document.getElementById('issuer-status');
+    statusEl.style.color = '#5c6b73';
+    statusEl.textContent = '保存しています…';
+
+    var body = {
+      action: 'save-invoice-issuer',
+      full_name: document.getElementById('issuer-full-name').value.trim(),
+      phone: document.getElementById('issuer-phone').value.trim(),
+      zip: document.getElementById('issuer-zip').value.trim(),
+      address: document.getElementById('issuer-address').value.trim()
+    };
+    if (pendingStampDataUrl !== undefined) {
+      body.stamp_image_data_url = pendingStampDataUrl;
+    }
+
+    window.AuthHelpers.callFunction('admin-data', { method: 'POST', body: body }).then(function (data) {
+      pendingStampDataUrl = undefined;
+      renderIssuer(data.issuer);
+      statusEl.style.color = '#3f9457';
+      statusEl.textContent = '保存しました';
+      setTimeout(function () { statusEl.textContent = ''; }, 2500);
+    }).catch(function (err) {
+      statusEl.style.color = '#c0524f';
+      statusEl.textContent = err.message || '保存に失敗しました';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('issue-member-select').addEventListener('change', onSelectionChange);
+    document.getElementById('issue-month-input').value = thisMonthStr();
+    document.getElementById('issue-date').value = todayStr();
+    document.getElementById('issue-submit').addEventListener('click', issueReceiptClicked);
+    document.getElementById('issuer-save-btn').addEventListener('click', saveIssuerClicked);
+    document.getElementById('issuer-stamp-input').addEventListener('change', function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      resizeStampImage(file, 160).then(function (dataUrl) {
+        pendingStampDataUrl = dataUrl;
+        renderStampPreview(dataUrl);
+      }).catch(function (err) {
+        var statusEl = document.getElementById('issuer-status');
+        statusEl.style.color = '#c0524f';
+        statusEl.textContent = err.message || '画像の読み込みに失敗しました';
+      });
+    });
+  });
+
+  netlifyIdentity.on('init', function (user) {
+    if (!user) return;
+    window.AuthHelpers.callFunction('admin-data', { query: { invoice_candidates: 1 } }).then(function (data) {
+      allMembers = data.members || [];
+      renderMemberSelect();
+    }).catch(function (err) {
+      showIssueError(err.message || '会員一覧の読み込みに失敗しました');
+    });
+    loadIssuer();
+    loadReceipts();
+  });
+</script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
   &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
@@ -235,7 +601,5 @@ function toggleIssuerInfo() {
     }
   });
 </script>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="auth.js"></script>
 </body>
 </html>

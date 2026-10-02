@@ -138,10 +138,18 @@
       var border = (i < applications.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
       var ptText = app.point_cost != null ? (app.point_cost + 'pt') : ('目安' + (app.point_estimate || '相談中'));
       var unread = app.unread_count > 0;
+      var threadUrl = (app.kind === 'monthly' ? 'message-monthly.html' : 'message.html') + '?id=' + app.id;
+      var tags = [];
+      if (app.opt_commercial) tags.push('商用利用');
+      if (app.opt_hidden) tags.push('実績非公開');
+      if (app.opt_copyright) tags.push('著作権譲渡');
+      var tagsHtml = tags.map(function (t) {
+        return '<span style="font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #f1eefb; color: #6a4fc0;">' + t + '</span>';
+      }).join('');
       return (
-        '<a class="row-link" href="message.html?id=' + app.id + '" style="display: flex; align-items: center; padding: 16px 0; font-size: 13px; color: inherit; text-decoration: none; ' + border + ' ' + (unread ? 'background:#fdf1f0;' : '') + '">' +
+        '<a class="row-link" href="' + threadUrl + '" style="display: flex; align-items: center; padding: 16px 0; font-size: 13px; color: inherit; text-decoration: none; ' + border + ' ' + (unread ? 'background:#fdf1f0;' : '') + '">' +
           '<div style="width: 90px; color: #5c6b73;">' + formatDate(app.created_at) + '</div>' +
-          '<div style="flex-grow: 1; display: flex; align-items: center; gap: 6px;">' + app.title + (unread ? '<span style="display:inline-flex; align-items:center; justify-content:center; min-width:16px; height:16px; padding:0 4px; background:#c0524f; color:#fff; font-size:9.5px; font-weight:800; border-radius:999px;">' + app.unread_count + '</span>' : '') + '</div>' +
+          '<div style="flex-grow: 1; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">' + app.title + (unread ? '<span style="display:inline-flex; align-items:center; justify-content:center; min-width:16px; height:16px; padding:0 4px; background:#c0524f; color:#fff; font-size:9.5px; font-weight:800; border-radius:999px;">' + app.unread_count + '</span>' : '') + tagsHtml + '</div>' +
           '<div style="width: 60px; color: #5c6b73;">' + ptText + '</div>' +
           '<div style="width: 120px;"><span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: ' + style.bg + '; color: ' + style.color + ';">' + app.status + '</span></div>' +
           '<div style="width: 110px; color: #5c6b73;">ー</div>' +

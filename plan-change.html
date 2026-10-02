@@ -78,27 +78,27 @@
 
     <div style="font-size: 12px;"><a href="settings.html">← 設定に戻る</a></div>
     <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 20px; font-weight: 800; font-weight: 400;">プランの変更・退会</div>
-    <div style="font-size: 12px; color: #5c6b73;">現在のプラン：月1プラン（月額25,000円＋消費税10%）／初回決済日：2026/8/1／現在保有中のポイント：0pt</div>
+    <div style="font-size: 12px; color: #5c6b73;" id="plan-summary">読み込み中…</div>
+
+    <div id="plan-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 12px;">
       <div style="font-size: 14px; font-weight: 800;">① プラン変更</div>
-      <div style="font-size: 12px; color: #4b5a61;">月1プラン → ポイントプランへの変更は、初回決済日から3ヶ月経過後に可能になります。プラン変更時は保有ポイントがすべて失効し、変更は翌月から適用されます。</div>
-      <div style="background: #fdf3e8; border: 1px solid #f2e0c4; border-radius: 12px; padding: 12px 16px; font-size: 12px; color: #a8722a; display: flex; align-items: center; gap: 8px;">
+      <div id="plan-change-desc" style="font-size: 12px; color: #4b5a61;">読み込み中…</div>
+      <div id="plan-change-note" style="display:none; background: #fdf3e8; border: 1px solid #f2e0c4; border-radius: 12px; padding: 12px 16px; font-size: 12px; color: #a8722a; display: flex; align-items: center; gap: 8px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8722a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        あと42日でプラン変更が可能になります（変更可能日：2026/11/1）
+        <span id="plan-change-note-text"></span>
       </div>
-      <div style="align-self: flex-start; background: #e4e9eb; color: #a3adb2; font-weight: 700; font-size: 12px; padding: 10px 22px; border-radius: 999px; cursor: not-allowed;">
+      <div id="plan-change-btn" style="align-self: flex-start; background: #e4e9eb; color: #a3adb2; font-weight: 700; font-size: 12px; padding: 10px 22px; border-radius: 999px; cursor: not-allowed;">
         プランを変更する
       </div>
     </div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 24px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 12px;">
-      <div style="font-size: 14px; font-weight: 800; color: #c0524f;">② 退会</div>
+      <div style="font-size: 14px; font-weight: 800; color: #c0524f;" id="leave-heading">② 退会</div>
       <div style="font-size: 12px; color: #4b5a61;">退会の申告期限は当月末までです。退会すると保有ポイントはすべて失効し、現金化・返金・譲渡はできません。</div>
-      <div style="background: #fbecec; border: 1px solid #f3d3d3; border-radius: 12px; padding: 12px 16px; font-size: 12px; color: #b2413d;">
-        今月中（〜9/30）に申告いただくと、10/1から退会となります
-      </div>
-      <div style="align-self: flex-start; background: #ffffff; border: 1px solid #e2a6a3; color: #c0524f; font-weight: 700; font-size: 12px; padding: 10px 22px; border-radius: 999px; cursor: pointer;">
+      <div id="leave-note" style="background: #fbecec; border: 1px solid #f3d3d3; border-radius: 12px; padding: 12px 16px; font-size: 12px; color: #b2413d;">読み込み中…</div>
+      <div id="leave-btn" style="align-self: flex-start; background: #ffffff; border: 1px solid #e2a6a3; color: #c0524f; font-weight: 700; font-size: 12px; padding: 10px 22px; border-radius: 999px; cursor: pointer;">
         退会を申請する
       </div>
     </div>
@@ -119,6 +119,147 @@
 </script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
+<script>
+  var PLAN_LABELS = { point: 'ポイントプラン（月額10,000円＋消費税10%）', monthly: '月1プラン（月額25,000円＋消費税10%）' };
+  var currentMember = null;
+  var monthlyPlanFull = false;
+
+  function showPlanError(msg) {
+    var box = document.getElementById('plan-error');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function formatDate(d) {
+    return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function nextMonthFirst(from) {
+    return new Date(from.getFullYear(), from.getMonth() + 1, 1);
+  }
+
+  function renderPlanSection(member) {
+    var isMonthly = member.plan === 'monthly';
+    document.getElementById('plan-summary').textContent =
+      '現在のプラン：' + (PLAN_LABELS[member.plan] || member.plan) + '／現在保有中のポイント：' + member.point_balance + 'pt';
+
+    var descEl = document.getElementById('plan-change-desc');
+    var noteEl = document.getElementById('plan-change-note');
+    var noteTextEl = document.getElementById('plan-change-note-text');
+    var btnEl = document.getElementById('plan-change-btn');
+
+    if (member.leave_requested_at) {
+      descEl.textContent = '退会予告中のため、プラン変更はできません。';
+      noteEl.style.display = 'none';
+      btnEl.style.background = '#e4e9eb';
+      btnEl.style.color = '#a3adb2';
+      btnEl.style.cursor = 'not-allowed';
+      btnEl.onclick = null;
+      return;
+    }
+
+    if (isMonthly) {
+      descEl.textContent = '月1プラン → ポイントプランへの変更は、初回決済日から3ヶ月経過後に可能になります。プラン変更時は保有ポイントがすべて失効し、変更は翌月から適用されます。';
+      var created = new Date(member.created_at);
+      var eligibleDate = new Date(created.getFullYear(), created.getMonth() + 3, created.getDate());
+      var now = new Date();
+      if (now < eligibleDate) {
+        var daysLeft = Math.ceil((eligibleDate - now) / (1000 * 60 * 60 * 24));
+        noteEl.style.display = 'flex';
+        noteTextEl.textContent = 'あと' + daysLeft + '日でプラン変更が可能になります（変更可能日：' + formatDate(eligibleDate) + '）';
+        btnEl.style.background = '#e4e9eb';
+        btnEl.style.color = '#a3adb2';
+        btnEl.style.cursor = 'not-allowed';
+        btnEl.onclick = null;
+      } else {
+        noteEl.style.display = 'none';
+        btnEl.textContent = 'ポイントプランに変更する';
+        btnEl.style.background = '#2f9bd6';
+        btnEl.style.color = '#ffffff';
+        btnEl.style.cursor = 'pointer';
+        btnEl.onclick = function () { changePlan('point'); };
+      }
+    } else {
+      descEl.textContent = 'ポイントプラン → 月1プランへの変更は、定員（2名）に空きがある場合のみ可能です。変更は翌月から適用され、保有ポイントはすべて失効します。';
+      if (monthlyPlanFull) {
+        noteEl.style.display = 'flex';
+        noteTextEl.textContent = '現在、月1プランは定員に達しているため変更できません。';
+        btnEl.style.background = '#e4e9eb';
+        btnEl.style.color = '#a3adb2';
+        btnEl.style.cursor = 'not-allowed';
+        btnEl.onclick = null;
+      } else {
+        noteEl.style.display = 'none';
+        btnEl.textContent = '月1プランに変更する';
+        btnEl.style.background = '#2f9bd6';
+        btnEl.style.color = '#ffffff';
+        btnEl.style.cursor = 'pointer';
+        btnEl.onclick = function () { changePlan('monthly'); };
+      }
+    }
+  }
+
+  function changePlan(newPlan) {
+    if (!window.confirm('プランを変更します。保有ポイントはすべて失効します。よろしいですか？')) return;
+    AuthHelpers.callFunction('member-data', { method: 'POST', body: { action: 'change-plan', plan: newPlan } })
+      .then(function () { location.href = 'settings.html'; })
+      .catch(function (err) { showPlanError('プラン変更に失敗しました：' + err.message); });
+  }
+
+  function renderLeaveSection(member) {
+    var headingEl = document.getElementById('leave-heading');
+    var noteEl = document.getElementById('leave-note');
+    var btnEl = document.getElementById('leave-btn');
+
+    if (member.leave_requested_at) {
+      var requestedAt = new Date(member.leave_requested_at);
+      var effectiveDate = nextMonthFirst(requestedAt);
+      headingEl.textContent = '② 退会（申告済み）';
+      noteEl.textContent = formatDate(requestedAt) + ' に退会を申告済みです。' + formatDate(effectiveDate) + ' から退会となります。';
+      btnEl.textContent = '退会の申告を取り消す';
+      btnEl.style.background = '#ffffff';
+      btnEl.style.borderColor = '#dcedf5';
+      btnEl.style.color = '#5c6b73';
+      btnEl.onclick = function () {
+        if (!window.confirm('退会の申告を取り消しますか？')) return;
+        AuthHelpers.callFunction('member-data', { method: 'POST', body: { action: 'cancel-leave-request' } })
+          .then(loadData)
+          .catch(function (err) { showPlanError('取り消しに失敗しました：' + err.message); });
+      };
+    } else {
+      var now = new Date();
+      var effectiveDate = nextMonthFirst(now);
+      headingEl.textContent = '② 退会';
+      noteEl.textContent = '今月中（〜' + formatDate(new Date(now.getFullYear(), now.getMonth() + 1, 0)) + '）に申告いただくと、' + formatDate(effectiveDate) + ' から退会となります';
+      btnEl.textContent = '退会を申請する';
+      btnEl.style.background = '#ffffff';
+      btnEl.style.borderColor = '#e2a6a3';
+      btnEl.style.color = '#c0524f';
+      btnEl.onclick = function () {
+        if (!window.confirm('退会を申告します。' + formatDate(effectiveDate) + ' から退会となり、保有ポイントは失効します。よろしいですか？')) return;
+        AuthHelpers.callFunction('member-data', { method: 'POST', body: { action: 'request-leave' } })
+          .then(loadData)
+          .catch(function (err) { showPlanError('退会の申告に失敗しました：' + err.message); });
+      };
+    }
+  }
+
+  function loadData() {
+    AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
+      currentMember = data.member;
+      monthlyPlanFull = !!data.monthlyPlanFull;
+      document.getElementById('plan-error').style.display = 'none';
+      renderPlanSection(data.member);
+      renderLeaveSection(data.member);
+    }).catch(function (err) {
+      showPlanError('読み込みに失敗しました：' + err.message);
+    });
+  }
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) { if (user) loadData(); });
+  }
+</script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
   &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>

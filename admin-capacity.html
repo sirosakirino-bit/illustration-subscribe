@@ -97,18 +97,18 @@
     <div class="capacity-stats-row" style="display: flex; gap: 14px;">
       <div class="capacity-stat-card" style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">月間総制作キャパ（上限）</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 24px; font-weight: 800; font-weight: 400; margin-top: 6px;">8<span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt / 月</span></div>
+        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 24px; font-weight: 800; font-weight: 400; margin-top: 6px;"><span id="cap-total">8</span><span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt / 月</span></div>
         <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">月1プラン・ポイントプラン合算の上限目安</div>
       </div>
       <div class="capacity-stat-card" style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">月1プランの当月消費</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 24px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #1f7fb3;">4<span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt</span></div>
-        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">基礎確保 2pt×2名／追加購入確定 0pt</div>
+        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 24px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #1f7fb3;"><span id="cap-monthly-used">-</span><span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt</span></div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;" id="cap-monthly-breakdown">読み込み中…</div>
       </div>
       <div class="capacity-stat-card" style="flex: 1; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">差引の自動算出枠（参考値）</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 24px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #3f9457;">4<span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt</span></div>
-        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">総キャパ8pt − 月1プラン消費4pt</div>
+        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 24px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #3f9457;"><span id="cap-auto">-</span><span style="font-size: 13px; font-weight: 700; color: #5c6b73;">pt</span></div>
+        <div style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;" id="cap-auto-note">読み込み中…</div>
       </div>
     </div>
 
@@ -120,14 +120,15 @@
 
       <div style="font-size: 11.5px; color: #5c6b73;">月間制作可能量は最大8ptです。実際の受付可能ポイント数は、通常依頼・制作状況等を考慮し、運営側で随時調整いたします。大型の通常依頼が入った場合などは、ここで残り枠数を直接調整してください。</div>
 
-      <div style="display: flex; align-items: center; gap: 14px; margin-top: 4px;">
+      <div style="display: flex; align-items: center; gap: 14px; margin-top: 4px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 8px; border: 2px solid #2f9bd6; border-radius: 14px; padding: 10px 20px; background: #eef8fd;">
-          <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 26px; font-weight: 800; font-weight: 400; color: #2f9bd6;">4</div>
+          <input id="cap-input" type="number" min="0" max="8" value="4" style="width: 50px; border: none; background: transparent; font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 26px; font-weight: 400; color: #2f9bd6; text-align: right;">
           <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">pt</div>
         </div>
-        <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 26px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: not-allowed;">この数値で更新する</div>
-        <div style="font-size: 11px; color: #b3c2c9;">最終更新：9/11 14:20（あなた）</div>
+        <div id="cap-update-btn" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 26px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">この数値で更新する</div>
+        <div style="font-size: 11px; color: #b3c2c9;" id="cap-updated-at">読み込み中…</div>
       </div>
+      <div id="cap-status" style="font-size: 11.5px; min-height: 14px;"></div>
     </div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 12px;">
@@ -135,15 +136,15 @@
 
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
         <div style="color: #5c6b73;">ポイントプラン受付可能枠</div>
-        <div style="font-weight: 700;">4pt</div>
+        <div style="font-weight: 700;" id="cap-breakdown-available">-pt</div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
         <div style="color: #5c6b73;">申請中・正式受付で仮押さえ済み（先着順）</div>
-        <div style="font-weight: 700; color: #b3791a;">2pt</div>
+        <div style="font-weight: 700; color: #b3791a;" id="cap-breakdown-held">-pt</div>
       </div>
       <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eef2f4; padding-top: 12px; font-size: 12.5px;">
         <div style="color: #5c6b73;">残り受付可能</div>
-        <div style="font-weight: 800; color: #3f9457;">2pt</div>
+        <div style="font-weight: 800; color: #3f9457;" id="cap-breakdown-remaining">-pt</div>
       </div>
     </div>
 
@@ -152,6 +153,8 @@
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
   &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
 <script>
   function toggleMobileNav() {
     var topbar = document.querySelector('.topbar');
@@ -163,8 +166,61 @@
       topbar.classList.remove('nav-open');
     }
   });
+
+  function formatDateTime(iso) {
+    if (!iso) return '更新履歴なし';
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  function renderCapacity(c) {
+    document.getElementById('cap-total').textContent = c.cap;
+    document.getElementById('cap-monthly-used').textContent = c.base_reserved + c.extra_confirmed;
+    document.getElementById('cap-monthly-breakdown').textContent = '基礎確保 2pt×' + c.monthly_member_count + '名／追加購入確定 ' + c.extra_confirmed + 'pt';
+    document.getElementById('cap-auto').textContent = c.auto_calculated;
+    document.getElementById('cap-auto-note').textContent = '総キャパ' + c.cap + 'pt − 月1プラン消費' + (c.base_reserved + c.extra_confirmed) + 'pt';
+    document.getElementById('cap-input').value = c.available_points;
+    document.getElementById('cap-updated-at').textContent = c.updated_at ? ('最終更新：' + formatDateTime(c.updated_at) + (c.updated_by ? '（' + c.updated_by + '）' : '')) : 'まだ調整されていません（自動算出値を使用中）';
+    document.getElementById('cap-breakdown-available').textContent = c.available_points + 'pt';
+    document.getElementById('cap-breakdown-held').textContent = c.held + 'pt';
+    document.getElementById('cap-breakdown-remaining').textContent = c.remaining + 'pt';
+  }
+
+  function loadCapacity() {
+    AuthHelpers.callFunction('admin-data', { method: 'GET', query: { capacity: 1 } }).then(function (data) {
+      renderCapacity(data.capacity);
+    }).catch(function (err) {
+      document.getElementById('cap-status').textContent = '取得に失敗しました：' + err.message;
+      document.getElementById('cap-status').style.color = '#c0524f';
+    });
+  }
+
+  document.getElementById('cap-update-btn').addEventListener('click', function () {
+    var btn = this;
+    var statusEl = document.getElementById('cap-status');
+    var value = Number(document.getElementById('cap-input').value);
+    if (!Number.isFinite(value) || value < 0) {
+      statusEl.textContent = '0以上の数値を入力してください';
+      statusEl.style.color = '#c0524f';
+      return;
+    }
+    btn.textContent = '更新しています…';
+    AuthHelpers.callFunction('admin-data', {
+      method: 'POST',
+      body: { action: 'set-capacity', available_points: value }
+    }).then(function (data) {
+      btn.textContent = 'この数値で更新する';
+      statusEl.textContent = '更新しました。会員側にも反映されています。';
+      statusEl.style.color = '#3f9457';
+      renderCapacity(data.capacity);
+    }).catch(function (err) {
+      btn.textContent = 'この数値で更新する';
+      statusEl.textContent = '更新に失敗しました：' + err.message;
+      statusEl.style.color = '#c0524f';
+    });
+  });
+
+  netlifyIdentity.on('init', function (user) { if (user) loadCapacity(); });
 </script>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="auth.js"></script>
 </body>
 </html>

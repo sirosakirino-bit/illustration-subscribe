@@ -155,11 +155,13 @@
 
       <div style="display: flex; flex-direction: column; gap: 6px;">
         <div style="font-size: 12px; font-weight: 700; color: #a8504c;">強制退会の理由（必須・記録されます）</div>
-        <div style="border: 1px solid #f0c2c2; background: #ffffff; border-radius: 12px; padding: 14px; font-size: 13px; color: #c7a9a7; min-height: 60px;">例）規約に反する迷惑行為があったため、運営判断により即時に利用停止・強制退会とする</div>
+        <textarea id="remove-reason" placeholder="例）規約に反する迷惑行為があったため、運営判断により即時に利用停止・強制退会とする" style="border: 1px solid #f0c2c2; background: #ffffff; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 60px; font-family: inherit; resize: vertical;"></textarea>
       </div>
 
+      <div id="remove-error" style="display:none; font-size: 12px; color: #c0524f;"></div>
+
       <div style="display: flex; justify-content: flex-start;">
-        <div style="background: #c0524f; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(192,82,79,0.3); cursor: not-allowed;">
+        <div id="remove-submit" style="background: #c0524f; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(192,82,79,0.3); cursor: pointer;">
           この会員を即時に強制退会させる
         </div>
       </div>
@@ -262,6 +264,33 @@
       loadData();
     }).catch(function (err) {
       showError('調整に失敗しました：' + err.message);
+    });
+  });
+
+  function showRemoveError(msg) {
+    var box = document.getElementById('remove-error');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  document.getElementById('remove-submit').addEventListener('click', function () {
+    var reason = document.getElementById('remove-reason').value.trim();
+    document.getElementById('remove-error').style.display = 'none';
+    if (!memberId) { showRemoveError('会員が指定されていません。'); return; }
+    if (!reason) { showRemoveError('強制退会の理由を入力してください。'); return; }
+    var name = currentMember ? (currentMember.handle_name || currentMember.full_name || currentMember.email) : 'この会員';
+    if (!window.confirm(name + ' さんを即時に強制退会させます。この操作は取り消せません。よろしいですか？')) return;
+
+    var btn = this;
+    btn.textContent = '処理しています…';
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'force-remove-member', member_id: memberId, reason: reason } }).then(function () {
+      btn.textContent = '強制退会が完了しました';
+      btn.style.cursor = 'default';
+      btn.style.boxShadow = 'none';
+      document.getElementById('remove-reason').disabled = true;
+    }).catch(function (err) {
+      btn.textContent = 'この会員を即時に強制退会させる';
+      showRemoveError('処理に失敗しました：' + err.message);
     });
   });
 

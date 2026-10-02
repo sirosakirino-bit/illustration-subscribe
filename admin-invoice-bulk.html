@@ -82,13 +82,10 @@
 
     <div style="display: flex; align-items: center; gap: 10px;">
       <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">対象月</div>
-      <select id="month-select" class="month-select" onchange="switchMonth()">
-        <option value="2026-09">2026年9月</option>
-        <option value="2026-08">2026年8月</option>
-        <option value="2026-07">2026年7月</option>
-        <option value="2026-06">2026年6月</option>
-      </select>
+      <select id="month-select" class="month-select" onchange="switchMonth()"></select>
     </div>
+
+    <div id="bulk-error" style="display:none; background:#fbecec; border:1px solid #f3d3d3; color:#c0524f; font-size:12px; padding:10px 16px; border-radius:12px;"></div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 8px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column;">
 
@@ -100,79 +97,269 @@
         <div style="width: 150px;">金額</div>
       </div>
 
-      <div id="invoice-rows"></div>
+      <div id="invoice-rows"><div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">読み込み中…</div></div>
 
     </div>
 
     <div style="background: #ffffff; border-radius: 18px; padding: 22px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
       <div>
-        <div style="font-size: 12px; color: #5c6b73;">選択中（<span id="selected-month-label">2026年9月</span>）</div>
-        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 16px; font-weight: 800; font-weight: 400;"><span id="selected-count">2件</span><span id="selected-total" style="font-size: 12px; font-weight: 700; color: #5c6b73; margin-left: 8px;">合計 38,500円（税込）</span></div>
+        <div style="font-size: 12px; color: #5c6b73;">選択中（<span id="selected-month-label"></span>）</div>
+        <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 16px; font-weight: 800; font-weight: 400;"><span id="selected-count">0件</span><span id="selected-total" style="font-size: 12px; font-weight: 700; color: #5c6b73; margin-left: 8px;">合計 0円（税込）</span></div>
       </div>
-      <div style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 28px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: not-allowed; display: flex; align-items: center; gap: 8px;">
+      <div id="bulk-submit-btn" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 28px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer; display: flex; align-items: center; gap: 8px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-        <span id="bulk-btn-label">選択した2件をまとめてPDF発行する（一括ダウンロード）</span>
+        <span id="bulk-btn-label">選択した0件をまとめてPDF発行する（一括ダウンロード）</span>
       </div>
     </div>
 
-    <div style="font-size: 11px; color: #b3c2c9;">※ チェックを外すと発行対象から除外できます（表示のみ・操作は未実装です）。</div>
+    <div style="font-size: 11px; color: #b3c2c9;">※ チェックを外すと発行対象から除外できます。既にこの対象月で発行済みの会員も一覧に表示されます（重複発行にご注意ください）。※商用利用などのオプション請求は対象外のため、個別に発行してください。</div>
 
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script src="auth.js"></script>
 <script>
-  var MONTH_DATA = {
-    '2026-09': { label: '2026年9月', rows: [
-      { date: '9/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 },
-      { date: '9/1', name: '[会員名B] さん',               plan: '月1プラン',     amount: 27500 }
-    ]},
-    '2026-08': { label: '2026年8月', rows: [
-      { date: '8/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 },
-      { date: '8/1', name: '[会員名B] さん',               plan: '月1プラン',     amount: 27500 },
-      { date: '8/1', name: '[会員名D] さん',               plan: 'ポイントプラン', amount: 11000 }
-    ]},
-    '2026-07': { label: '2026年7月', rows: [
-      { date: '7/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 },
-      { date: '7/1', name: '[会員名B] さん',               plan: '月1プラン',     amount: 27500 }
-    ]},
-    '2026-06': { label: '2026年6月', rows: [
-      { date: '6/1', name: '[会員名A] さん（山田 花子）', plan: 'ポイントプラン', amount: 11000 }
-    ]}
+  var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+  var PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
+  var PLAN_MEMO = {
+    point: 'イラスト制作サブスクリプション（ポイントプラン）ご利用料として',
+    monthly: 'イラスト制作サブスクリプション（月1プラン）ご利用料として'
   };
 
-  function checkIcon() {
-    return '<div class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>';
+  var allMembers = [];
+  var currentIssuer = null;
+  var checkedIds = {}; // memberId -> true/false
+  var currentMonth = '';
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
   }
 
-  function renderMonth(key) {
-    var data = MONTH_DATA[key];
-    var rowsHtml = '';
-    var total = 0;
+  function memberDisplayName(m) { return m.handle_name || m.full_name || m.email; }
+  function yen(n) { return Math.round(n).toLocaleString() + '円'; }
+  function formatDateJa(iso) {
+    var d = new Date(iso);
+    return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  }
 
-    data.rows.forEach(function (r, i) {
-      total += r.amount;
-      var borderStyle = (i < data.rows.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
-      rowsHtml +=
-        '<div style="display: flex; align-items: center; padding: 14px 0; ' + borderStyle + ' font-size: 13px;">' +
-          '<div style="width: 30px;">' + checkIcon() + '</div>' +
-          '<div style="width: 90px; color: #5c6b73;">' + r.date + '</div>' +
-          '<div style="flex-grow: 1;">' + r.name + '</div>' +
-          '<div style="width: 110px; color: #4b5a61;">' + r.plan + '</div>' +
-          '<div style="width: 150px; color: #4b5a61; white-space: nowrap;">' + r.amount.toLocaleString() + '円（税込）</div>' +
-        '</div>';
-    });
+  function monthLabel(key) {
+    var parts = key.split('-');
+    return parts[0] + '年' + Number(parts[1]) + '月';
+  }
 
-    document.getElementById('invoice-rows').innerHTML = rowsHtml;
-    document.getElementById('selected-month-label').textContent = data.label;
-    document.getElementById('selected-count').textContent = data.rows.length + '件';
-    document.getElementById('selected-total').textContent = '合計 ' + total.toLocaleString() + '円（税込）';
-    document.getElementById('bulk-btn-label').textContent = '選択した' + data.rows.length + '件をまとめてPDF発行する（一括ダウンロード）';
+  function buildMonthOptions() {
+    var sel = document.getElementById('month-select');
+    sel.innerHTML = '';
+    var now = new Date();
+    for (var i = 0; i < 12; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      var opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = monthLabel(key);
+      sel.appendChild(opt);
+    }
+    currentMonth = sel.value;
+  }
+
+  function checkIcon(checked) {
+    if (checked) {
+      return '<div class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>';
+    }
+    return '<div class="check" style="background:#fff;"></div>';
+  }
+
+  function toggleRow(memberId) {
+    checkedIds[memberId] = !checkedIds[memberId];
+    renderRows();
+  }
+
+  function renderRows() {
+    var wrap = document.getElementById('invoice-rows');
+    if (allMembers.length === 0) {
+      wrap.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">対象の会員がいません</div>';
+    } else {
+      var html = '';
+      allMembers.forEach(function (m, i) {
+        var amount = PLAN_AMOUNTS[m.plan] || 0;
+        var borderStyle = (i < allMembers.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
+        html +=
+          '<div onclick="toggleRow(' + m.id + ')" style="cursor:pointer; display: flex; align-items: center; padding: 14px 0; ' + borderStyle + ' font-size: 13px;">' +
+            '<div style="width: 30px;">' + checkIcon(checkedIds[m.id]) + '</div>' +
+            '<div style="width: 90px; color: #5c6b73;">' + Number(currentMonth.split('-')[1]) + '/1</div>' +
+            '<div style="flex-grow: 1;">' + escapeHtml(memberDisplayName(m)) + '</div>' +
+            '<div style="width: 110px; color: #4b5a61;">' + escapeHtml(PLAN_LABELS[m.plan] || m.plan) + '</div>' +
+            '<div style="width: 150px; color: #4b5a61; white-space: nowrap;">' + yen(amount) + '（税込）</div>' +
+          '</div>';
+      });
+      wrap.innerHTML = html;
+    }
+    updateSummary();
+  }
+
+  function updateSummary() {
+    var selected = allMembers.filter(function (m) { return checkedIds[m.id]; });
+    var total = selected.reduce(function (sum, m) { return sum + (PLAN_AMOUNTS[m.plan] || 0); }, 0);
+    document.getElementById('selected-month-label').textContent = monthLabel(currentMonth);
+    document.getElementById('selected-count').textContent = selected.length + '件';
+    document.getElementById('selected-total').textContent = '合計 ' + yen(total) + '（税込）';
+    document.getElementById('bulk-btn-label').textContent = '選択した' + selected.length + '件をまとめてPDF発行する（一括ダウンロード）';
+  }
+
+  function showBulkError(msg) {
+    var box = document.getElementById('bulk-error');
+    if (!msg) { box.style.display = 'none'; box.textContent = ''; return; }
+    box.textContent = msg;
+    box.style.display = 'block';
   }
 
   function switchMonth() {
-    renderMonth(document.getElementById('month-select').value);
+    currentMonth = document.getElementById('month-select').value;
+    checkedIds = {};
+    allMembers.forEach(function (m) { checkedIds[m.id] = true; });
+    renderRows();
   }
 
-  renderMonth('2026-09');
+  function addReceiptPage(doc, opts, isFirst) {
+    if (!isFirst) doc.addPage();
+    var pageW = doc.internal.pageSize.getWidth();
+    var marginX = 22;
+    var y = 26;
+
+    doc.setFontSize(22);
+    doc.text('領収書', marginX, y);
+    doc.setFontSize(9);
+    doc.text('発行番号：No. ' + opts.receiptNo, pageW - marginX, y - 6, { align: 'right' });
+    doc.text('発行日：' + formatDateJa(opts.issueDate), pageW - marginX, y, { align: 'right' });
+
+    y += 16;
+    doc.setFontSize(15);
+    doc.text(opts.recipient + ' 様', marginX, y);
+    doc.setLineWidth(0.5);
+    doc.line(marginX, y + 2, marginX + 90, y + 2);
+
+    y += 14;
+    doc.setFontSize(10);
+    doc.text('金額', marginX, y);
+    doc.setFontSize(20);
+    doc.text(yen(opts.total) + '-（税込）', marginX + 16, y);
+
+    y += 12;
+    doc.setFontSize(10);
+    var memoLines = doc.splitTextToSize(opts.memo + '\n上記正に領収いたしました。', pageW - marginX * 2);
+    doc.text(memoLines, marginX, y);
+    y += memoLines.length * 5 + 6;
+
+    doc.setLineWidth(0.2);
+    doc.line(marginX, y, pageW - marginX, y);
+    y += 7;
+    doc.text(opts.itemLabel, marginX, y);
+    doc.text(yen(opts.subtotal), pageW - marginX, y, { align: 'right' });
+    y += 8;
+    doc.line(marginX, y - 5, pageW - marginX, y - 5);
+    doc.text('消費税（10%）', marginX, y);
+    doc.text(yen(opts.tax), pageW - marginX, y, { align: 'right' });
+    y += 9;
+    doc.setFontSize(12);
+    doc.text('合計（税込）', marginX, y);
+    doc.text(yen(opts.total), pageW - marginX, y, { align: 'right' });
+
+    y += 20;
+    doc.setFontSize(8);
+    doc.text('電子発行のため収入印紙は不要です。', marginX, y);
+
+    if (opts.issuer) {
+      var issuerX = pageW - marginX;
+      var issuerY = y - 6;
+      if (opts.issuer.stamp_image_data_url) {
+        try { doc.addImage(opts.issuer.stamp_image_data_url, 'JPEG', issuerX - 60, issuerY - 4, 16, 16); } catch (e) { /* 画像形式が合わない場合は無視 */ }
+      }
+      doc.setFontSize(11);
+      doc.text(opts.issuer.full_name || '', issuerX, issuerY, { align: 'right' });
+      doc.setFontSize(9);
+      var line2 = opts.issuer.zip ? ('〒' + opts.issuer.zip) : '';
+      var line3 = opts.issuer.address || '';
+      var line4 = opts.issuer.phone ? ('TEL：' + opts.issuer.phone) : '';
+      [line2, line3, line4].filter(Boolean).forEach(function (t, i) {
+        doc.text(t, issuerX, issuerY + 5 + i * 5, { align: 'right' });
+      });
+    }
+  }
+
+  function bulkIssueClicked() {
+    showBulkError('');
+    var selected = allMembers.filter(function (m) { return checkedIds[m.id]; });
+    if (selected.length === 0) { showBulkError('発行対象の会員を1件以上選択してください'); return; }
+
+    var jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) { showBulkError('PDF生成ライブラリの読み込みに失敗しました。通信環境をご確認のうえ、再度お試しください。'); return; }
+
+    var btn = document.getElementById('bulk-submit-btn');
+    var labelEl = document.getElementById('bulk-btn-label');
+    var originalLabel = labelEl.textContent;
+    labelEl.textContent = '発行しています…';
+    btn.style.pointerEvents = 'none';
+
+    var issueDate = new Date().toISOString().slice(0, 10);
+    var promiseChain = Promise.resolve();
+    var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
+
+    selected.forEach(function (member, i) {
+      promiseChain = promiseChain.then(function () {
+        return window.AuthHelpers.callFunction('admin-data', {
+          method: 'POST',
+          body: { action: 'issue-receipt', member_id: member.id, period_month: currentMonth }
+        }).then(function (data) {
+          var total = PLAN_AMOUNTS[member.plan] || 0;
+          var subtotal = Math.round(total / 1.1);
+          var tax = total - subtotal;
+          var receiptNo = currentMonth.replace('-', '') + '-' + String(data.receipt.id).padStart(3, '0');
+          addReceiptPage(doc, {
+            receiptNo: receiptNo,
+            issueDate: issueDate,
+            recipient: memberDisplayName(member),
+            memo: PLAN_MEMO[member.plan] || '',
+            itemLabel: (PLAN_LABELS[member.plan] || member.plan) + '利用料（' + currentMonth + '）',
+            subtotal: subtotal,
+            tax: tax,
+            total: total,
+            issuer: currentIssuer
+          }, i === 0);
+        });
+      });
+    });
+
+    promiseChain.then(function () {
+      doc.save('領収書_一括_' + currentMonth + '.pdf');
+    }).catch(function (err) {
+      showBulkError(err.message || '一括発行に失敗しました（途中まで発行済みの場合があります。発行履歴をご確認ください）');
+    }).then(function () {
+      labelEl.textContent = originalLabel;
+      btn.style.pointerEvents = '';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    buildMonthOptions();
+    document.getElementById('bulk-submit-btn').addEventListener('click', bulkIssueClicked);
+  });
+
+  netlifyIdentity.on('init', function (user) {
+    if (!user) return;
+    window.AuthHelpers.callFunction('admin-data', { query: { invoice_candidates: 1 } }).then(function (data) {
+      allMembers = data.members || [];
+      allMembers.forEach(function (m) { checkedIds[m.id] = true; });
+      renderRows();
+    }).catch(function (err) {
+      showBulkError(err.message || '会員一覧の読み込みに失敗しました');
+    });
+    window.AuthHelpers.callFunction('admin-data', { query: { invoice_issuer: 1 } }).then(function (data) {
+      currentIssuer = data.issuer;
+    }).catch(function () { /* 未設定でも発行は続行 */ });
+  });
 </script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
   &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
@@ -189,7 +376,5 @@
     }
   });
 </script>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<script src="auth.js"></script>
 </body>
 </html>

@@ -296,17 +296,38 @@
     document.body.classList.remove('mobile-thread-open');
   }
 
+  function selectMonthlyQuote(btn, pt) {
+    document.querySelectorAll('.monthly-quote-chip').forEach(function (c) {
+      c.style.border = '1px solid #e3dcf5';
+      c.style.background = '#ffffff';
+      c.style.color = '#6a4fc0';
+    });
+    btn.style.border = '2px solid #6a4fc0';
+    btn.style.background = '#f1eefb';
+    btn.style.color = '#6a4fc0';
+    document.getElementById('quote-pt-input').value = pt;
+  }
+
   function renderComposers(application) {
     var container = document.getElementById('thread-composers');
     if (application.status === 'ヒアリング中') {
+      var isMonthly = application.kind === 'monthly';
+      var ptField = isMonthly
+        ? ('<div style="font-size: 12px; font-weight: 800; color: #6a4fc0;">今月のご依頼の確定内容</div>' +
+           '<div style="display:flex; gap:8px;">' +
+             '<div class="monthly-quote-chip" onclick="selectMonthlyQuote(this, 2)" style="flex:1; text-align:center; border:2px solid #6a4fc0; background:#f1eefb; color:#6a4fc0; border-radius:12px; padding:10px 6px; font-size:12px; font-weight:700; cursor:pointer;">基礎枠のみ（2pt）</div>' +
+             '<div class="monthly-quote-chip" onclick="selectMonthlyQuote(this, 3)" style="flex:1; text-align:center; border:1px solid #e3dcf5; background:#ffffff; color:#6a4fc0; border-radius:12px; padding:10px 6px; font-size:12px; font-weight:700; cursor:pointer;">追加購入あり（3pt）</div>' +
+           '</div>' +
+           '<input id="quote-pt-input" type="hidden" value="2">')
+        : ('<div style="font-size: 12px; font-weight: 800; color: #6a4fc0;">確定ポイント数</div>' +
+           '<input id="quote-pt-input" class="pt-input" type="number" min="1" step="1" placeholder="例）5">');
       container.innerHTML =
         '<div class="quote-btn" onclick="toggleComposer()">' +
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>' +
-          'ポイントを提示する' +
+          (isMonthly ? '今月のご依頼内容を提示する' : 'ポイントを提示する') +
         '</div>' +
         '<div id="composer-box" class="composer">' +
-          '<div style="font-size: 12px; font-weight: 800; color: #6a4fc0;">確定ポイント数</div>' +
-          '<input id="quote-pt-input" class="pt-input" type="number" min="1" step="1" placeholder="例）5">' +
+          ptField +
           '<div style="font-size: 12px; font-weight: 800; color: #6a4fc0; margin-top: 4px;">備考（会員に表示されます・任意）</div>' +
           '<textarea id="quote-note-input" style="width: 100%; min-height: 60px; border: 1px solid #e3dcf5; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;" placeholder="例）複数人・背景込みの一枚絵として5ptでご案内します。"></textarea>' +
           '<div class="send-quote-btn" onclick="sendQuote()">この内容で見積もりを送信</div>' +
@@ -351,19 +372,32 @@
       }
 
       if (m.kind === 'quote') {
-        var priceYen = (m.point_cost * 10000).toLocaleString();
+        var isMonthly = application.kind === 'monthly';
         var statusNote = '';
         if (m.quote_status === 'pending') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#b3791a; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員の確認待ち</div>';
         else if (m.quote_status === 'accepted') statusNote = '<div style="font-size:10.5px; font-weight:700; color:#3f9457; background:#e6f7ea; padding:4px 10px; border-radius:999px; align-self:flex-start;">正式受付済み</div>';
         else if (m.quote_status === 'superseded') statusNote = '<div style="font-size:10.5px; color:#b3c2c9;">新しい内容に更新済み</div>';
+
+        var amountLine;
+        if (isMonthly) {
+          var extra = m.point_cost >= 3;
+          amountLine = '<div style="font-family: \'GenEi Kiwami Gothic\', \'Dela Gothic One\', system-ui, sans-serif; font-size:20px; font-weight:800; font-weight: 400; color:#3b454a;">' +
+            (extra ? '確保枠2pt ＋ 追加購入1pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（計3pt相当）</span>' : '確保枠2pt相当<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（追加購入なし）</span>') +
+            '</div>' +
+            (extra ? '<div style="font-size:12px; font-weight:700; color:#a8722a; background:#fdf3e8; padding:6px 12px; border-radius:8px;">追加購入：+1pt（+10,000円＋消費税10%）</div>' : '');
+        } else {
+          var priceYen = (m.point_cost * 10000).toLocaleString();
+          amountLine = '<div style="font-family: \'GenEi Kiwami Gothic\', \'Dela Gothic One\', system-ui, sans-serif; font-size:20px; font-weight:800; font-weight: 400; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>';
+        }
+
         return (
           '<div class="msg-row" style="align-items:flex-end;">' +
             '<div class="quote-card" style="align-self:flex-end;">' +
               '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#6a4fc0;">' +
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6a4fc0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>' +
-                'ポイントのご提示' +
+                (isMonthly ? '今月のご依頼内容のご提示' : 'ポイントのご提示') +
               '</div>' +
-              '<div style="font-family: \'GenEi Kiwami Gothic\', \'Dela Gothic One\', system-ui, sans-serif; font-size:20px; font-weight:800; font-weight: 400; color:#3b454a;">' + m.point_cost + 'pt<span style="font-size:12px; font-weight:700; color:#5c6b73; margin-left:6px;">（¥' + priceYen + '＋消費税10%）</span></div>' +
+              amountLine +
               (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
               statusNote +
             '</div>' +

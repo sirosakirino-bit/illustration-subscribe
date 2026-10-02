@@ -65,7 +65,7 @@
     <div class="navlinks">
       <a href="mypage.html" class="nav-inactive">マイページ</a>
       <a href="apply-monthly.html" class="nav-active">今月のご依頼</a>
-      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">2</span></a>
+      <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span id="history-nav-badge" style="display: none; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">0</span></a>
       <a href="settings.html" class="nav-inactive">設定</a>
     </div>
     <div class="user">
@@ -96,46 +96,51 @@
 
       <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 17px; font-weight: 800; font-weight: 400;">今月のご依頼内容</div>
 
+      <div id="monthly-blocked" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 14px; padding: 14px 18px; font-size: 12px; color: #a8722a;"></div>
+
+      <div id="monthly-form-body" style="display: flex; flex-direction: column; gap: 22px;">
+
       <div style="display: flex; flex-direction: column; gap: 6px;">
-        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">依頼内容</div>
-        <div style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #b3c2c9; min-height: 70px;">例）バストアップ＋簡易背景で、表情差分を1パターン追加していただきたいです…</div>
+        <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">依頼内容<span style="color: #c0524f; font-weight: 700;">（必須）</span></div>
+        <textarea id="monthly-details" style="border: 1px solid #dcedf5; border-radius: 12px; padding: 14px; font-size: 13px; color: #3b454a; min-height: 70px; font-family: inherit; width: 100%; resize: vertical;" placeholder="例）バストアップ＋簡易背景で、表情差分を1パターン追加していただきたいです…"></textarea>
         <div style="font-size: 11px; color: #5c6b73;">※月1プランの制作内容は、ポイント表の2pt相当（バストアップ＋簡易背景の目安）がそのまま適用されます</div>
       </div>
 
       <div style="border: 1px solid #f2e0c4; background: #fdf9f2; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
         <div style="font-size: 12.5px; font-weight: 800; color: #a8722a;">内容が2pt相当を超えそうな場合</div>
         <div style="font-size: 11.5px; color: #8a6524;">2pt相当（バストアップ＋簡易背景の目安）を超えるボリュームをご希望の場合、不足分として追加1ptまで購入いただけます。1ヶ月に利用できる制作量は最大3pt相当までです。追加購入したポイントは翌月へ持ち越せません。</div>
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #f2e0c4; border-radius: 12px; padding: 12px 16px;">
+        <div class="opt-row" id="monthly-extra-purchase" onclick="toggleOption(this)" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #f2e0c4; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #d9b877;"></div>
+            <div class="opt-box" style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #d9b877;"></div>
             <div style="font-size: 13px; font-weight: 700; color: #3b454a;">不足分1ptを追加購入する</div>
           </div>
           <div style="font-size: 12px; color: #a8722a; font-weight: 700;">＋10,000円 <span style="font-size: 10.5px; font-weight: 500;">＋税10%</span></div>
         </div>
+        <div style="font-size: 10.5px; color: #8a6524;">※実際に追加購入が必要かどうかは、運営とのやり取りの中で最終確定します。ここでのチェックは「追加購入の希望あり」の目安としてお送りします。</div>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px;">
         <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">オプション</div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+        <div class="opt-row" id="opt-commercial-monthly" onclick="toggleOption(this)" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+            <div class="opt-box" style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
             <div style="font-size: 13px;">商用利用</div>
           </div>
           <div style="font-size: 12px; color: #5c6b73;">＋20,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+        <div class="opt-row" id="opt-hidden-monthly" onclick="toggleOption(this)" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+            <div class="opt-box" style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
             <div style="font-size: 13px;">実績非公開</div>
           </div>
           <div style="font-size: 12px; color: #5c6b73;">＋50,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px;">
+        <div class="opt-row" id="opt-copyright-monthly" onclick="toggleOption(this)" style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
+            <div class="opt-box" style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de;"></div>
             <div style="font-size: 13px;">著作権譲渡</div>
           </div>
           <div style="font-size: 12px; color: #5c6b73;">＋100,000円 <span style="font-size: 10.5px; color: #b3c2c9;">＋税10%</span></div>
@@ -144,10 +149,14 @@
         <div style="font-size: 10.5px; color: #b3c2c9;">※追加購入・オプション料金は月額サブスクの請求とは別に、正式受付時にStripeから個別の請求書でご案内します。</div>
       </div>
 
+      <div id="monthly-note" style="display:none; font-size: 11.5px; font-weight: 700; color: #c0524f;"></div>
+
       <div style="display: flex; justify-content: flex-start;">
-        <a href="message-monthly.html" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3);">
+        <div id="submit-monthly" onclick="submitMonthly()" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; box-shadow: 0 4px 12px rgba(47,155,214,0.3); cursor: pointer;">
           この内容で依頼する
-        </a>
+        </div>
+      </div>
+
       </div>
 
     </div>
@@ -168,6 +177,101 @@
 </script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="auth.js"></script>
+<script>
+  function toggleOption(row) {
+    var box = row.querySelector('.opt-box');
+    var checked = row.getAttribute('data-checked') === '1';
+    if (checked) {
+      row.setAttribute('data-checked', '0');
+      row.style.background = (row.id === 'monthly-extra-purchase') ? '#ffffff' : '';
+      row.style.borderColor = (row.id === 'monthly-extra-purchase') ? '#f2e0c4' : '#eef2f4';
+      box.style.background = 'transparent';
+      box.innerHTML = '';
+    } else {
+      row.setAttribute('data-checked', '1');
+      row.style.background = '#eef8fd';
+      row.style.borderColor = '#2f9bd6';
+      box.style.background = '#2f9bd6';
+      box.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    }
+  }
+
+  function isOptionChecked(id) {
+    var el = document.getElementById(id);
+    return !!el && el.getAttribute('data-checked') === '1';
+  }
+
+  function updateNavBadge(applications) {
+    var total = (applications || []).reduce(function (sum, a) { return sum + (a.unread_count || 0); }, 0);
+    var badge = document.getElementById('history-nav-badge');
+    if (badge) {
+      if (total > 0) { badge.textContent = total; badge.style.display = 'inline-flex'; }
+      else { badge.style.display = 'none'; }
+    }
+  }
+
+  function showMonthlyBlocked(message) {
+    document.getElementById('monthly-blocked').style.display = 'block';
+    document.getElementById('monthly-blocked').textContent = message;
+    document.getElementById('monthly-form-body').style.display = 'none';
+  }
+
+  function loadMemberData() {
+    if (!window.AuthHelpers) return;
+    AuthHelpers.callFunction('member-data', { method: 'GET' }).then(function (data) {
+      updateNavBadge(data.applications);
+      if (data.member.plan !== 'monthly') {
+        showMonthlyBlocked('このページは月1プラン会員向けのページです。');
+        return;
+      }
+      var hasActive = (data.applications || []).some(function (app) {
+        return app.kind === 'monthly' && (app.status === 'ヒアリング中' || app.status === '制作中');
+      });
+      if (hasActive) {
+        showMonthlyBlocked('今月のご依頼はすでにお送りいただいています。対応完了後、来月またお申し込みください。');
+      }
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  function submitMonthly() {
+    var detailsEl = document.getElementById('monthly-details');
+    var noteEl = document.getElementById('monthly-note');
+    var btn = document.getElementById('submit-monthly');
+
+    if (!detailsEl.value.trim()) {
+      noteEl.style.display = 'block';
+      noteEl.textContent = 'ご依頼内容を入力してください。';
+      detailsEl.focus();
+      return;
+    }
+    noteEl.style.display = 'none';
+    btn.textContent = '送信しています…';
+
+    AuthHelpers.callFunction('member-data', {
+      method: 'POST',
+      body: {
+        action: 'submit-monthly',
+        details: detailsEl.value.trim(),
+        extra_purchase: isOptionChecked('monthly-extra-purchase'),
+        opt_commercial: isOptionChecked('opt-commercial-monthly'),
+        opt_hidden: isOptionChecked('opt-hidden-monthly'),
+        opt_copyright: isOptionChecked('opt-copyright-monthly')
+      }
+    }).then(function () {
+      location.href = 'history.html';
+    }).catch(function (err) {
+      btn.textContent = 'この内容で依頼する';
+      noteEl.style.display = 'block';
+      noteEl.textContent = '送信に失敗しました：' + err.message;
+    });
+  }
+
+  if (window.netlifyIdentity) {
+    netlifyIdentity.on('init', function (user) { if (user) loadMemberData(); });
+  }
+</script>
 <div style="text-align: center; padding: 18px 36px 14px; font-size: 10.5px; color: #b3c2c9;">
   &copy; 2026 KurageIka&#12288;<a href="legal.html" style="color: #5c6b73; text-decoration: underline;">利用規約・プライバシーポリシー・特定商取引法に基づく表記</a>
 </div>

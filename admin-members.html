@@ -138,25 +138,14 @@
       <div class="status-pause-btn">サービスを一時休止する</div>
     </div>
 
-    <div style="background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 18px; padding: 18px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
+    <div id="leave-notice-card" style="display:none; background: #fff7f0; border: 1px solid #f5dfc4; border-radius: 18px; padding: 18px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); flex-direction: column; gap: 10px;">
       <div style="display: flex; align-items: center; gap: 8px;">
         <div style="font-size: 13px; font-weight: 800; color: #a8722a;">退会予告</div>
-        <span style="font-size: 10.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #f2e0c4; color: #a8722a;">翌月1日付・2件</span>
+        <span id="leave-notice-count" style="font-size: 10.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #f2e0c4; color: #a8722a;">翌月1日付・0件</span>
       </div>
       <div style="font-size: 11px; color: #8a6524;">退会の申告があった会員です。当月末までの申告分は、翌月1日から請求が停止し退会となります。</div>
 
-      <div style="display: flex; flex-direction: column;">
-        <div class="leave-row" style="border-bottom: 1px dashed #f2e0c4;">
-          <div class="leave-name">[会員名E] さん</div>
-          <div class="leave-date">申告日：9/12</div>
-          <div class="leave-due">退会予定：10/1</div>
-        </div>
-        <div class="leave-row">
-          <div class="leave-name">[会員名F] さん</div>
-          <div class="leave-date">申告日：9/25</div>
-          <div class="leave-due">退会予定：10/1</div>
-        </div>
-      </div>
+      <div id="leave-notice-rows" style="display: flex; flex-direction: column;"></div>
     </div>
 
     <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
@@ -164,13 +153,12 @@
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
         <div style="position: relative;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9db0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 13px; top: 50%; transform: translateY(-50%);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" placeholder="会員名・メールアドレスで検索" style="width: 220px; padding: 8px 14px 8px 34px; border: 1px solid #dcedf5; border-radius: 999px; font-size: 12px; font-family: inherit; color: #3b454a; outline: none; background: #ffffff;">
+          <input id="member-search-input" type="text" placeholder="会員名・メールアドレスで検索" style="width: 220px; padding: 8px 14px 8px 34px; border: 1px solid #dcedf5; border-radius: 999px; font-size: 12px; font-family: inherit; color: #3b454a; outline: none; background: #ffffff;">
         </div>
         <div style="display: flex; gap: 8px;">
-          <div style="background: #2f9bd6; color: #fff; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px;">すべて</div>
-          <div style="background: #ffffff; border: 1px solid #dcedf5; color: #5c6b73; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px;">利用中</div>
-          <div style="background: #ffffff; border: 1px solid #dcedf5; color: #5c6b73; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px;">未払い</div>
-          <div style="background: #ffffff; border: 1px solid #dcedf5; color: #5c6b73; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px;">退会済み</div>
+          <div class="member-filter-chip" data-filter="all" onclick="setFilter('all', this)" style="background: #2f9bd6; color: #fff; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px; cursor: pointer;">すべて</div>
+          <div class="member-filter-chip" data-filter="active" onclick="setFilter('active', this)" style="background: #ffffff; border: 1px solid #dcedf5; color: #5c6b73; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px; cursor: pointer;">利用中</div>
+          <div class="member-filter-chip" data-filter="removed" onclick="setFilter('removed', this)" style="background: #ffffff; border: 1px solid #dcedf5; color: #5c6b73; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px; cursor: pointer;">強制退会済み</div>
         </div>
       </div>
     </div>
@@ -209,22 +197,68 @@
 <script src="auth.js"></script>
 <script>
   var PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+  var allMembers = [];
+  var currentFilter = 'all';
+  var currentSearch = '';
 
-  function renderMembers(members) {
+  function formatDate(iso) {
+    var d = new Date(iso);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+  function nextMonthFirst(from) {
+    var d = new Date(from.getFullYear(), from.getMonth() + 1, 1);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  function renderLeaveNotices(members) {
+    var pending = members.filter(function (m) { return m.leave_requested_at && !m.is_removed; });
+    var card = document.getElementById('leave-notice-card');
+    if (!pending.length) { card.style.display = 'none'; return; }
+    card.style.display = 'flex';
+    document.getElementById('leave-notice-count').textContent = '翌月1日付・' + pending.length + '件';
+    document.getElementById('leave-notice-rows').innerHTML = pending.map(function (m, i) {
+      var name = m.handle_name || m.full_name || m.email;
+      var border = (i < pending.length - 1) ? 'border-bottom: 1px dashed #f2e0c4;' : '';
+      var requestedAt = new Date(m.leave_requested_at);
+      return (
+        '<div class="leave-row" style="' + border + '">' +
+          '<div class="leave-name">' + name + ' さん</div>' +
+          '<div class="leave-date">申告日：' + formatDate(requestedAt) + '</div>' +
+          '<div class="leave-due">退会予定：' + nextMonthFirst(requestedAt) + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function renderMembers() {
     var container = document.getElementById('member-rows');
-    if (!members.length) {
-      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">まだ会員がいません</div>';
+    var filtered = allMembers.filter(function (m) {
+      if (currentFilter === 'active' && m.is_removed) return false;
+      if (currentFilter === 'removed' && !m.is_removed) return false;
+      if (currentSearch) {
+        var name = (m.handle_name || m.full_name || m.email || '').toLowerCase();
+        var email = (m.email || '').toLowerCase();
+        if (name.indexOf(currentSearch) === -1 && email.indexOf(currentSearch) === -1) return false;
+      }
+      return true;
+    });
+
+    if (!filtered.length) {
+      container.innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #5c6b73; text-align: center;">該当する会員がいません</div>';
       return;
     }
-    container.innerHTML = members.map(function (m, i) {
-      var border = (i < members.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
+    container.innerHTML = filtered.map(function (m, i) {
+      var border = (i < filtered.length - 1) ? 'border-bottom: 1px dashed #eef2f4;' : '';
       var name = m.handle_name || m.full_name || m.email;
       var initial = name ? name.charAt(0) : '?';
+      var badges = '';
+      if (m.is_removed) badges += '<span style="font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #fbecec; color: #c0524f; margin-left: 6px;">強制退会済み</span>';
+      else if (m.leave_requested_at) badges += '<span style="font-size: 9.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #f2e0c4; color: #a8722a; margin-left: 6px;">退会予告</span>';
       return (
-        '<div class="member-row" style="' + border + '">' +
+        '<div class="member-row" style="' + border + (m.is_removed ? ' opacity: 0.55;' : '') + '">' +
           '<div class="col-name">' +
             '<div style="width: 26px; height: 26px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #1f7fb3; flex-shrink: 0;">' + initial + '</div>' +
-            name + ' さん' +
+            name + ' さん' + badges +
           '</div>' +
           '<div class="col-plan">' + (PLAN_LABELS[m.plan] || m.plan) + '</div>' +
           '<div class="col-pt">' + m.point_balance + 'pt</div>' +
@@ -235,11 +269,31 @@
     }).join('');
   }
 
+  function setFilter(filter, chip) {
+    currentFilter = filter;
+    document.querySelectorAll('.member-filter-chip').forEach(function (c) {
+      c.style.background = '#ffffff';
+      c.style.border = '1px solid #dcedf5';
+      c.style.color = '#5c6b73';
+    });
+    chip.style.background = '#2f9bd6';
+    chip.style.border = 'none';
+    chip.style.color = '#fff';
+    renderMembers();
+  }
+
+  document.getElementById('member-search-input').addEventListener('input', function () {
+    currentSearch = this.value.trim().toLowerCase();
+    renderMembers();
+  });
+
   if (window.netlifyIdentity) {
     netlifyIdentity.on('init', function (user) {
       if (!user || !window.AuthHelpers) return;
       AuthHelpers.callFunction('admin-data', { method: 'GET' }).then(function (data) {
-        renderMembers(data.members);
+        allMembers = data.members || [];
+        renderLeaveNotices(allMembers);
+        renderMembers();
       }).catch(function (err) {
         document.getElementById('member-rows').innerHTML = '<div style="padding: 20px 0; font-size: 12px; color: #c0524f; text-align: center;">読み込みに失敗しました：' + err.message + '</div>';
       });

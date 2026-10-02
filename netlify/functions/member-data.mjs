@@ -1,6 +1,10 @@
 import { getDb } from './_lib/db.mjs';
 import { requireUser, jsonResponse } from './_lib/auth.mjs';
 import { notifyAdmin, escapeHtml, siteUrl } from './_lib/email.mjs';
+import { computeCapacity } from './_lib/capacity.mjs';
+
+const PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+const PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
 
 function memberLabel(member) {
   return member.handle_name || member.full_name || member.email;
@@ -35,6 +39,12 @@ export async function handler(event, context) {
   try {
     const user = requireUser(context);
     const member = await ensureMember(db, user);
+
+    if (member.is_removed) {
+      const err = new Error('このアカウントはご利用いただけません。詳しくは運営までお問い合わせください。');
+      err.statusCode = 403;
+      throw err;
+    }
 
     if (event.httpMethod === 'GET') {
       const query = event.queryStringParameters || {};
@@ -73,7 +83,14 @@ export async function handler(event, context) {
         LIMIT 3
       `;
 
-      return jsonResponse(200, { member, applications, recentAnnouncements });
+      // ポイントプランの今月の受付枠（残り）。メニュー申請画面(apply.html)の上部表示用
+      const capacity = await computeCapacity(db);
+
+      // 月1プランの定員（2名）。プラン変更画面(plan-change.html)でのポイント→月1変更可否の判定用
+      const monthlyCountRows = await db.sql`SELECT COUNT(*)::int AS c FROM members WHERE plan = 'monthly' AND is_removed = false`;
+      const monthlyPlanFull = monthlyCountRows[0].c >= 2;
+
+      return jsonResponse(200, { member, applications, recentAnnouncements, capacity, monthlyPlanFull });
     }
 
     if (event.httpMethod === 'POST') {
@@ -97,10 +114,20 @@ export async function handler(event, context) {
         const notes = (body.notes || '').trim();
         if (!notes) return jsonResponse(400, { error: 'ご要望メモの入力は必須です' });
         if (member.point_balance < pt) return jsonResponse(400, { error: 'ポイントが不足しています' });
+
+        const capacity = await computeCapacity(db);
+        if (capacity.remaining < pt) {
+          return jsonResponse(400, { error: '今月のポイントプラン受付枠が不足しているため、現在は受付できません。枠が回復するまでお待ちください。' });
+        }
+
+        const optCommercial = !!body.opt_commercial;
+        const optHidden = !!body.opt_hidden;
+        const optCopyright = !!body.opt_copyright;
+
         const updatedMembers = await db.sql`UPDATE members SET point_balance = point_balance - ${pt} WHERE id = ${member.id} RETURNING *`;
         const inserted = await db.sql`
-          INSERT INTO applications (member_id, kind, title, details, point_cost, status)
-          VALUES (${member.id}, 'menu', ${MENU_TITLES[pt]}, ${notes}, ${pt}, '制作中') RETURNING *`;
+          INSERT INTO applications (member_id, kind, title, details, point_cost, status, opt_commercial, opt_hidden, opt_copyright)
+          VALUES (${member.id}, 'menu', ${MENU_TITLES[pt]}, ${notes}, ${pt}, '制作中', ${optCommercial}, ${optHidden}, ${optCopyright}) RETURNING *`;
         await db.sql`
           INSERT INTO messages (application_id, sender, kind, body, read_by_member, read_by_admin)
           VALUES (${inserted[0].id}, 'member', 'text', ${notes}, true, false)
@@ -122,9 +149,14 @@ export async function handler(event, context) {
         const pending = await db.sql`
           SELECT id FROM applications WHERE member_id = ${member.id} AND kind = 'consult' AND status = 'ヒアリング中'`;
         if (pending.length > 0) return jsonResponse(400, { error: 'すでに相談中（ヒアリング中）の申請があります。回答・正式受付が済んでから、次のご相談をお送りください。' });
+
+        const optCommercial = !!body.opt_commercial;
+        const optHidden = !!body.opt_hidden;
+        const optCopyright = !!body.opt_copyright;
+
         const inserted = await db.sql`
-          INSERT INTO applications (member_id, kind, title, details, point_estimate, status)
-          VALUES (${member.id}, 'consult', ${body.title || '特殊な依頼のご相談'}, ${details}, ${body.point_estimate || null}, 'ヒアリング中') RETURNING *`;
+          INSERT INTO applications (member_id, kind, title, details, point_estimate, status, opt_commercial, opt_hidden, opt_copyright)
+          VALUES (${member.id}, 'consult', ${body.title || '特殊な依頼のご相談'}, ${details}, ${body.point_estimate || null}, 'ヒアリング中', ${optCommercial}, ${optHidden}, ${optCopyright}) RETURNING *`;
         await db.sql`
           INSERT INTO messages (application_id, sender, kind, body, read_by_member, read_by_admin)
           VALUES (${inserted[0].id}, 'member', 'text', ${details}, true, false)
@@ -134,6 +166,45 @@ export async function handler(event, context) {
           html:
             '<p>' + escapeHtml(memberLabel(member)) + ' さんから、特殊な依頼のご相談がありました。</p>' +
             '<p>内容：' + escapeHtml(details) + '</p>' +
+            '<p><a href="' + siteUrl('admin-inbox.html#' + inserted[0].id) + '">管理画面で確認する</a></p>'
+        }).catch(function () {});
+        return jsonResponse(200, { member, application: inserted[0] });
+      }
+
+      // ---- 月1プラン：今月のご依頼を送信する（保有ポイントは使わず、基礎2pt相当を消費） ----
+      if (action === 'submit-monthly') {
+        if (member.plan !== 'monthly') return jsonResponse(400, { error: '月1プランの会員のみご利用いただけます' });
+        const details = (body.details || '').trim();
+        if (!details) return jsonResponse(400, { error: 'ご依頼内容の入力は必須です' });
+
+        const active = await db.sql`
+          SELECT id FROM applications WHERE member_id = ${member.id} AND kind = 'monthly' AND status IN ('ヒアリング中', '制作中')`;
+        if (active.length > 0) return jsonResponse(400, { error: '現在進行中の今月のご依頼が1件あるため、新しい申請はできません。対応完了後にもう一度お申し込みください。' });
+
+        const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+        const thisMonth = await db.sql`
+          SELECT id FROM applications
+          WHERE member_id = ${member.id} AND kind = 'monthly' AND status != 'キャンセル' AND created_at >= ${monthStart}`;
+        if (thisMonth.length > 0) return jsonResponse(400, { error: '今月分のご依頼はすでにお送りいただいています。来月またお申し込みください。' });
+
+        const wantsExtra = !!body.extra_purchase;
+        const optCommercial = !!body.opt_commercial;
+        const optHidden = !!body.opt_hidden;
+        const optCopyright = !!body.opt_copyright;
+
+        const inserted = await db.sql`
+          INSERT INTO applications (member_id, kind, title, details, point_estimate, status, opt_commercial, opt_hidden, opt_copyright)
+          VALUES (${member.id}, 'monthly', '今月のご依頼', ${details}, ${wantsExtra ? '追加購入あり希望' : '基礎枠（2pt相当）'}, 'ヒアリング中', ${optCommercial}, ${optHidden}, ${optCopyright}) RETURNING *`;
+        await db.sql`
+          INSERT INTO messages (application_id, sender, kind, body, read_by_member, read_by_admin)
+          VALUES (${inserted[0].id}, 'member', 'text', ${details}, true, false)
+        `;
+        notifyAdmin({
+          subject: '【新しい申請】' + memberLabel(member) + ' さんから今月のご依頼がありました（月1プラン）',
+          html:
+            '<p>' + escapeHtml(memberLabel(member)) + ' さんから、今月のご依頼がありました。</p>' +
+            '<p>内容：' + escapeHtml(details) + '</p>' +
+            (wantsExtra ? '<p>追加購入（+1pt）を希望されています。</p>' : '') +
             '<p><a href="' + siteUrl('admin-inbox.html#' + inserted[0].id) + '">管理画面で確認する</a></p>'
         }).catch(function () {});
         return jsonResponse(200, { member, application: inserted[0] });
@@ -181,15 +252,22 @@ export async function handler(event, context) {
         if (quoteRows.length === 0) return jsonResponse(400, { error: '有効なポイントのご提示が見つかりません' });
         const quote = quoteRows[0];
 
-        const freshMembers = await db.sql`SELECT * FROM members WHERE id = ${member.id}`;
-        const freshMember = freshMembers[0];
-        if (freshMember.point_balance < quote.point_cost) {
-          return jsonResponse(400, { error: 'ポイントが不足しているため、この内容では正式受付できません' });
+        // 月1プランの「今月のご依頼」は保有ポイントを使わない（基礎2pt相当はサブスクに含まれ、
+        // 追加購入分（quote.point_cost=3）は正式受付時にStripeの個別請求書で別途ご案内する運用）
+        let updatedMembers = [member];
+        if (application.kind === 'monthly') {
+          // 変更なし（point_balanceは減算しない）
+        } else {
+          const freshMembers = await db.sql`SELECT * FROM members WHERE id = ${member.id}`;
+          const freshMember = freshMembers[0];
+          if (freshMember.point_balance < quote.point_cost) {
+            return jsonResponse(400, { error: 'ポイントが不足しているため、この内容では正式受付できません' });
+          }
+          updatedMembers = await db.sql`
+            UPDATE members SET point_balance = point_balance - ${quote.point_cost} WHERE id = ${member.id} RETURNING *
+          `;
         }
 
-        const updatedMembers = await db.sql`
-          UPDATE members SET point_balance = point_balance - ${quote.point_cost} WHERE id = ${member.id} RETURNING *
-        `;
         const updatedApp = await db.sql`
           UPDATE applications SET status = '制作中', point_cost = ${quote.point_cost}, updated_at = now()
           WHERE id = ${applicationId} RETURNING *
@@ -207,6 +285,52 @@ export async function handler(event, context) {
         }).catch(function () {});
 
         return jsonResponse(200, { member: updatedMembers[0], application: updatedApp[0] });
+      }
+
+      // ---- プラン変更（次回請求日から新プランが適用される想定。表示上の案内のみで、反映自体は即時） ----
+      if (action === 'change-plan') {
+        const newPlan = body.plan === 'monthly' ? 'monthly' : body.plan === 'point' ? 'point' : null;
+        if (!newPlan) return jsonResponse(400, { error: '不正なプランです' });
+        if (member.leave_requested_at) return jsonResponse(400, { error: '退会予告中はプラン変更できません。先に退会予告を取り消してください。' });
+        if (newPlan === member.plan) return jsonResponse(400, { error: 'すでにこのプランをご利用中です' });
+
+        if (newPlan === 'point') {
+          const monthsSinceSignup = (Date.now() - new Date(member.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30);
+          if (monthsSinceSignup < 3) {
+            return jsonResponse(400, { error: '月1プラン→ポイントプランへの変更は、初回決済日から3ヶ月経過後に可能です' });
+          }
+        }
+        if (newPlan === 'monthly') {
+          const monthlyCountRows = await db.sql`SELECT COUNT(*)::int AS c FROM members WHERE plan = 'monthly' AND is_removed = false`;
+          if (monthlyCountRows[0].c >= 2) {
+            return jsonResponse(400, { error: '月1プランは現在定員に達しているため変更できません' });
+          }
+        }
+
+        const updated = await db.sql`UPDATE members SET plan = ${newPlan}, point_balance = 0 WHERE id = ${member.id} RETURNING *`;
+        notifyAdmin({
+          subject: '【プラン変更】' + memberLabel(member) + ' さんがプランを変更しました',
+          html: '<p>' + escapeHtml(memberLabel(member)) + ' さんが、' + (PLAN_LABELS[member.plan] || member.plan) + ' から ' + (PLAN_LABELS[newPlan] || newPlan) + ' への変更を申し込みました。</p>'
+        }).catch(function () {});
+        return jsonResponse(200, { member: updated[0] });
+      }
+
+      // ---- 退会を申告する（当月末までの申告で翌月1日付け退会。運営の会員一覧「退会予告」に表示される） ----
+      if (action === 'request-leave') {
+        if (member.leave_requested_at) return jsonResponse(400, { error: 'すでに退会を申告済みです' });
+        const updated = await db.sql`UPDATE members SET leave_requested_at = now() WHERE id = ${member.id} RETURNING *`;
+        notifyAdmin({
+          subject: '【退会予告】' + memberLabel(member) + ' さんが退会を申告しました',
+          html: '<p>' + escapeHtml(memberLabel(member)) + ' さんが退会を申告しました。翌月1日付けで退会となります。</p>'
+        }).catch(function () {});
+        return jsonResponse(200, { member: updated[0] });
+      }
+
+      // ---- 退会申告を取り消す ----
+      if (action === 'cancel-leave-request') {
+        if (!member.leave_requested_at) return jsonResponse(400, { error: '退会の申告はありません' });
+        const updated = await db.sql`UPDATE members SET leave_requested_at = NULL WHERE id = ${member.id} RETURNING *`;
+        return jsonResponse(200, { member: updated[0] });
       }
 
       return jsonResponse(400, { error: '不明な操作です' });

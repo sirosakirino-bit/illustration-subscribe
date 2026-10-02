@@ -1,6 +1,10 @@
 import { getDb } from './_lib/db.mjs';
 import { requireAdmin, jsonResponse } from './_lib/auth.mjs';
 import { notifyMember, escapeHtml, siteUrl } from './_lib/email.mjs';
+import { computeCapacity, setCapacity } from './_lib/capacity.mjs';
+
+const PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
+const PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
 
 async function getMemberById(db, memberId) {
   const rows = await db.sql`SELECT * FROM members WHERE id = ${memberId}`;
@@ -39,6 +43,39 @@ export async function handler(event, context) {
       if (query.announcement_templates) {
         const templates = await db.sql`SELECT * FROM announcement_templates ORDER BY created_at DESC`;
         return jsonResponse(200, { templates });
+      }
+
+      // ---- 制作枠状況 ----
+      if (query.capacity) {
+        const capacity = await computeCapacity(db);
+        return jsonResponse(200, { capacity });
+      }
+
+      // ---- 領収書：発行者情報 ----
+      if (query.invoice_issuer) {
+        const rows = await db.sql`SELECT * FROM invoice_issuer WHERE id = 1`;
+        return jsonResponse(200, { issuer: rows[0] || null });
+      }
+
+      // ---- 領収書：発行履歴 ----
+      if (query.receipts) {
+        const receipts = await db.sql`
+          SELECT receipts.*, COALESCE(members.handle_name, members.full_name, members.email) AS member_display_name
+          FROM receipts JOIN members ON members.id = receipts.member_id
+          ORDER BY receipts.issued_at DESC LIMIT 100
+        `;
+        return jsonResponse(200, { receipts });
+      }
+
+      // ---- 領収書一括発行：対象月に発行できる会員一覧（現在アクティブな会員＝毎月1日に同額で請求される前提の近似値） ----
+      if (query.invoice_candidates) {
+        const members = await db.sql`
+          SELECT id, email, full_name, handle_name, zip, prefecture, address1, address2, plan
+          FROM members
+          WHERE is_removed = false
+          ORDER BY created_at ASC
+        `;
+        return jsonResponse(200, { members });
       }
 
       // ---- メッセージ管理：スレッド詳細 ----
@@ -346,6 +383,81 @@ export async function handler(event, context) {
         if (!templateId) return jsonResponse(400, { error: 'テンプレートIDが不正です' });
         await db.sql`DELETE FROM announcement_templates WHERE id = ${templateId}`;
         return jsonResponse(200, { ok: true });
+      }
+
+      // ---- 制作枠状況：今月のポイントプラン受付可能ポイント数を更新 ----
+      if (action === 'set-capacity') {
+        const availablePoints = Number(body.available_points);
+        if (!Number.isFinite(availablePoints) || availablePoints < 0) {
+          return jsonResponse(400, { error: '受付可能ポイント数が不正です' });
+        }
+        const admin = requireAdmin(context);
+        const capacity = await setCapacity(db, availablePoints, admin.email || null);
+        return jsonResponse(200, { capacity });
+      }
+
+      // ---- 強制退会（即時利用停止）。通常の退会（翌月1日付け）とは異なり確定時点で即時アクセス不可・ポイント失効 ----
+      if (action === 'force-remove-member') {
+        const memberId = Number(body.member_id);
+        const reason = (body.reason || '').trim();
+        if (!memberId || !reason) return jsonResponse(400, { error: '会員・理由はどちらも必須です' });
+
+        const rows = await db.sql`
+          UPDATE members SET is_removed = true, removed_reason = ${reason}, removed_at = now(), point_balance = 0
+          WHERE id = ${memberId} RETURNING *
+        `;
+        if (rows.length === 0) return jsonResponse(404, { error: '会員が見つかりません' });
+
+        // 進行中の申請はすべて取り消し扱いにする
+        await db.sql`
+          UPDATE applications SET status = 'キャンセル', updated_at = now()
+          WHERE member_id = ${memberId} AND status IN ('ヒアリング中', '制作中')
+        `;
+
+        return jsonResponse(200, { member: rows[0] });
+      }
+
+      // ---- 領収書：発行者情報（フルネーム・電話番号・住所・角印画像）を保存 ----
+      if (action === 'save-invoice-issuer') {
+        const fullName = (body.full_name || '').trim();
+        const phone = (body.phone || '').trim();
+        const zip = (body.zip || '').trim();
+        const address = (body.address || '').trim();
+        const stampImageDataUrl = body.stamp_image_data_url || null;
+
+        const existing = await db.sql`SELECT stamp_image_data_url FROM invoice_issuer WHERE id = 1`;
+        const keepStamp = stampImageDataUrl === undefined || stampImageDataUrl === null
+          ? (existing[0] ? existing[0].stamp_image_data_url : null)
+          : stampImageDataUrl;
+
+        const upserted = await db.sql`
+          INSERT INTO invoice_issuer (id, full_name, phone, zip, address, stamp_image_data_url, updated_at)
+          VALUES (1, ${fullName}, ${phone}, ${zip}, ${address}, ${keepStamp}, now())
+          ON CONFLICT (id) DO UPDATE SET
+            full_name = EXCLUDED.full_name, phone = EXCLUDED.phone, zip = EXCLUDED.zip,
+            address = EXCLUDED.address, stamp_image_data_url = EXCLUDED.stamp_image_data_url, updated_at = now()
+          RETURNING *
+        `;
+        return jsonResponse(200, { issuer: upserted[0] });
+      }
+
+      // ---- 領収書：発行記録を1件保存する（PDF自体はブラウザ側で生成。ここでは発行履歴として記録のみ） ----
+      if (action === 'issue-receipt') {
+        const memberId = Number(body.member_id);
+        const periodMonth = (body.period_month || '').trim();
+        if (!memberId || !periodMonth) return jsonResponse(400, { error: '会員・対象月はどちらも必須です' });
+
+        const memberRows = await db.sql`SELECT * FROM members WHERE id = ${memberId}`;
+        if (memberRows.length === 0) return jsonResponse(404, { error: '会員が見つかりません' });
+        const targetMember = memberRows[0];
+        const amount = PLAN_AMOUNTS[targetMember.plan] || 0;
+
+        const inserted = await db.sql`
+          INSERT INTO receipts (member_id, period_month, plan, amount_total)
+          VALUES (${memberId}, ${periodMonth}, ${targetMember.plan}, ${amount})
+          RETURNING *
+        `;
+        return jsonResponse(200, { receipt: inserted[0], member: targetMember });
       }
 
       return jsonResponse(400, { error: '不明な操作です' });
