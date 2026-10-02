@@ -491,7 +491,7 @@ export async function handler(event, context) {
         // Stripe側のサブスクリプションも即時キャンセルし、以降の請求が発生しないようにする
         if (targetBefore.stripe_subscription_id) {
           try {
-            const stripe = getStripe();
+            const stripe = await getStripe();
             await stripe.subscriptions.cancel(targetBefore.stripe_subscription_id);
           } catch (err) {
             console.error('強制退会に伴うStripeサブスクリプションのキャンセルに失敗しました:', err);
@@ -519,7 +519,7 @@ export async function handler(event, context) {
           return jsonResponse(400, { error: 'この会員はまだStripeのサブスクリプションと紐付いていません' });
         }
 
-        const stripe = getStripe();
+        const stripe = await getStripe();
         try {
           if (action === 'pause-member') {
             await stripe.subscriptions.update(target.stripe_subscription_id, { pause_collection: { behavior: 'void' } });

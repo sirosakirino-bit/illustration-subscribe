@@ -61,7 +61,7 @@ export async function handler(event) {
   let stripe;
   let stripeEvent;
   try {
-    stripe = getStripe();
+    stripe = await getStripe();
     stripeEvent = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error('Stripe Webhookの署名検証に失敗しました:', err.message);

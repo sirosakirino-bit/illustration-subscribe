@@ -22,7 +22,7 @@ export async function handler(event, context) {
     }
 
     const plan = member.plan === 'monthly' ? 'monthly' : 'point';
-    const stripe = getStripe();
+    const stripe = await getStripe();
     const customerId = await ensureStripeCustomer(db, stripe, member);
 
     const session = await stripe.checkout.sessions.create({

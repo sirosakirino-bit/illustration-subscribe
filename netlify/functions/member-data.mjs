@@ -396,7 +396,7 @@ export async function handler(event, context) {
         // proration_behavior: 'none' により、今期分の請求はそのまま・次回請求日から新プランの金額が適用される。
         if (member.stripe_subscription_id) {
           try {
-            const stripe = getStripe();
+            const stripe = await getStripe();
             const subscription = await stripe.subscriptions.retrieve(member.stripe_subscription_id);
             const itemId = subscription.items.data[0].id;
             await stripe.subscriptions.update(member.stripe_subscription_id, {
@@ -425,7 +425,7 @@ export async function handler(event, context) {
         // （全会員共通で請求日が毎月1日のため、これが「翌月1日から請求停止」の仕様に一致する）
         if (member.stripe_subscription_id) {
           try {
-            const stripe = getStripe();
+            const stripe = await getStripe();
             await stripe.subscriptions.update(member.stripe_subscription_id, { cancel_at_period_end: true });
           } catch (err) {
             console.error('Stripeサブスクリプションの解約予約に失敗しました:', err);
@@ -447,7 +447,7 @@ export async function handler(event, context) {
 
         if (member.stripe_subscription_id) {
           try {
-            const stripe = getStripe();
+            const stripe = await getStripe();
             await stripe.subscriptions.update(member.stripe_subscription_id, { cancel_at_period_end: false });
           } catch (err) {
             console.error('Stripeサブスクリプションの解約予約の取り消しに失敗しました:', err);

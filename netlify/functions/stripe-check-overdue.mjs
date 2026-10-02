@@ -24,7 +24,7 @@ export async function handler() {
       return { statusCode: 200, body: JSON.stringify({ checked: 0 }) };
     }
 
-    const stripe = getStripe();
+    const stripe = await getStripe();
     let canceledCount = 0;
 
     for (const member of overdue) {

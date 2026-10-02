@@ -1,8 +1,11 @@
 // Stripe連携の共通処理（SDKの初期化・プランとPriceの対応表・顧客の取得/作成）
-import Stripe from 'stripe';
+// ※ 'stripe' パッケージはここでは読み込まず、getStripe()が実際に呼ばれた時に動的import()で読み込む。
+//    トップレベルで固定的にimportすると、万が一そのパッケージが正しくインストールされていない
+//    環境では、このファイルをimportしているだけの関数（会員一覧・メッセージ機能など、
+//    Stripeを全く使わない処理）まで巻き添えで丸ごと動かなくなってしまうため。
 
 let _stripe = null;
-export function getStripe() {
+export async function getStripe() {
   if (_stripe) return _stripe;
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) {
@@ -10,6 +13,7 @@ export function getStripe() {
     err.statusCode = 500;
     throw err;
   }
+  const { default: Stripe } = await import('stripe');
   _stripe = new Stripe(key, { apiVersion: '2024-06-20' });
   return _stripe;
 }

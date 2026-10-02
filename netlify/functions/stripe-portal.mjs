@@ -18,7 +18,7 @@ export async function handler(event, context) {
       return jsonResponse(400, { error: 'まだお支払い情報が登録されていません。先にお支払い手続きを完了してください。' });
     }
 
-    const stripe = getStripe();
+    const stripe = await getStripe();
     const session = await stripe.billingPortal.sessions.create({
       customer: member.stripe_customer_id,
       return_url: (process.env.SITE_URL || 'https://xovy-studio.netlify.app') + '/settings.html'
