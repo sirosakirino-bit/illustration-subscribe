@@ -40,7 +40,7 @@ function wrapHtml(bodyHtml) {
   return (
     '<div style="font-family: sans-serif; font-size: 14px; color: #3b454a; line-height: 1.8;">' +
       bodyHtml +
-      '<div style="margin-top: 28px; padding-top: 16px; border-top: 1px solid #e4ecef; font-family: sans-serif; font-size: 14px; color: #3b454a; line-height: 1.8;">' +
+      '<div style="margin-top: 28px; padding-top: 16px; border-top: 1px solid #e4ecef; font-family: sans-serif; font-size: 14px; color: #6b7680; line-height: 1.8;">' +
         footerHtml +
       '</div>' +
     '</div>'
