@@ -186,6 +186,26 @@
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div id="menu-sample-toggle" onclick="toggleMenuSample()" style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11.5px; font-weight: 700; color: #2f9bd6; user-select: none;">
+              <span>依頼内容のサンプル文</span>
+              <span id="menu-sample-arrow" style="font-size: 9px;">▼</span>
+            </div>
+            <div id="menu-sample-body" style="display: none; background: #f7fbff; border: 1px solid #dcedf5; border-radius: 10px; padding: 12px 16px; font-size: 11.5px; color: #5c6b73; line-height: 1.8; white-space: pre-wrap;">■性別
+■外見(髪型、衣装など)
+■表情
+■構図、ポーズ
+■背景
+■使用用途
+■その他補足
+
+■イラストの雰囲気
+※ご希望の雰囲気があれば寄せて書くことが可能です。
+　参考画像にて添付ください。
+
+⚠版権キャラクター、版権キャラクターの衣装等は受付不可になりますのでご了承ください。</div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
             <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">依頼内容<span style="color: #c0524f; font-weight: 700;">（必須）</span></div>
             <textarea id="menu-notes" class="field-input" style="min-height: 60px; resize: vertical;" placeholder="例）服装は制服、表情は笑顔でお願いします…"></textarea>
           </div>
@@ -227,7 +247,12 @@
           <div style="font-size: 10.5px; color: #b3c2c9;">※オプション料金は月額サブスクの請求とは別に、受付時にStripeから個別の請求書でご案内します。</div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="background: #fff8ec; border: 1px solid #f5e3bd; border-radius: 12px; padding: 10px 16px; font-size: 11.5px; color: #9c7a2e; line-height: 1.7;">メニューからの依頼申請はヒアリングがないため、詳細に依頼内容をご記入ください。</div>
+          <div class="opt-row" id="menu-detail-confirmed" onclick="toggleOption(this); updateMenuSubmitState();" style="display: flex; align-items: center; gap: 10px; border: 1px solid #eef2f4; border-radius: 12px; padding: 12px 16px; cursor: pointer;">
+            <div class="opt-box" style="width: 18px; height: 18px; border-radius: 5px; border: 1px solid #c9d8de; flex-shrink: 0;"></div>
+            <div style="font-size: 12.5px;">ご依頼内容を詳細に記載しました。</div>
+          </div>
           <div id="submit-menu" onclick="submitMenu()" style="align-self: flex-start; background: #cbd8dd; color: #fff; font-weight: 700; font-size: 13px; padding: 13px 30px; border-radius: 999px; cursor: not-allowed;">
             メニューを選択してください
           </div>
@@ -246,6 +271,26 @@
       <div id="consult-form-card" style="background: #ffffff; border-radius: 20px; padding: 28px 30px; box-shadow: 0 4px 14px rgba(47,155,214,0.10); display: flex; flex-direction: column; gap: 22px;">
 
         <div style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 17px; font-weight: 800; font-weight: 400;">特殊な依頼のご相談</div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div id="consult-sample-toggle" onclick="toggleConsultSample()" style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11.5px; font-weight: 700; color: #2f9bd6; user-select: none;">
+            <span>依頼内容のサンプル文</span>
+            <span id="consult-sample-arrow" style="font-size: 9px;">▼</span>
+          </div>
+          <div id="consult-sample-body" style="display: none; background: #f7fbff; border: 1px solid #dcedf5; border-radius: 10px; padding: 12px 16px; font-size: 11.5px; color: #5c6b73; line-height: 1.8; white-space: pre-wrap;">■性別
+■外見(髪型、衣装など)
+■表情
+■構図、ポーズ
+■背景
+■使用用途
+■その他補足
+
+■イラストの雰囲気
+※ご希望の雰囲気があれば寄せて書くことが可能です。
+　参考画像にて添付ください。
+
+⚠版権キャラクター、版権キャラクターの衣装等は受付不可になりますのでご了承ください。</div>
+        </div>
 
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <div style="font-size: 12px; font-weight: 700; color: #5c6b73;">依頼内容<span style="color: #c0524f; font-weight: 700;">（必須）</span></div>
@@ -451,6 +496,22 @@
     }
   }
 
+  function toggleMenuSample() {
+    var body = document.getElementById('menu-sample-body');
+    var arrow = document.getElementById('menu-sample-arrow');
+    var open = body.style.display !== 'none';
+    body.style.display = open ? 'none' : 'block';
+    arrow.textContent = open ? '▼' : '▲';
+  }
+
+  function toggleConsultSample() {
+    var body = document.getElementById('consult-sample-body');
+    var arrow = document.getElementById('consult-sample-arrow');
+    var open = body.style.display !== 'none';
+    body.style.display = open ? 'none' : 'block';
+    arrow.textContent = open ? '▼' : '▲';
+  }
+
   function selectMenu(card, pt) {
     var cards = document.querySelectorAll('.menu-card');
     cards.forEach(function (c) {
@@ -465,20 +526,33 @@
     document.getElementById('menu-detail').style.display = 'flex';
     document.getElementById('selected-pt-text').textContent = pt + 'pt';
 
-    var remaining = memberBalance - pt;
+    updateMenuSubmitState();
+  }
+
+  // 残ポイント・「依頼内容を詳細に記載しました」チェックの両方を踏まえて、送信ボタンの状態を更新する
+  function updateMenuSubmitState() {
+    if (selectedPt === null) return;
+    var remaining = memberBalance - selectedPt;
     var resultEl = document.getElementById('balance-check-result');
     var checkEl = document.getElementById('balance-check');
     var submitBtn = document.getElementById('submit-menu');
+    var confirmed = isOptionChecked('menu-detail-confirmed');
 
     if (remaining >= 0) {
       resultEl.textContent = '受付後の残り：' + remaining + 'pt';
       resultEl.style.color = '#3f9457';
       checkEl.style.background = '#e6f7ea';
       checkEl.style.border = '1px solid #cdebd4';
-      submitBtn.textContent = 'この内容で受付する（ヒアリング不要）';
-      submitBtn.style.background = '#2f9bd6';
-      submitBtn.style.cursor = 'pointer';
-      submitBtn.style.boxShadow = '0 4px 12px rgba(47,155,214,0.3)';
+      submitBtn.textContent = 'この内容で依頼する';
+      if (confirmed) {
+        submitBtn.style.background = '#2f9bd6';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.style.boxShadow = '0 4px 12px rgba(47,155,214,0.3)';
+      } else {
+        submitBtn.style.background = '#cbd8dd';
+        submitBtn.style.cursor = 'not-allowed';
+        submitBtn.style.boxShadow = 'none';
+      }
     } else {
       resultEl.textContent = 'ポイントが不足しています';
       resultEl.style.color = '#c0524f';
@@ -496,6 +570,7 @@
     if (!TEST_MODE_SKIP_LIMITS && hasActiveApplication) return;
     var remaining = memberBalance - selectedPt;
     if (!TEST_MODE_SKIP_LIMITS && remaining < 0) return;
+    if (!isOptionChecked('menu-detail-confirmed')) return;
 
     var notesEl = document.getElementById('menu-notes');
     if (!notesEl.value.trim()) {
