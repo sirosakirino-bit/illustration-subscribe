@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>会員一覧｜Xovy Studio 管理画面</title>
-<link rel="preload" as="font" type="font/ttf" href="fonts/GenEiKiwamiGo.ttf" crossorigin>
+<link rel="preload" as="font" type="font/woff" href="fonts/GenEiKiwamiGo.woff" crossorigin>
 <link rel="preload" as="font" type="font/woff" href="fonts/KosugiMaru-Regular.woff" crossorigin>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="180x180" href="favicon-180.png">
@@ -17,9 +17,9 @@
   *::-webkit-scrollbar-thumb:hover { background: #9ed2ea; }
   html { scrollbar-width: thin; scrollbar-color: #cfe6f1 transparent; }
 
-  @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: optional; }
-  @font-face { font-family: 'Kosugi Maru'; src: url('fonts/KosugiMaru-Regular.woff') format('woff'), url('fonts/KosugiMaru-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: optional; }
-  @font-face { font-family: 'Dela Gothic One'; src: url('fonts/DelaGothicOne-Regular.woff') format('woff'), url('fonts/DelaGothicOne-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: optional; }
+  @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.woff') format('woff'), url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: fallback; }
+  @font-face { font-family: 'Kosugi Maru'; src: url('fonts/KosugiMaru-Regular.woff') format('woff'), url('fonts/KosugiMaru-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: fallback; }
+  @font-face { font-family: 'Dela Gothic One'; src: url('fonts/DelaGothicOne-Regular.woff') format('woff'), url('fonts/DelaGothicOne-Regular.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: fallback; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
   body { background: radial-gradient(circle, #c9e2ef 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
@@ -44,7 +44,7 @@
     .navlinks > a { padding: 6px 9px; }
   }
 
-  @media (max-width: 1300px) {
+  @media (max-width: 1000px) {
     .topbar { padding: 16px 18px; position: relative; justify-content: flex-start; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
