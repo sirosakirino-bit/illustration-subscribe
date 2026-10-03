@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>設定｜Xovy Studio</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="font" type="font/ttf" href="fonts/GenEiKiwamiGo.ttf" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Dela+Gothic+One&display=optional">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="180x180" href="favicon-180.png">
 <link rel="apple-touch-icon" href="favicon-180.png">
@@ -16,7 +19,7 @@
   *::-webkit-scrollbar-thumb:hover { background: #9ed2ea; }
   html { scrollbar-width: thin; scrollbar-color: #cfe6f1 transparent; }
 
-  @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'GenEi Kiwami Gothic'; src: url('fonts/GenEiKiwamiGo.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: optional; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
   body { background: radial-gradient(circle, #c9e2ef 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
@@ -34,14 +37,12 @@
   .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; flex-shrink: 0; white-space: nowrap; }
   .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; }
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1300px) {
     .topbar { padding: 16px 18px; position: relative; justify-content: flex-start; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
     .topbar > div:last-child { display: flex; flex-shrink: 0; gap: 6px; order: 2; margin-left: auto; }
     .avatar { flex-shrink: 0; }
-    .user-name-row { display: none; }
-    .user > a[data-action="logout"] { display: none; }
     .nav-toggle-btn { display: flex; order: 3; }
     .navlinks { display: none; }
     .topbar.nav-open .navlinks {
@@ -64,8 +65,18 @@
       padding: 12px 14px;
       border-radius: 10px;
     }
-    .topbar.nav-open .navlinks > a[data-action="logout"] { display: block; border-top: 1px solid #eef2f4; margin-top: 4px; padding-top: 14px; }
     .topbar.nav-open .nav-active { box-shadow: none; }
+  }
+
+  @media (max-width: 650px) {
+    .user-name-row { display: none; }
+    .user > a[data-action="logout"] { display: none; }
+    .topbar.nav-open .navlinks > a[data-action="logout"] { display: block; border-top: 1px solid #eef2f4; margin-top: 4px; padding-top: 14px; }
+  }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 16px 12px; gap: 6px; }
+    .avatar { width: 28px; height: 28px; }
   }
 </style>
 </head>
