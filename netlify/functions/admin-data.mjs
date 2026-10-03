@@ -45,6 +45,14 @@ export async function handler(event, context) {
         return jsonResponse(200, { threads });
       }
 
+      // ---- トップバーの「メッセージ」未読件数バッジ（全管理画面共通） ----
+      if (query.unread_count) {
+        const rows = await db.sql`
+          SELECT COUNT(*)::int AS c FROM messages WHERE sender = 'member' AND read_by_admin = false
+        `;
+        return jsonResponse(200, { unread_count: rows[0].c });
+      }
+
       // ---- お知らせ配信：保存済みテンプレート一覧 ----
       if (query.announcement_templates) {
         const templates = await db.sql`SELECT * FROM announcement_templates ORDER BY created_at DESC`;

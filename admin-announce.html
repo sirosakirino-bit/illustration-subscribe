@@ -97,7 +97,7 @@
       <a href="admin-members.html" class="nav-inactive">会員一覧</a>
       <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
       <a href="admin-requests.html" class="nav-inactive">申請管理</a>
-      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ</a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span id="inbox-nav-badge" style="display: none; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">0</span></a>
       <a href="admin-payments.html" class="nav-inactive">決済状況</a>
       <a href="admin-announce.html" class="nav-active">お知らせ配信</a>
       <a href="#" data-action="logout" class="nav-inactive">ログアウト</a>
@@ -273,10 +273,26 @@
     });
   });
 
+  // トップバーの「メッセージ」未読件数バッジ（全管理画面共通）
+  function loadInboxBadge() {
+    if (!window.AuthHelpers) return;
+    AuthHelpers.callFunction('admin-data', { method: 'GET', query: { unread_count: 1 } }).then(function (data) {
+      var badge = document.getElementById('inbox-nav-badge');
+      if (!badge) return;
+      if (data.unread_count > 0) {
+        badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }).catch(function () {});
+  }
+
   if (window.netlifyIdentity) {
     netlifyIdentity.on('init', function (user) {
       if (!user || !window.AuthHelpers) return;
       loadTemplates();
+      loadInboxBadge();
     });
   }
 </script>

@@ -97,7 +97,7 @@
       <a href="admin-members.html" class="nav-inactive">会員一覧</a>
       <a href="admin-capacity.html" class="nav-inactive">制作枠</a>
       <a href="admin-requests.html" class="nav-inactive">申請管理</a>
-      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span style="display: inline-flex; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">1</span></a>
+      <a href="admin-inbox.html" class="nav-inactive" style="display: flex; align-items: center; gap: 5px;">メッセージ<span id="inbox-nav-badge" style="display: none; align-items: center; justify-content: center; min-width: 14px; height: 14px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">0</span></a>
       <a href="admin-payments.html" class="nav-active">決済状況</a>
       <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
       <a href="#" data-action="logout" class="nav-inactive">ログアウト</a>
@@ -121,7 +121,7 @@
         <div id="stat-revenue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #3f9457;">ー</div>
         <div id="stat-revenue-note" style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">読み込み中…</div>
       </div>
-      <div style="flex: 1; min-width: 180px; background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 16px; padding: 18px 20px;">
+      <div style="flex: 1; min-width: 180px; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #a8722a; font-weight: 700;">今月の追加料金売上（税込・別枠）</div>
         <div id="stat-option-revenue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #a8722a;">ー</div>
         <div id="stat-option-revenue-note" style="font-size: 10.5px; color: #b3927a; margin-top: 4px;">読み込み中…</div>
@@ -181,7 +181,7 @@
 
     </div>
 
-    <div style="background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 18px; padding: 20px 26px; display: flex; flex-direction: column; gap: 10px;">
+    <div style="background: #ffffff; border-radius: 18px; padding: 20px 26px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; gap: 10px;">
       <div>
         <div style="font-size: 13px; font-weight: 800; color: #a8722a;">追加料金の決済履歴（商用利用・著作権譲渡など・別枠）</div>
         <div style="font-size: 10.5px; color: #b3927a; margin-top: 2px;">メッセージ画面から個別に請求した、サブスクの月額課金とは別枠のオプション料金の履歴です。</div>
@@ -349,9 +349,25 @@
     });
   }
 
+  // トップバーの「メッセージ」未読件数バッジ（全管理画面共通）
+  function loadInboxBadge() {
+    if (!window.AuthHelpers) return;
+    AuthHelpers.callFunction('admin-data', { method: 'GET', query: { unread_count: 1 } }).then(function (data) {
+      var badge = document.getElementById('inbox-nav-badge');
+      if (!badge) return;
+      if (data.unread_count > 0) {
+        badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }).catch(function () {});
+  }
+
   netlifyIdentity.on('init', function (user) {
     if (!user) return;
     loadPayments();
+    loadInboxBadge();
   });
 </script>
 </body>
