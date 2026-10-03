@@ -32,6 +32,7 @@
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #5c6b73; }
+  .navlinks > a[data-action="logout"] { display: none; }
   .user { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; flex-shrink: 0; white-space: nowrap; }
   .avatar { width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; flex-shrink: 0; }
 
@@ -65,7 +66,7 @@
   .status-progress { background: #fff0da; color: #b3791a; }
   .status-done { background: #e6f7ea; color: #3f9457; }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1000px) {
     .topbar { padding: 16px 18px; }
     .logo { order: 1;  font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-weight: 400;}
     .user { order: 2; }
@@ -83,14 +84,14 @@
     .history-name { font-size: 12.5px; }
   }
 
-  @media (max-width: 1100px) {
-    .topbar { padding: 16px 18px; position: relative; }
+  @media (max-width: 1000px) {
+    .topbar { padding: 16px 18px; position: relative; justify-content: flex-start; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
-    .topbar > div:last-child { display: flex; flex-shrink: 1; min-width: 0; gap: 6px; }
+    .topbar > div:last-child { display: flex; flex-shrink: 0; gap: 6px; order: 2; margin-left: auto; }
     .avatar { flex-shrink: 0; }
-    .user-name-row { display: block; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .user a[data-action="logout"] { flex-shrink: 0; }
+    .user-name-row { display: none; }
+    .user > a[data-action="logout"] { display: none; }
     .nav-toggle-btn { display: flex; order: 3; }
     .navlinks { display: none; }
     .topbar.nav-open .navlinks {
@@ -113,6 +114,7 @@
       padding: 12px 14px;
       border-radius: 10px;
     }
+    .topbar.nav-open .navlinks > a[data-action="logout"] { display: block; border-top: 1px solid #eef2f4; margin-top: 4px; padding-top: 14px; }
     .topbar.nav-open .nav-active { box-shadow: none; }
   }
 </style>
@@ -128,6 +130,7 @@
       <a href="apply.html" id="nav-apply-link" class="nav-inactive">ポイントを使う</a>
       <a href="history.html" class="nav-inactive" style="display: flex; align-items: center; gap: 6px;">申請履歴<span id="history-nav-badge" style="display: none; align-items: center; justify-content: center; min-width: 15px; height: 15px; padding: 0 4px; background: #c0524f; color: #fff; font-size: 9px; font-weight: 800; border-radius: 999px;">0</span></a>
       <a href="settings.html" class="nav-inactive">設定</a>
+      <a href="#" data-action="logout" class="nav-inactive">ログアウト</a>
     </div>
     <div class="user">
       <div class="avatar" data-user-initial>A</div>

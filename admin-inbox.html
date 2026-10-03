@@ -40,6 +40,7 @@
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
   .nav-active { background: #ffffff; color: #2f9bd6; border-radius: 999px; box-shadow: 0 2px 6px rgba(47,155,214,0.15); }
   .nav-inactive { color: #5c6b73; }
+  .navlinks > a[data-action="logout"] { display: none; }
   .admin-user-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: #5c6b73; flex-shrink: 0; white-space: nowrap; }
 
   .contact-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-left: 3px solid transparent; cursor: pointer; }
@@ -64,7 +65,7 @@
   .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
   .thread-back-link { display: none; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #2f9bd6; cursor: pointer; flex-shrink: 0; }
 
-  @media (max-width: 1320px) {
+  @media (max-width: 1200px) {
     .topbar { padding: 16px 18px; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
@@ -83,13 +84,13 @@
     body.mobile-thread-open .inbox-thread { display: flex; }
   }
 
-  @media (max-width: 1320px) {
-    .topbar { padding: 16px 18px; position: relative; }
+  @media (max-width: 1200px) {
+    .topbar { padding: 16px 18px; position: relative; justify-content: flex-start; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
     .topbar > div:last-child { display: none; }
-    .admin-user-info { display: flex; flex-shrink: 1; min-width: 0; gap: 6px; }
-    .admin-user-info > div:last-child { max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .admin-user-info { display: flex; flex-shrink: 0; gap: 6px; order: 2; margin-left: auto; }
+    .admin-user-info > div:last-child { display: none; }
     .nav-toggle-btn { display: flex; order: 3; }
     .navlinks { display: none; }
     .topbar.nav-open .navlinks {
@@ -112,6 +113,7 @@
       padding: 12px 14px;
       border-radius: 10px;
     }
+    .topbar.nav-open .navlinks > a[data-action="logout"] { display: block; border-top: 1px solid #eef2f4; margin-top: 4px; padding-top: 14px; }
     .topbar.nav-open .nav-active { box-shadow: none; }
   }
 </style>
@@ -129,6 +131,7 @@
       <a href="admin-inbox.html" class="nav-active">メッセージ</a>
       <a href="admin-payments.html" class="nav-inactive">決済状況</a>
       <a href="admin-announce.html" class="nav-inactive">お知らせ配信</a>
+      <a href="#" data-action="logout" class="nav-inactive">ログアウト</a>
     </div>
     <a href="admin-settings.html" class="admin-user-info" style="text-decoration: none;">
       <div data-admin-icon style="width: 32px; height: 32px; border-radius: 50%; background: #d6f0fb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #1f7fb3; overflow: hidden; flex-shrink: 0;">運</div>
