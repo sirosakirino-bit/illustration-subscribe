@@ -22,9 +22,9 @@
   body { background: radial-gradient(circle, #c9e2ef 1px, transparent 1px) 0 0/26px 26px, linear-gradient(180deg, #eef8fd 0%, #f7fbff 100%); font-family: 'Kosugi Maru', system-ui, sans-serif; color: #3b454a; line-height: 1.85; letter-spacing: 0.2px; text-rendering: optimizeLegibility; min-height: 100vh; }
   a { color: #2f9bd6; text-decoration: none; }
   a:hover { color: #1f7fb3; }
-  .page { width: 100%; max-width: 900px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .page { width: 100%; max-width: 1100px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: nowrap; gap: 10px; width: 100vw; position: relative; left: 50%; margin-left: -50vw; box-sizing: border-box; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: nowrap; gap: 10px; }
   .logo { font-size: 20px; font-weight: 800; color: #2f9bd6;  font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-weight: 400; flex-shrink: 0; white-space: nowrap;}
   .navlinks { display: flex; gap: 10px; font-size: 13px; font-weight: 700; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
   .navlinks > a { padding: 8px 16px; }
@@ -51,12 +51,14 @@
   .send-btn.disabled { background: #cbd8dd; cursor: not-allowed; }
   .kbd { background: #eef2f4; border: 1px solid #dcedf5; border-radius: 5px; padding: 1px 6px; font-family: ui-monospace, monospace; color: #5c6b73; }
 
-  @media (max-width: 820px) {
+  @media (max-width: 1100px) {
     .topbar { padding: 16px 18px; position: relative; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
-    .topbar > div:last-child { display: none; }
-    .user-name-row { display: none; }
+    .topbar > div:last-child { display: flex; flex-shrink: 1; min-width: 0; gap: 6px; }
+    .avatar { flex-shrink: 0; }
+    .user-name-row { display: block; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user a[data-action="logout"] { flex-shrink: 0; }
     .nav-toggle-btn { display: flex; order: 3; }
     .navlinks { display: none; }
     .topbar.nav-open .navlinks {

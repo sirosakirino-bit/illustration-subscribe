@@ -34,7 +34,7 @@
   .deliver-composer { display: none; flex-direction: column; gap: 12px; background: #f3faf5; border: 1px solid #cfe8d6; border-radius: 14px; padding: 18px 20px; }
   .send-deliver-btn { background: #3f9457; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 22px; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; }
   .deliver-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: nowrap; gap: 10px; width: 100vw; position: relative; left: 50%; margin-left: -50vw; box-sizing: border-box; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 36px; flex-wrap: nowrap; gap: 10px; }
   .navlinks { display: flex; gap: 3px; font-size: 12px; font-weight: 700; flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
   .navlinks > a { padding: 8px 10px; }
   .nav-toggle-btn { display: none; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: #eaf6fb; cursor: pointer; flex-shrink: 0; }
@@ -64,7 +64,7 @@
   .inbox-thread { flex-grow: 1; background: #ffffff; border-radius: 18px; box-shadow: 0 3px 10px rgba(47,155,214,0.08); display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
   .thread-back-link { display: none; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #2f9bd6; cursor: pointer; flex-shrink: 0; }
 
-  @media (max-width: 820px) {
+  @media (max-width: 1320px) {
     .topbar { padding: 16px 18px; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
@@ -83,13 +83,13 @@
     body.mobile-thread-open .inbox-thread { display: flex; }
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 1320px) {
     .topbar { padding: 16px 18px; position: relative; }
     .topbar > div:first-child { order: 1; }
     .topbar > div:last-child { order: 2; }
     .topbar > div:last-child { display: none; }
-    .admin-user-info { display: none; }
-    .user-name-row { display: none; }
+    .admin-user-info { display: flex; flex-shrink: 1; min-width: 0; gap: 6px; }
+    .admin-user-info > div:last-child { max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .nav-toggle-btn { display: flex; order: 3; }
     .navlinks { display: none; }
     .topbar.nav-open .navlinks {
