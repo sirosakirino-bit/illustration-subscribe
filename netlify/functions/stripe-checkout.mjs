@@ -7,7 +7,7 @@ import { getStripe, priceIdForPlan, nextMonthFirstDayUnix, ensureStripeCustomer 
 export async function handler(event, context) {
   if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'このメソッドは使えません' });
 
-  const db = getDb();
+  const db = await getDb();
   try {
     const user = requireUser(context);
     const memberRows = await db.sql`SELECT * FROM members WHERE identity_user_id = ${user.sub}`;

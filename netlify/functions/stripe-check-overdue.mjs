@@ -10,7 +10,7 @@ import { notifyAdmin, escapeHtml } from './_lib/email.mjs';
 const OVERDUE_DAYS = 14;
 
 export async function handler() {
-  const db = getDb();
+  const db = await getDb();
   try {
     const overdue = await db.sql`
       SELECT * FROM members

@@ -68,7 +68,7 @@ export async function handler(event) {
     return { statusCode: 400, body: 'Webhook signature verification failed' };
   }
 
-  const db = getDb();
+  const db = await getDb();
 
   try {
     const type = stripeEvent.type;

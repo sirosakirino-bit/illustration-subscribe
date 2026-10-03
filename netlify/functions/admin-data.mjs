@@ -13,7 +13,7 @@ async function getMemberById(db, memberId) {
 }
 
 export async function handler(event, context) {
-  const db = getDb();
+  const db = await getDb();
 
   try {
     requireAdmin(context);

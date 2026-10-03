@@ -74,7 +74,7 @@ async function ensureMember(db, user) {
 }
 
 export async function handler(event, context) {
-  const db = getDb();
+  const db = await getDb();
   try {
     const user = requireUser(context);
     const member = await ensureMember(db, user);
