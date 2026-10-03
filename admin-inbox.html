@@ -55,6 +55,13 @@
   .send-quote-btn { background: #6a4fc0; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 0; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; padding-left: 22px; padding-right: 22px; }
   .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
   .pt-input { width: 90px; padding: 9px 10px; border: 1px solid #e3dcf5; border-radius: 10px; font-size: 13px; font-family: inherit; text-align: center; }
+
+  .charge-btn { display: inline-flex; align-items: center; gap: 6px; background: #fdf3e8; color: #a8722a; font-size: 12px; font-weight: 700; padding: 9px 18px; border-radius: 999px; cursor: pointer; align-self: flex-start; }
+  .charge-composer { display: none; flex-direction: column; gap: 12px; background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 14px; padding: 18px 20px; }
+  .send-charge-btn { background: #a8722a; color: #fff; font-weight: 700; font-size: 13px; padding: 11px 0; border-radius: 999px; text-align: center; cursor: pointer; align-self: flex-start; padding-left: 22px; padding-right: 22px; }
+  .charge-card { background: #fdf9f2; border: 1.5px solid #f2e0c4; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 440px; align-self: flex-start; }
+  .charge-preset-chip { font-size: 11px; font-weight: 700; padding: 7px 12px; border-radius: 999px; border: 1px solid #f2e0c4; background: #ffffff; color: #a8722a; cursor: pointer; }
+  .amount-input { width: 140px; padding: 9px 10px; border: 1px solid #f2e0c4; border-radius: 10px; font-size: 13px; font-family: inherit; text-align: center; }
   .bubble { font-size: 13px; padding: 12px 16px; max-width: 420px; line-height: 1.6; white-space: pre-wrap; }
   .bubble.mine { background: #2f9bd6; color: #ffffff; border-radius: 16px 4px 16px 16px; align-self: flex-end; }
   .bubble.theirs { background: #f2f6f7; color: #3b454a; border-radius: 4px 16px 16px 16px; align-self: flex-start; }
@@ -195,6 +202,28 @@
 
           <div id="thread-composers" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #eef2f4; padding: 16px 22px; flex-shrink: 0;"></div>
 
+          <div style="display: flex; flex-direction: column; gap: 12px; padding: 0 22px 16px; flex-shrink: 0;">
+            <div class="charge-btn" onclick="toggleChargeComposer()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8722a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M9 10a2.5 2.5 0 0 1 2.5-2h1a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h1a2.5 2.5 0 0 0 2.5-2"/></svg>
+              追加料金を請求
+            </div>
+            <div id="charge-composer-box" class="charge-composer">
+              <div style="font-size: 12px; font-weight: 800; color: #a8722a;">よくある請求内容から選ぶ（任意）</div>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <div class="charge-preset-chip" onclick="selectChargePreset('商用利用のご請求です。', 22000)">商用利用（¥22,000）</div>
+                <div class="charge-preset-chip" onclick="selectChargePreset('実績非公開のご請求です。', 55000)">実績非公開（¥55,000）</div>
+                <div class="charge-preset-chip" onclick="selectChargePreset('著作権譲渡のご請求です。', 110000)">著作権譲渡（¥110,000）</div>
+                <div class="charge-preset-chip" onclick="selectChargePreset('修正回数超過分のご請求です。', 11000)">修正回数超過（¥11,000）</div>
+              </div>
+              <div style="font-size: 12px; font-weight: 800; color: #a8722a;">請求金額（税込・円）</div>
+              <input id="charge-amount-input" class="amount-input" type="number" min="1" step="1" placeholder="例）22000">
+              <div style="font-size: 12px; font-weight: 800; color: #a8722a;">内容（会員に表示されます）</div>
+              <textarea id="charge-note-input" style="width: 100%; min-height: 60px; border: 1px solid #f2e0c4; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-family: inherit; color: #3b454a; outline: none; resize: vertical; background: #ffffff;" placeholder="例）商用利用オプションのご請求です。"></textarea>
+              <div class="send-charge-btn" onclick="sendCharge()">この内容で請求する</div>
+              <div style="font-size: 10.5px; color: #b3927a;">送信すると、Stripeの請求書を発行して会員にメールとメッセージでお知らせします。会員はメッセージ内の「お支払いはこちら」から支払えます。</div>
+            </div>
+          </div>
+
           <div style="display: flex; align-items: flex-end; gap: 10px; padding: 14px 22px 0; border-top: 1px solid #eef2f4; flex-shrink: 0;">
             <textarea id="thread-send-input" rows="1" placeholder="メッセージを入力…" style="flex-grow: 1; border: 1px solid #dcedf5; border-radius: 18px; padding: 10px 18px; font-size: 13px; color: #3b454a; font-family: inherit; outline: none; resize: none; max-height: 160px; line-height: 1.5;"></textarea>
             <div id="thread-send-btn" style="background: #2f9bd6; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 22px; border-radius: 999px; flex-shrink: 0; cursor: pointer;">送信</div>
@@ -286,7 +315,7 @@
       : '';
 
     return (
-      '<div id="request-summary-card" style="background:#eef8fd; border:1.5px solid #cbe9f7; border-radius:14px; padding:16px 20px; max-width:440px; align-self:flex-start; flex-shrink:0; display:flex; flex-direction:column; gap:10px;">' +
+      '<div id="request-summary-card" style="background:#eef8fd; border:1.5px solid #cbe9f7; border-radius:14px; padding:16px 20px; max-width:50%; min-width:340px; align-self:flex-start; flex-shrink:0; display:flex; flex-direction:column; gap:10px;">' +
         '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#1f7fb3;">' +
           '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1f7fb3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' +
           '依頼内容' +
@@ -426,6 +455,36 @@
     el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
   }
 
+  function toggleChargeComposer() {
+    var el = document.getElementById('charge-composer-box');
+    if (!el) return;
+    el.style.display = (el.style.display === 'flex') ? 'none' : 'flex';
+  }
+
+  function selectChargePreset(note, amount) {
+    document.getElementById('charge-amount-input').value = amount;
+    document.getElementById('charge-note-input').value = note;
+  }
+
+  function sendCharge() {
+    if (!selectedId) return;
+    var amount = Number(document.getElementById('charge-amount-input').value);
+    var note = (document.getElementById('charge-note-input').value || '').trim();
+    if (!amount || amount < 1) { alert('請求金額を入力してください'); return; }
+    if (!note) { alert('内容を入力してください（会員に表示されます）'); return; }
+
+    AuthHelpers.callFunction('admin-data', { method: 'POST', body: { action: 'request-charge', application_id: Number(selectedId), amount: amount, note: note } })
+      .then(function () {
+        document.getElementById('charge-amount-input').value = '';
+        document.getElementById('charge-note-input').value = '';
+        document.getElementById('charge-composer-box').style.display = 'none';
+        loadThread(selectedId);
+      })
+      .catch(function (err) {
+        alert('請求に失敗しました：' + err.message);
+      });
+  }
+
   function renderThreadMessages(messages, application) {
     var container = document.getElementById('thread-messages');
     // 依頼内容カードは、やり取りと同じスクロール領域の先頭に差し込む（上部固定にはしない）
@@ -474,6 +533,28 @@
               amountLine +
               (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
               statusNote +
+            '</div>' +
+            '<div class="meta">あなた（運営）　' + when + '</div>' +
+          '</div>'
+        );
+      }
+
+      if (m.kind === 'charge') {
+        var chargeStatusNote = '';
+        if (m.charge_status === 'pending') chargeStatusNote = '<div style="font-size:10.5px; font-weight:700; color:#b3791a; background:#fff0da; padding:4px 10px; border-radius:999px; align-self:flex-start;">会員のお支払い待ち</div>';
+        else if (m.charge_status === 'paid') chargeStatusNote = '<div style="font-size:10.5px; font-weight:700; color:#3f9457; background:#e6f7ea; padding:4px 10px; border-radius:999px; align-self:flex-start;">支払い済み</div>';
+        else if (m.charge_status === 'failed') chargeStatusNote = '<div style="font-size:10.5px; font-weight:700; color:#c0524f; background:#fbeceb; padding:4px 10px; border-radius:999px; align-self:flex-start;">決済エラー</div>';
+
+        return (
+          '<div class="msg-row" style="align-items:flex-end;">' +
+            '<div class="charge-card" style="align-self:flex-end;">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#a8722a;">' +
+                '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a8722a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M9 10a2.5 2.5 0 0 1 2.5-2h1a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h1a2.5 2.5 0 0 0 2.5-2"/></svg>' +
+                '追加料金のご請求' +
+              '</div>' +
+              '<div style="font-family: \'GenEi Kiwami Gothic\', \'Dela Gothic One\', system-ui, sans-serif; font-size:20px; font-weight:800; font-weight: 400; color:#3b454a;">¥' + Number(m.charge_amount).toLocaleString() + '</div>' +
+              (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
+              chargeStatusNote +
             '</div>' +
             '<div class="meta">あなた（運営）　' + when + '</div>' +
           '</div>'

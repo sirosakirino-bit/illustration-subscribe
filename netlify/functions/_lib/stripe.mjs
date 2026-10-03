@@ -54,6 +54,30 @@ export function nextMonthFirstDayUnix(from) {
   return Math.floor(nextMonthFirstJstUtc / 1000);
 }
 
+// 商用利用・著作権譲渡・実績非公開・修正回数超過などの個別オプション料金を、
+// サブスクの月額課金とは別枠の「一回限りの請求書（Invoice）」として作成する。
+// collection_method: 'send_invoice' を使うため、Stripe側からの自動引き落としは行われず、
+// 会員がhosted_invoice_url（請求書の支払いページ）を開いて能動的に支払う形になる。
+export async function createOptionInvoice(stripe, customerId, amountYen, description) {
+  await stripe.invoiceItems.create({
+    customer: customerId,
+    amount: Math.round(amountYen), // JPYはゼロ桁通貨のため、そのまま円の整数
+    currency: 'jpy',
+    description: description
+  });
+
+  const invoice = await stripe.invoices.create({
+    customer: customerId,
+    collection_method: 'send_invoice',
+    days_until_due: 14,
+    auto_advance: false,
+    metadata: { kind: 'option_charge' }
+  });
+
+  const finalized = await stripe.invoices.finalizeInvoice(invoice.id);
+  return { id: finalized.id, hostedInvoiceUrl: finalized.hosted_invoice_url };
+}
+
 // member行からStripe顧客IDを取得する。なければ新規作成してDBに保存する。
 export async function ensureStripeCustomer(db, stripe, member) {
   if (member.stripe_customer_id) return member.stripe_customer_id;

@@ -121,6 +121,11 @@
         <div id="stat-revenue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #3f9457;">ー</div>
         <div id="stat-revenue-note" style="font-size: 10.5px; color: #b3c2c9; margin-top: 4px;">読み込み中…</div>
       </div>
+      <div style="flex: 1; min-width: 180px; background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 16px; padding: 18px 20px;">
+        <div style="font-size: 11px; color: #a8722a; font-weight: 700;">今月の追加料金売上（税込・別枠）</div>
+        <div id="stat-option-revenue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #a8722a;">ー</div>
+        <div id="stat-option-revenue-note" style="font-size: 10.5px; color: #b3927a; margin-top: 4px;">読み込み中…</div>
+      </div>
       <div style="flex: 1; min-width: 180px; background: #ffffff; border-radius: 16px; padding: 18px 20px; box-shadow: 0 3px 10px rgba(47,155,214,0.08);">
         <div style="font-size: 11px; color: #5c6b73; font-weight: 700;">未払い・要確認</div>
         <div id="stat-pastdue" style="font-family: 'GenEi Kiwami Gothic', 'Dela Gothic One', system-ui, sans-serif; font-size: 22px; font-weight: 800; font-weight: 400; margin-top: 6px; color: #c0524f;">ー</div>
@@ -172,6 +177,26 @@
 
       <div id="payment-history-rows">
         <div style="padding: 14px 0; font-size: 12px; color: #5c6b73;">読み込み中…</div>
+      </div>
+
+    </div>
+
+    <div style="background: #fdf9f2; border: 1px solid #f2e0c4; border-radius: 18px; padding: 20px 26px; display: flex; flex-direction: column; gap: 10px;">
+      <div>
+        <div style="font-size: 13px; font-weight: 800; color: #a8722a;">追加料金の決済履歴（商用利用・著作権譲渡など・別枠）</div>
+        <div style="font-size: 10.5px; color: #b3927a; margin-top: 2px;">メッセージ画面から個別に請求した、サブスクの月額課金とは別枠のオプション料金の履歴です。</div>
+      </div>
+
+      <div id="option-history-header" style="display: none; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2e0c4; font-size: 11px; font-weight: 700; color: #a8722a;">
+        <div style="width: 90px;">請求日</div>
+        <div style="flex-grow: 1;">会員</div>
+        <div style="width: 220px;">内容</div>
+        <div style="width: 130px;">金額</div>
+        <div style="width: 90px;">ステータス</div>
+      </div>
+
+      <div id="option-history-rows">
+        <div style="padding: 14px 0; font-size: 12px; color: #a8722a;">読み込み中…</div>
       </div>
 
     </div>
@@ -277,17 +302,50 @@
     }).join('');
   }
 
+  function renderOptionHistory(events) {
+    var wrap = document.getElementById('option-history-rows');
+    var header = document.getElementById('option-history-header');
+    if (!events.length) {
+      header.style.display = 'none';
+      wrap.innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #a8722a;">まだ追加料金の決済履歴はありません</div>';
+      return;
+    }
+    header.style.display = 'flex';
+    wrap.innerHTML = events.map(function (e) {
+      var isSuccess = e.event_type === 'option_invoice.paid';
+      var statusBadge = isSuccess
+        ? '<span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #e6f7ea; color: #3f9457;">成功</span>'
+        : '<span style="font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: #fbecec; color: #c0524f;">失敗</span>';
+      var name = escapeHtml(e.member_display_name);
+      var desc = escapeHtml(e.description || 'ー');
+      return (
+        '<div style="display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #f2e0c4; font-size: 13px;">' +
+          '<div style="width: 90px; color: #a8722a;">' + formatMd(e.created_at) + '</div>' +
+          '<div style="flex-grow: 1;">' + name + ' さん</div>' +
+          '<div style="width: 220px; color: #4b5a61; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px;">' + desc + '</div>' +
+          '<div style="width: 130px; color: #4b5a61; white-space: nowrap;">' + yen(e.amount) + '</div>' +
+          '<div style="width: 90px;">' + statusBadge + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
   function loadPayments() {
     window.AuthHelpers.callFunction('admin-data', { query: { payments: 1 } }).then(function (data) {
       document.getElementById('stat-revenue').textContent = Math.round(data.revenue_total || 0).toLocaleString() + '円';
       document.getElementById('stat-revenue-note').textContent = '入金済み ' + (data.revenue_count || 0) + '件';
       document.getElementById('stat-canceled').textContent = (data.canceled_count || 0) + '件';
+      document.getElementById('stat-option-revenue').textContent = Math.round(data.option_revenue_total || 0).toLocaleString() + '円';
+      document.getElementById('stat-option-revenue-note').textContent = '入金済み ' + (data.option_revenue_count || 0) + '件';
       renderPastDue(data.past_due_members || [], data.overdue_days || 14);
       renderHistory(data.recent_events || []);
+      renderOptionHistory(data.option_recent_events || []);
     }).catch(function (err) {
       document.getElementById('stat-revenue').textContent = '取得失敗';
+      document.getElementById('stat-option-revenue').textContent = '取得失敗';
       document.getElementById('pastdue-rows').innerHTML = '<div style="padding: 14px 0; font-size: 12px; color: #c0524f;">読み込みに失敗しました：' + escapeHtml(err.message) + '</div>';
       document.getElementById('payment-history-rows').innerHTML = '';
+      document.getElementById('option-history-rows').innerHTML = '';
     });
   }
 

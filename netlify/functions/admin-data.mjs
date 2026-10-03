@@ -2,7 +2,7 @@ import { getDb } from './_lib/db.mjs';
 import { requireAdmin, jsonResponse } from './_lib/auth.mjs';
 import { notifyMember, escapeHtml, siteUrl } from './_lib/email.mjs';
 import { computeCapacity, setCapacity } from './_lib/capacity.mjs';
-import { getStripe } from './_lib/stripe.mjs';
+import { getStripe, createOptionInvoice, ensureStripeCustomer } from './_lib/stripe.mjs';
 
 const PLAN_LABELS = { point: 'ポイントプラン', monthly: '月1プラン' };
 const PLAN_AMOUNTS = { point: 11000, monthly: 27500 }; // 税込
@@ -130,12 +130,38 @@ export async function handler(event, context) {
           LIMIT 50
         `;
 
+        // ---- 追加料金（商用利用・著作権譲渡などの個別オプション請求）：サブスクの月額課金とは別枠で集計・表示する ----
+        const optionRevenueRows = await db.sql`
+          SELECT COALESCE(SUM(amount), 0)::int AS total, COUNT(*)::int AS c
+          FROM payment_events
+          WHERE event_type = 'option_invoice.paid' AND status = '成功' AND created_at >= ${monthStart}
+        `;
+
+        const optionRecentEvents = await db.sql`
+          SELECT pe.*,
+            CASE
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL AND NULLIF(m.full_name, '') IS NOT NULL AND m.handle_name <> m.full_name THEN m.handle_name || '（' || m.full_name || '）'
+              WHEN NULLIF(m.handle_name, '') IS NOT NULL THEN m.handle_name
+              WHEN NULLIF(m.full_name, '') IS NOT NULL THEN m.full_name
+              ELSE m.email
+            END AS member_display_name,
+            m.id AS member_id
+          FROM payment_events pe
+          JOIN members m ON m.id = pe.member_id
+          WHERE pe.event_type IN ('option_invoice.paid', 'option_invoice.payment_failed')
+          ORDER BY pe.created_at DESC
+          LIMIT 50
+        `;
+
         return jsonResponse(200, {
           revenue_total: revenueRows[0].total,
           revenue_count: revenueRows[0].c,
           canceled_count: canceledRows[0].c,
           past_due_members: pastDueMembers,
           recent_events: recentEvents,
+          option_revenue_total: optionRevenueRows[0].total,
+          option_revenue_count: optionRevenueRows[0].c,
+          option_recent_events: optionRecentEvents,
           overdue_days: 14
         });
       }
@@ -383,6 +409,49 @@ export async function handler(event, context) {
             (note ? '<p>' + escapeHtml(note) + '</p>' : '') +
             '<p><a href="' + siteUrl('message.html?id=' + applicationId) + '">内容を確認して正式受付する</a></p>'
         }).catch(function () {});
+        return jsonResponse(200, { message: inserted[0] });
+      }
+
+      // ---- 個別オプション料金を請求する（商用利用・実績非公開・著作権譲渡・修正回数超過など）----
+      // ポイント提示とは異なり、申請のステータスを問わずいつでも請求できる
+      // （キャンセル済みの申請にだけは請求しない）。サブスクの月額課金とは別に、
+      // Stripeの一回限りの請求書（Invoice）を発行し、hosted_invoice_urlをメッセージに添えて会員へ送る。
+      if (action === 'request-charge') {
+        const applicationId = Number(body.application_id);
+        const amount = Math.round(Number(body.amount));
+        const note = (body.note || '').trim();
+        if (!amount || amount < 1) return jsonResponse(400, { error: '請求金額を入力してください' });
+        if (!note) return jsonResponse(400, { error: '内容を入力してください（会員に表示されます）' });
+
+        const rows = await db.sql`SELECT * FROM applications WHERE id = ${applicationId}`;
+        if (rows.length === 0) return jsonResponse(404, { error: '申請が見つかりません' });
+        if (rows[0].status === 'キャンセル') {
+          return jsonResponse(400, { error: '取消済みの申請には請求できません' });
+        }
+
+        const member = await getMemberById(db, rows[0].member_id);
+        if (!member) return jsonResponse(404, { error: '会員情報が見つかりません' });
+
+        const stripe = await getStripe();
+        const customerId = await ensureStripeCustomer(db, stripe, member);
+        const invoice = await createOptionInvoice(stripe, customerId, amount, note);
+
+        const inserted = await db.sql`
+          INSERT INTO messages (application_id, sender, kind, body, charge_amount, charge_status, stripe_invoice_id, stripe_hosted_invoice_url, read_by_member, read_by_admin)
+          VALUES (${applicationId}, 'admin', 'charge', ${note}, ${amount}, 'pending', ${invoice.id}, ${invoice.hostedInvoiceUrl}, false, true)
+          RETURNING *
+        `;
+
+        notifyMember(member, {
+          subject: '【お支払いのお願い】追加料金のご請求（¥' + amount.toLocaleString() + '）',
+          html:
+            '<p>運営より、追加料金のご請求があります。</p>' +
+            '<p>金額：¥' + amount.toLocaleString() + '（税込）</p>' +
+            '<p>内容：' + escapeHtml(note) + '</p>' +
+            '<p><a href="' + invoice.hostedInvoiceUrl + '">こちらからお支払いください</a></p>' +
+            '<p>（メッセージ画面からも同じリンクを開けます）</p>'
+        }).catch(function () {});
+
         return jsonResponse(200, { message: inserted[0] });
       }
 

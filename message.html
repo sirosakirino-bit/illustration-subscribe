@@ -40,9 +40,12 @@
 
   .quote-card { background: #f9f7fd; border: 1.5px solid #e3dcf5; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; max-width: 420px; align-self: flex-start; }
   .delivery-card { background: #f3faf5; border: 1.5px solid #cfe8d6; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; max-width: 420px; align-self: flex-start; }
+  .charge-card { background: #fdf9f2; border: 1.5px solid #f2e0c4; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; max-width: 420px; align-self: flex-start; }
   .balance-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px; background: #e6f7ea; border: 1px solid #cdebd4; color: #3f9457; }
   .accept-btn { background: #2f9bd6; color: #fff; font-weight: 700; font-size: 12.5px; padding: 10px 0; border-radius: 999px; text-align: center; cursor: pointer; box-shadow: 0 4px 12px rgba(47,155,214,0.3); }
   .accept-btn:hover { opacity: 0.92; }
+  .pay-btn { display: block; background: #a8722a; color: #fff; font-weight: 700; font-size: 12.5px; padding: 10px 0; border-radius: 999px; text-align: center; cursor: pointer; box-shadow: 0 4px 12px rgba(168,114,42,0.3); }
+  .pay-btn:hover { opacity: 0.92; }
   .msg-row { display: flex; flex-direction: column; gap: 4px; }
   .bubble { font-size: 13px; padding: 12px 16px; max-width: 420px; line-height: 1.6; white-space: pre-wrap; }
   .bubble.mine { background: #2f9bd6; color: #fff; border-radius: 16px 4px 16px 16px; align-self: flex-end; }
@@ -264,6 +267,34 @@
                 '納品のお知らせ' +
               '</div>' +
               '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' +
+            '</div>' +
+            '<div class="meta">運営　' + when + '</div>' +
+          '</div>'
+        );
+      }
+
+      if (m.kind === 'charge') {
+        var chargeActions = '';
+        if (m.charge_status === 'paid') {
+          chargeActions = '<div style="font-size:12px; font-weight:800; color:#3f9457; display:flex; align-items:center; gap:6px;">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3f9457" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+            'お支払い済み</div>';
+        } else if (m.charge_status === 'failed') {
+          chargeActions = '<div style="font-size:11.5px; font-weight:700; color:#c0524f;">決済に失敗しました。お手数ですが、もう一度お支払いをお試しください。</div>' +
+            '<a href="' + escapeHtml(m.stripe_hosted_invoice_url || '#') + '" target="_blank" rel="noopener" class="pay-btn">お支払いはこちら</a>';
+        } else {
+          chargeActions = '<a href="' + escapeHtml(m.stripe_hosted_invoice_url || '#') + '" target="_blank" rel="noopener" class="pay-btn">お支払いはこちら</a>';
+        }
+        return (
+          '<div class="msg-row" style="align-items:flex-start;">' +
+            '<div class="charge-card">' +
+              '<div style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:800; color:#a8722a;">' +
+                '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a8722a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M9 10a2.5 2.5 0 0 1 2.5-2h1a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 0 0 5h1a2.5 2.5 0 0 0 2.5-2"/></svg>' +
+                '運営からの追加料金のご請求' +
+              '</div>' +
+              '<div style="font-family: \'GenEi Kiwami Gothic\', \'Dela Gothic One\', system-ui, sans-serif; font-size:20px; font-weight:800; font-weight: 400; color:#3b454a;">¥' + Number(m.charge_amount).toLocaleString() + '</div>' +
+              (m.body ? '<div style="font-size:12px; color:#4b5a61; line-height:1.6;">' + escapeHtml(m.body) + '</div>' : '') +
+              chargeActions +
             '</div>' +
             '<div class="meta">運営　' + when + '</div>' +
           '</div>'

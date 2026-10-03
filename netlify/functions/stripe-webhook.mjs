@@ -23,12 +23,65 @@ async function findMemberBy(db, { memberId, subscriptionId, customerId }) {
   return null;
 }
 
+// 個別オプション料金（商用利用・実績非公開・著作権譲渡・修正回数超過など）の請求書イベントを処理する。
+// サブスクの月額課金用のinvoice.paid / invoice.payment_failedハンドラとは完全に分けて扱う
+// （obj.subscriptionが無い＝一回限りのInvoice APIで発行した請求書、という判定で振り分ける）。
+async function handleOptionInvoiceEvent(db, stripeEvent, obj, succeeded) {
+  const msgRows = await db.sql`SELECT * FROM messages WHERE stripe_invoice_id = ${obj.id}`;
+  if (msgRows.length === 0) return { statusCode: 200, body: 'option invoice: no matching message (ignored)' };
+  const message = msgRows[0];
+
+  const appRows = await db.sql`SELECT * FROM applications WHERE id = ${message.application_id}`;
+  if (appRows.length === 0) return { statusCode: 200, body: 'option invoice: application not found (ignored)' };
+  const application = appRows[0];
+
+  const member = await findMemberBy(db, { memberId: application.member_id });
+  if (!member) return { statusCode: 200, body: 'option invoice: member not found (ignored)' };
+
+  const isNew = await claimEvent(db, {
+    stripeEventId: stripeEvent.id, memberId: member.id, eventType: succeeded ? 'option_invoice.paid' : 'option_invoice.payment_failed',
+    category: 'option', amount: succeeded ? (obj.amount_paid || 0) : (obj.amount_due || 0), status: succeeded ? '成功' : '失敗',
+    description: message.body
+  });
+  if (!isNew) return { statusCode: 200, body: 'already processed' };
+
+  await db.sql`UPDATE messages SET charge_status = ${succeeded ? 'paid' : 'failed'} WHERE id = ${message.id}`;
+
+  const amountLabel = '¥' + (succeeded ? (obj.amount_paid || 0) : (obj.amount_due || 0)).toLocaleString();
+  await db.sql`
+    INSERT INTO messages (application_id, sender, kind, body, read_by_member, read_by_admin)
+    VALUES (${message.application_id}, 'system', 'system', ${succeeded ? ('お支払い（' + amountLabel + '）が確認できました') : ('お支払い（' + amountLabel + '）の決済に失敗しました')}, false, true)
+  `;
+
+  if (succeeded) {
+    notifyMember(member, {
+      subject: '【お支払い確認】追加料金のお支払いが完了しました',
+      html: '<p>' + amountLabel + 'のお支払いが確認できました。ありがとうございます。</p>'
+    }).catch(function () {});
+    notifyAdmin({
+      subject: '【決済完了】' + (member.handle_name || member.full_name || member.email) + ' さんの追加料金（' + amountLabel + '）のお支払いが完了しました',
+      html: '<p>内容：' + escapeHtml(message.body || '') + '</p>'
+    }).catch(function () {});
+  } else {
+    notifyMember(member, {
+      subject: '【お支払いエラー】追加料金の決済に失敗しました',
+      html: '<p>' + amountLabel + 'のご請求について、決済処理に失敗しました。お手数ですが、メッセージ画面の支払いリンクから再度お試しください。</p>'
+    }).catch(function () {});
+    notifyAdmin({
+      subject: '【お支払いエラー】' + (member.handle_name || member.full_name || member.email) + ' さんの追加料金（' + amountLabel + '）の決済に失敗しました',
+      html: '<p>内容：' + escapeHtml(message.body || '') + '</p>'
+    }).catch(function () {});
+  }
+
+  return { statusCode: 200, body: 'ok' };
+}
+
 // 既にこのStripeイベントを処理済みかどうかを payment_events への挿入で判定する（Stripeは同じイベントを複数回送ることがある）。
 // 挿入できた（＝初めて見るイベント）場合のみ true を返す。
-async function claimEvent(db, { stripeEventId, memberId, eventType, category, amount, status }) {
+async function claimEvent(db, { stripeEventId, memberId, eventType, category, amount, status, description }) {
   const inserted = await db.sql`
-    INSERT INTO payment_events (member_id, stripe_event_id, event_type, category, amount, status)
-    VALUES (${memberId || null}, ${stripeEventId}, ${eventType}, ${category}, ${amount == null ? null : amount}, ${status})
+    INSERT INTO payment_events (member_id, stripe_event_id, event_type, category, amount, status, description)
+    VALUES (${memberId || null}, ${stripeEventId}, ${eventType}, ${category}, ${amount == null ? null : amount}, ${status}, ${description || null})
     ON CONFLICT (stripe_event_id) DO NOTHING
     RETURNING *
   `;
@@ -114,6 +167,9 @@ export async function handler(event) {
     }
 
     if (type === 'invoice.paid') {
+      // obj.subscriptionが無い場合は、サブスクの月額課金ではなく一回限りのオプション請求書（Invoice API）
+      if (!obj.subscription) return await handleOptionInvoiceEvent(db, stripeEvent, obj, true);
+
       const subscriptionId = obj.subscription;
       const customerId = obj.customer;
       const member = await findMemberBy(db, { subscriptionId, customerId });
@@ -144,6 +200,9 @@ export async function handler(event) {
     }
 
     if (type === 'invoice.payment_failed') {
+      // obj.subscriptionが無い場合は、サブスクの月額課金ではなく一回限りのオプション請求書（Invoice API）
+      if (!obj.subscription) return await handleOptionInvoiceEvent(db, stripeEvent, obj, false);
+
       const subscriptionId = obj.subscription;
       const customerId = obj.customer;
       const member = await findMemberBy(db, { subscriptionId, customerId });
